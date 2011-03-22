@@ -19,7 +19,6 @@ function simulate(string input) {
     print "Entering the for loop to look through the arcs."
 
     for (int i = 0; i < input.length; i++) {
-	//find looks through all arcs and returns a list of all meeting the conditions
 
 	path next;
 
@@ -38,6 +37,12 @@ function simulate(string input) {
 
 	    print "Navigating to the node at the end of that edge.";
 	    current = next.to;
+
+	}
+	else{
+
+	    print "There was a problem.  Now exiting.";
+	    return false;
 
 	}
 
