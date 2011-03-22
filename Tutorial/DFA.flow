@@ -8,6 +8,9 @@ an even number of a's and an even number of b's. */
 
 //precondition: dfa, e.g. every character in
 //the alphabet is represented uniquely by an out-arc on each node
+
+use 'DFA.flowt';
+
 function simulate(string input) { 
 
     dfa current = START; 

@@ -3,6 +3,9 @@ This DFA represents all strings of a's and b's with
 an even number of a's and an even number of b's. */
 
 /* Building the graph */ 
+
+use 'DFA.flowt';
+
 START s0 = dfa("s0", false);  //state s0 is labeled as the START state
 s1 = dfa("s1", false);
 s2 = dfa("s2", false); 
