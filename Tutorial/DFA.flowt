@@ -1,0 +1,10 @@
+/* Sample program: I use a graph to simulate a DFA. 
+This DFA represents all strings of a's and b's with 
+an even number of a's and an even number of b's. */
+
+/* The typedef section */ 
+/* each dfa node has two attributes, and each path arc has one attribute */
+
+NODE dfa(string state, boolean isAccepting) START; //START is a required node label
+
+ARC path(string symbol);
