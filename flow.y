@@ -1,66 +1,76 @@
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- * Copyright (C) 2001 Gerwin Klein <lsf@jflex.de>                          *
- * All rights reserved.                                                    *
- *                                                                         *
- * This is a modified version of the example from                          *
- *   http://www.lincom-asg.com/~rjamison/byacc/                            *
- *                                                                         *
- * Thanks to Larry Bell and Bob Jamison for suggestions and comments.      *
- *                                                                         *
- * This program is free software; you can redistribute it and/or modify    *
- * it under the terms of the GNU General Public License. See the file      *
- * COPYRIGHT for more information.                                         *
- *                                                                         *
- * This program is distributed in the hope that it will be useful,         *
- * but WITHOUT ANY WARRANTY; without even the implied warranty of          *
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
- * GNU General Public License for more details.                            *
- *                                                                         *
- * You should have received a copy of the GNU General Public License along *
- * with this program; if not, write to the Free Software Foundation, Inc., *
- * 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA                 *
- *                                                                         *
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 %{
   import java.io.*;
 %}
-      
-%token NL          /* newline  */
-%token <dval> NUM  /* a number */
 
-%type <dval> exp
+/* keywords */
+%token INT_T  /* keyword int, the type */
+%token FLT_T  /* keyword flot, the type */
+%token NODE_T /* keyword Node, the type */
+%token ARC_T  /* keyword Arc, the type */
+%token GRAPH  /* keyword Graph */
+%token WHILE  /* keyword while */
+%token IF     /* keyword if */
+%token USE    /* keyword use */
+%token PRINT  /* keyword print */
 
+%token NL     /* newline character */
+%token FLT    /* a floating-point number literal */
+%token INT    /* integer literal */
+%token ID     /* identifier */
+
+/* multicharacter operators */
+%token ARC    /* arc connection operator -> */
+%token EQ     /* equality operator == */
+%token NEQ    /* inequality operator != */
+%token LTE    /* less than or equal to <= */
+%token GTE    /* greater than or equal to >= */
+
+/* operator precedence */
+%nonassoc EQ NEQ
+%nonassoc '<' '>' LTE GTE
 %left '-' '+'
+%left '%'
 %left '*' '/'
-%left NEG          /* negation--unary minus */
-%right '^'         /* exponentiation        */
+%right NEG          /* negation--unary minus */
       
 %%
 
-input:   /* empty string */
-       | input line
-       ;
-      
-line:    NL      { if (interactive) System.out.print("Expression: "); }
-       | exp NL  { System.out.println(" = " + $1); 
-                   if (interactive) System.out.print("Expression: "); }
-       ;
-      
-exp:     NUM                { $$ = $1; }
-       | exp '+' exp        { $$ = $1 + $3; }
-       | exp '-' exp        { $$ = $1 - $3; }
-       | exp '*' exp        { $$ = $1 * $3; }
-       | exp '/' exp        { $$ = $1 / $3; }
-       | '-' exp  %prec NEG { $$ = -$2; }
-       | exp '^' exp        { $$ = Math.pow($1, $3); }
-       | '(' exp ')'        { $$ = $2; }
-       ;
+graph_decl : type_link graph_stmt_list { System.out.println("Syntax is correct"); }
+;
+
+type_link : USE ID ';'                 {}
+;
+
+graph_stmt_list : graph_stmt ';'       {}
+| graph_stmt_list graph_stmt ';'       {}
+;
+
+graph_stmt : label_app                 {}
+| node_dec                             {}
+| arc_dec                              {}
+;
+
+label_app : ID ':' node_dec            {}
+;
+
+node_dec : '@' ID attr_list            {}
+| '@' ID                               {}
+;
+
+arc_dec : ID ARC ID attr_list          {}
+| ID ARC ID                            {}
+;
+
+attr_list : attr                       {}
+| attr_list ',' attr                   {}
+;
+
+attr : INT                             {}
+;
 
 %%
 
   private Yylex lexer;
-
 
   private int yylex () {
     int yyl_return = -1;
@@ -88,7 +98,6 @@ exp:     NUM                { $$ = $1; }
   static boolean interactive;
 
   public static void main(String args[]) throws IOException {
-    System.out.println("BYACC/Java with JFlex Calculator Demo");
 
     Parser yyparser;
     if ( args.length > 0 ) {
