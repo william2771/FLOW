@@ -1,0 +1,26 @@
+use valid.flowt;
+
+int x = 0;
+
+/* just testing for syntax */
+x+2;
+int w = 2;
+x = w;
+int y = w;
+y = w * 3;
+y = x / w;
+int z = y - 4;
+
+int i = 0;
+while (x > 0)
+{
+	i = i % 2;
+}
+
+if(y <= x)
+{
+	w >= z;
+	w != x;
+}
+
+/* COMMENTS SHOULD BE IGNORED */
