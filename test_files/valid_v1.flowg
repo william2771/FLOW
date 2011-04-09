@@ -1,0 +1,12 @@
+use valid.flowt;
+
+/* Building the Graph */
+
+START: @node1 3, 4;
+@node2 1, 5;
+@node_spec 17, 17;
+
+node1 -> node2 6;
+node2 -> node1 4;
+node_spec -> node2 2;
+node1 -> node_spec 7;
