@@ -1,7 +1,8 @@
 public class Node{
    public Node()
    {
-      /* default constructor does nothing! */
+      /* default constructor does nothing! pretty much */
+      degree = inDegree = outDegree = 0;
    }
 
    void addInArc(Arc in)
@@ -20,13 +21,13 @@ public class Node{
       degree++;
    }
 
-   int getDegree() {return degree;}
-   int getInDegree() {return inDegree;}
-   int getOutDegree() {return outDegree;}
+   int getDegree() { return degree; }
+   int getInDegree() { return inDegree; }
+   int getOutDegree() { return outDegree; }
 
-   ArrayList<Arc> getArcs() {return arcs;}
-   ArrayList<Arc> getArcsIn() {return arcsOut;}
-   ArrayList<Arc> getArcsOut() {return arcsIn;}
+   ArrayList<Arc> getArcs() { return arcs; }
+   ArrayList<Arc> getArcsIn() { return arcsOut; }
+   ArrayList<Arc> getArcsOut() { return arcsIn; }
 
    int inDegree;
    int outDegree;

@@ -10,6 +10,7 @@
 %token GRAPH  /* keyword Graph */
 %token WHILE  /* keyword while */
 %token IF     /* keyword if */
+%token OF     /* keyword of */
 %token USE    /* keyword use */
 %token PRINT  /* keyword print */
 
@@ -31,6 +32,7 @@
 %left '-' '+'
 %left '%'
 %left '*' '/'
+%right OF           /* used for defining List types */
 %right NEG          /* negation--unary minus */
       
 %%
@@ -38,7 +40,7 @@
 graph_decl : type_link graph_stmt_list { System.out.println("Syntax is correct"); }
 ;
 
-type_link : USE ID ';'                 {}
+type_link : USE ID ';'                 { System.out.println("typelink on line " + lexer.getLine()); }
 ;
 
 graph_stmt_list : graph_stmt ';'       {}
@@ -50,7 +52,7 @@ graph_stmt : label_app                 {}
 | arc_dec                              {}
 ;
 
-label_app : ID ':' node_dec            {}
+label_app : ID ':' node_dec            {System.out.println("label on line " + lexer.getLine());}
 ;
 
 node_dec : '@' ID attr_list            {}
@@ -84,16 +86,13 @@ attr : INT                             {}
     return yyl_return;
   }
 
-
   public void yyerror (String error) {
     System.err.println ("Error: " + error);
   }
 
-
   public Parser(Reader r) {
     lexer = new Yylex(r, this);
   }
-
 
   static boolean interactive;
 

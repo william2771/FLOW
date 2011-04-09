@@ -9,6 +9,10 @@
     this(r);
     this.yyparser = yyparser;
   }
+
+  private int line = 1;
+
+  public int getLine() { return line; }
 %}
 
 comment = "/*"(.|\n)*"*/"
@@ -32,6 +36,7 @@ Arc         { return Parser.ARC_T; }
 Graph       { return Parser.GRAPH; }
 while       { return Parser.WHILE; }
 if          { return Parser.IF; }
+of          { return Parser.OF; }
 use         { return Parser.USE; }
 print       { return Parser.PRINT; }
 
@@ -58,11 +63,15 @@ print       { return Parser.PRINT; }
 "*" | 
 "/" | 
 "%" | 
+"{" |
+"}" |
+"[" |
+"]" |
 "(" | 
 ")"         { return (int) yycharat(0); }
 
-/* newline 
-{NL}        { return Parser.NL; }*/
+/* newline */
+{NL}        { line++; }
 
 /* float */
 {FLT}       { yyparser.yylval = new ParserVal(Double.parseDouble(yytext()));
@@ -78,5 +87,4 @@ print       { return Parser.PRINT; }
 
 /* strip whitespace and comments */
 [ \t]+    |
-{NL}      |
 {comment}   { }
