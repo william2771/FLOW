@@ -10,12 +10,22 @@
     this.yyparser = yyparser;
   }
 
+  /* track the line numbers for debugging */
   private int line = 1;
-
   public int getLine() { return line; }
+  private int countNLs(String comment) {
+    int count = 0;
+    for (int i = 0; i < comment.length(); i++) {
+      if (comment.charAt(i) == '\n') count ++;
+    }
+    return count;
+  }
+
+  /* method needed to handle the escaped characters in a string literal */
 %}
 
 comment = "/*"(.|\n)*"*/"
+STR     = \"(.|\n)*\"
 FLT     = [0-9]+"."[0-9]+
 INT     = [0-9]+
 ID      = [A-Za-z][A-Za-z0-9_]*
@@ -70,8 +80,10 @@ print       { return Parser.PRINT; }
 "(" | 
 ")"         { return (int) yycharat(0); }
 
-/* newline */
-{NL}        { line++; }
+/* string literal */
+{STR}       { line += countNLs(yytext()); //counts newlines. should handle escaped chars
+              yyparser.yylval = new ParserVal(yytext());
+              return Parser.STR; }
 
 /* float */
 {FLT}       { yyparser.yylval = new ParserVal(Double.parseDouble(yytext()));
@@ -85,6 +97,9 @@ print       { return Parser.PRINT; }
 {ID}        { yyparser.yylval = new ParserVal(yytext());
               return Parser.ID; }
 
+/* newline */
+{NL}        { line++; }
+
 /* strip whitespace and comments */
-[ \t]+    |
-{comment}   { }
+[ \t]+      { }
+{comment}   { line += countNLs(yytext()); }

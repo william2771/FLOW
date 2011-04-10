@@ -14,8 +14,8 @@
 %token USE    /* keyword use */
 %token PRINT  /* keyword print */
 
-%token NL     /* newline character */
-%token FLT    /* a floating-point number literal */
+%token STR    /* string literal */
+%token FLT    /* floating-point number literal */
 %token INT    /* integer literal */
 %token ID     /* identifier */
 
@@ -40,7 +40,7 @@
 graph_decl : type_link graph_stmt_list { System.out.println("Syntax is correct"); }
 ;
 
-type_link : USE ID ';'                 { System.out.println("typelink on line " + lexer.getLine()); }
+type_link : USE STR ';'                {}
 ;
 
 graph_stmt_list : graph_stmt ';'       {}
@@ -67,7 +67,7 @@ attr_list : attr                       {}
 | attr_list ',' attr                   {}
 ;
 
-attr : INT                             {}
+attr : INT                             {System.out.println(yylval.ival + " on line " + lexer.getLine());}
 ;
 
 %%

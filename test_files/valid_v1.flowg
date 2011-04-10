@@ -1,6 +1,11 @@
-use valid.flowt;
+/* this is a comment */
+use "valid.
 
-/* Building the Graph */
+flowt";
+
+/* Building 
+
+the Graph */
 
 START: @node1 3, 4;
 @node2 1, 5;
