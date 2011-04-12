@@ -2,6 +2,8 @@
 
 %byaccj
 
+%line
+
 %{
   private Parser yyparser;
 
@@ -11,8 +13,7 @@
   }
 
   /* track the line numbers for debugging */
-  private int line = 1;
-  public int getLine() { return line; }
+  public int getLine() { return yyline; }
   private int countNLs(String comment) {
     int count = 0;
     for (int i = 0; i < comment.length(); i++) {
@@ -24,7 +25,7 @@
   /* method needed to handle the escaped characters in a string literal */
 %}
 
-comment = "/*"(.|\n)*"*/"
+comment = "/*" [^*] ~"*/" | "/*" "*"+ "/"
 STR     = \"(.|\n)*\"
 FLT     = [0-9]+"."[0-9]+
 INT     = [0-9]+
@@ -37,6 +38,11 @@ LTE     = "<="
 GTE     = ">="
 
 %%
+
+/* strip whitespace and comments */
+{NL}      |
+[ \t]+    |
+{comment}   { }
 
 /* reserved words - more to follow */
 int         { return Parser.INT_T; }
@@ -81,8 +87,7 @@ print       { return Parser.PRINT; }
 ")"         { return (int) yycharat(0); }
 
 /* string literal */
-{STR}       { line += countNLs(yytext()); //counts newlines. should handle escaped chars
-              yyparser.yylval = new ParserVal(yytext());
+{STR}       { yyparser.yylval = new ParserVal(yytext());
               return Parser.STR; }
 
 /* float */
@@ -94,12 +99,6 @@ print       { return Parser.PRINT; }
               return Parser.INT; }
 
 /* identifier */
-{ID}        { yyparser.yylval = new ParserVal(yytext());
+{ID}        { //add this id to the symbol table
+              yyparser.yylval = new ParserVal(yytext());
               return Parser.ID; }
-
-/* newline */
-{NL}        { line++; }
-
-/* strip whitespace and comments */
-[ \t]+      { }
-{comment}   { line += countNLs(yytext()); }

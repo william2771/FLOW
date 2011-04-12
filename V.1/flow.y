@@ -40,7 +40,7 @@
 graph_decl : type_link graph_stmt_list { System.out.println("Syntax is correct"); }
 ;
 
-type_link : USE STR ';'                {}
+type_link : USE STR ';'                { System.out.println($2.sval); }
 ;
 
 graph_stmt_list : graph_stmt ';'       {}
@@ -83,6 +83,7 @@ attr : INT                             {System.out.println(yylval.ival + " on li
     catch (IOException e) {
       System.err.println("IO error :"+e);
     }
+
     return yyl_return;
   }
 
