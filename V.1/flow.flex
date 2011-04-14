@@ -19,7 +19,6 @@
 %}
 
 comment = "/*" [^*] ~"*/" | "/*" "*"+ "/" | "//" .* {NL}
-/* STR     = \"(.|\n)*\" | \'(.|\n)*\' */
 FLT     = [0-9]+"."[0-9]+
 INT     = [0-9]+
 ID      = [A-Za-z][A-Za-z0-9_]*
@@ -45,9 +44,11 @@ GTE     = ">="
 /* reserved words - more to follow */
 int         { return Parser.INT_T; }
 float       { return Parser.FLT_T; }
+string      { return Parser.STR_T; }
 Node        { return Parser.NODE_T; }
 Arc         { return Parser.ARC_T; }
 Graph       { return Parser.GRAPH; }
+List        { return Parser.LIST_T; }
 while       { return Parser.WHILE; }
 if          { return Parser.IF; }
 of          { return Parser.OF; }
@@ -84,9 +85,7 @@ print       { return Parser.PRINT; }
 "(" | 
 ")"         { return (int) yycharat(0); }
 
-/* string literal 
-{STR}       { yyparser.yylval = new ParserVal(yytext());
-              return Parser.STR; } */
+/* string literal */
 
 \"          { yybegin(STRING);
               string = ""; }

@@ -1,13 +1,16 @@
 %{
   import java.io.*;
+  import java.util.*;
 %}
 
 /* keywords */
 %token INT_T  /* keyword int, the type */
-%token FLT_T  /* keyword flot, the type */
+%token FLT_T  /* keyword float, the type */
+%token STR_T  /* keyword string, the type */
 %token NODE_T /* keyword Node, the type */
 %token ARC_T  /* keyword Arc, the type */
 %token GRAPH  /* keyword Graph */
+%token LIST_T /* keyword List, the type */
 %token WHILE  /* keyword while */
 %token IF     /* keyword if */
 %token OF     /* keyword of */
@@ -37,7 +40,49 @@
       
 %%
 
-graph_decl : type_link graph_stmt_list { System.out.println("Syntax is correct"); }
+valid_program : type_def
+| graph_decl
+;
+
+/* Beginning of typedef section */
+
+type_def : node_type_def arc_type_def  { System.out.println($2.sval); }
+;
+
+node_type_def : NODE_T ID '(' param_list ')' label_list ';'
+                                       { symbols.put("node_type", $2.sval); }
+;
+
+arc_type_def : ARC_T ID '(' param_list ')' ';'
+                                       { symbols.put("arc_type", $2.sval);
+                                         $$.sval = "public class " + $2.sval + " extends Arc {\n  public " + $2.sval + "(" + symbols.get("node_type") + " source, " + symbols.get("node_type") + " dest, " + $4.sval + ") {\n    this(source, dest);\n  }\n}"; }
+;
+
+param_list : param_list ',' param      { $$.sval = $1.sval + ", " + $3.sval; }
+| param                                { $$.sval = $1.sval; }
+| /* empty string */                   { /* nothing */ }
+;
+
+param : type ID                        { $$.sval = $1.sval + " " + $2.sval; }
+;
+
+type : INT_T                           { $$.sval = "int"; }
+| FLT_T                                { $$.sval = "double"; }
+| STR_T                                { $$.sval = "String"; }
+;
+
+label_list : label_list ',' ID         { $$.sval = $1.sval + ", " + $3.sval;
+                                         $$.obj = $1.obj;
+                                         ((ArrayList<String>) $$.obj).add($3.sval); }
+| ID                                   { $$.sval = $1.sval;
+                                         $$.obj = new ArrayList<String>();
+                                         ((ArrayList<String>) $$.obj).add($1.sval); }
+| /* empty string */                   { /* nothing */ }
+;
+
+/* Beginning of graph declaration section */
+
+graph_decl : type_link graph_stmt_list { System.out.println("Syntax is correct for the graph declaration."); }
 ;
 
 type_link : USE STR ';'                { System.out.println($2.sval); }
@@ -73,6 +118,7 @@ attr : INT                             {System.out.println(yylval.ival + " on li
 %%
 
   private Yylex lexer;
+  private Hashtable symbols;
 
   private int yylex () {
     int yyl_return = -1;
@@ -94,6 +140,12 @@ attr : INT                             {System.out.println(yylval.ival + " on li
     lexer = new Yylex(r, this);
   }
 
+  public Parser(Reader r, Hashtable symbols)
+  {
+    lexer = new Yylex(r, this);
+    this.symbols = symbols;
+  }
+
   static boolean interactive;
 
   public static void main(String args[]) throws IOException {
@@ -112,7 +164,7 @@ attr : INT                             {System.out.println(yylval.ival + " on li
     }
 
     yyparser.yyparse();
-    
+
     if (interactive) {
       System.out.println();
       System.out.println("Have a nice day");
