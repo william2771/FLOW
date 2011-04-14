@@ -1,2 +1,2 @@
-NODE n1(int x, int y) START; //START is a required node label
-ARC path(int value);
+Node n1(int x, int y) START; //START is a required node label
+Arc path(int value);
