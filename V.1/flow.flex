@@ -14,19 +14,10 @@
 
   /* track the line numbers for debugging */
   public int getLine() { return yyline; }
-  private int countNLs(String comment) {
-    int count = 0;
-    for (int i = 0; i < comment.length(); i++) {
-      if (comment.charAt(i) == '\n') count ++;
-    }
-    return count;
-  }
-
-  /* method needed to handle the escaped characters in a string literal */
 %}
 
-comment = "/*" [^*] ~"*/" | "/*" "*"+ "/"
-STR     = \"(.|\n)*\"
+comment = "/*" [^*] ~"*/" | "/*" "*"+ "/" | "//" .* {NL}
+STR     = \"(.|\n)*\" | \'(.|\n)*\'
 FLT     = [0-9]+"."[0-9]+
 INT     = [0-9]+
 ID      = [A-Za-z][A-Za-z0-9_]*
