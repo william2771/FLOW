@@ -7,6 +7,8 @@
 %{
   private Parser yyparser;
 
+  private String string; /* used to build up string literals */
+
   public Yylex(java.io.Reader r, Parser yyparser) {
     this(r);
     this.yyparser = yyparser;
@@ -17,7 +19,7 @@
 %}
 
 comment = "/*" [^*] ~"*/" | "/*" "*"+ "/" | "//" .* {NL}
-STR     = \"(.|\n)*\" | \'(.|\n)*\'
+/* STR     = \"(.|\n)*\" | \'(.|\n)*\' */
 FLT     = [0-9]+"."[0-9]+
 INT     = [0-9]+
 ID      = [A-Za-z][A-Za-z0-9_]*
@@ -28,7 +30,12 @@ NEQ     = "!="
 LTE     = "<="
 GTE     = ">="
 
+%state STRING
+%state SQSTRING
+
 %%
+
+<YYINITIAL>{
 
 /* strip whitespace and comments */
 {NL}      |
@@ -77,9 +84,15 @@ print       { return Parser.PRINT; }
 "(" | 
 ")"         { return (int) yycharat(0); }
 
-/* string literal */
+/* string literal 
 {STR}       { yyparser.yylval = new ParserVal(yytext());
-              return Parser.STR; }
+              return Parser.STR; } */
+
+\"          { yybegin(STRING);
+              string = ""; }
+
+\'          { yybegin(SQSTRING); 
+              string = ""; }
 
 /* float */
 {FLT}       { yyparser.yylval = new ParserVal(Double.parseDouble(yytext()));
@@ -93,3 +106,47 @@ print       { return Parser.PRINT; }
 {ID}        { //add this id to the symbol table
               yyparser.yylval = new ParserVal(yytext());
               return Parser.ID; }
+
+} /* End state YYINITIAL */
+
+<STRING> {
+
+/* Closing double quote */
+
+\"          { yybegin(YYINITIAL); 
+              yyparser.yylval = new ParserVal(string);
+              return Parser.STR; }
+
+/* Escaped characters */
+
+"\\\""      { string += "\""; }
+"\\n"       { string += "\n"; }
+"\\t"       { string += "\t"; }
+"\\r"       { string += "\r"; }
+"\\f"       { string += "\f"; }
+"\\b"       { string += "\b"; }
+"\\\\"      { string += "\\"; }
+
+/* All other characters */
+
+[^\"\\]+    { string += yytext(); }
+
+} /* End state STRING */
+
+<SQSTRING> {
+
+/* Closing single quote */
+
+\'          { yybegin(YYINITIAL);
+              yyparser.yylval = new ParserVal(string);
+              return Parser.STR; }
+
+/* Escaped single quote */
+
+"\\'"       { string += "'"; }
+
+/* All other characters */
+
+[^\'\\]+    { string += yytext(); }
+
+} /* End state SQSTRING */

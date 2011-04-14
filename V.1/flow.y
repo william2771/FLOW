@@ -83,7 +83,6 @@ attr : INT                             {System.out.println(yylval.ival + " on li
     catch (IOException e) {
       System.err.println("IO error :"+e);
     }
-
     return yyl_return;
   }
 
@@ -109,7 +108,7 @@ attr : INT                             {System.out.println(yylval.ival + " on li
       System.out.println("[Quit with CTRL-D]");
       System.out.print("Expression: ");
       interactive = true;
-	    yyparser = new Parser(new InputStreamReader(System.in));
+      yyparser = new Parser(new InputStreamReader(System.in));
     }
 
     yyparser.yyparse();

@@ -1,15 +1,14 @@
-/* this is a comment */
-use "valid.
+/* leading comment */
 
-flowt";
+use "val\\id.f\"lowt\n";
 
-/* Building 
-
-the Graph */
+/* Building the Graph */
 
 START: @node1 3, 4;
 @node2 1, 5;
 @node_spec 17, 17;
+
+//A different kind of comment
 
 node1 -> node2 6;
 node2 -> node1 4;
