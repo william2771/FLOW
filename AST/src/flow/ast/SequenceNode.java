@@ -14,6 +14,6 @@ public class SequenceNode extends ASTNode {
 	}
 	
 	private SequenceNode left;
-	private SequenceNode right;
+	private StatementNode right;
 
 }
