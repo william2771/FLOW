@@ -2,18 +2,18 @@ package flow.ast;
 
 public class SequenceNode extends ASTNode {
 
-	public SequenceNode()
+	public SequenceNode(SequenceNode prev, StatementNode exec)
 	{
-		left = right = null;
+		this.prev = prev;
+		this.exec = exec;
 	}
 
 	@Override
 	public String emit() {
-		// TODO Auto-generated method stub
-		return null;
+		return prev.emit() + exec.emit();
 	}
 
-	private SequenceNode left;
-	private StatementNode right;
+	private SequenceNode prev;
+	private StatementNode exec;
 
 }
