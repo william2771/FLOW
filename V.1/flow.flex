@@ -28,7 +28,6 @@ EQ      = "=="
 NEQ     = "!="
 LTE     = "<="
 GTE     = ">="
-
 %state STRING
 %state SQSTRING
 
