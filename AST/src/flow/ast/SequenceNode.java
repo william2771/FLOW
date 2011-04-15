@@ -6,14 +6,14 @@ public class SequenceNode extends ASTNode {
 	{
 		left = right = null;
 	}
-	
+
 	@Override
 	public String emit() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	private SequenceNode left;
-	private SequenceNode right;
+	private StatementNode right;
 
 }
