@@ -1,8 +1,10 @@
-Will: Skeletons for everything. ASTNode and Sequence Node completed already.
-
+Will: Skeletons for everything. ASTNode complete.
+Steph: SequenceNode complete. Unrelated - will look into error grammars
+David: Statement nodes + classes that extend it
+Mark: Page 2 of the UML file (ID, attr, types, values)
 Moses: all extra solver classes (Expression and all classes that extend it)
 
-Mark: Page 2 of the UML file (ID, attr, types, values)
 
-David: Statement nodes + classes that extend it
+
+
 
