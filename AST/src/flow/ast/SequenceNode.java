@@ -4,7 +4,8 @@ public class SequenceNode extends ASTNode {
 
 	public SequenceNode()
 	{
-		left = right = null;
+		left = null;
+		right = null;
 	}
 
 	@Override
