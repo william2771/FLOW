@@ -1,6 +1,6 @@
 package flow.ast;
 
-public class Comparison extends StatementNode {
+public class Comparison extends Expression {
 
 	private Expression e1;
 	private Expression e2;
