@@ -6,7 +6,7 @@ public class ListDec extends StatementNode {
 	private ID id;
 	private AttributeListNode aList;
 	@Override
-	public String emit() {
+	public String toString() {
 		// TODO Auto-generated method stub
 		return null;
 	}

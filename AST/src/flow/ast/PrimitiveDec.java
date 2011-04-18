@@ -1,9 +1,10 @@
 package flow.ast;
 
-public class IfNode extends StatementNode {
+public class PrimitiveDec extends StatementNode {
 
-	private Expression exp;
-	private SequenceNode block;
+	private pType type;
+	private ID id;
+	private pValue val;
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub

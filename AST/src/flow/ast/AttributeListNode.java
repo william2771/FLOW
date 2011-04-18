@@ -1,3 +1,5 @@
+package flow.ast;
+
 public class AttributeListNode {
     Attribute head;
     AttributeListNode tail;

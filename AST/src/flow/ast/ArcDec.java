@@ -8,7 +8,7 @@ public class ArcDec extends StatementNode {
 		
 	
 	@Override
-	public String emit() {
+	public String toString() {
 		// TODO Auto-generated method stub
 		return null;
 	}

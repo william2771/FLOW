@@ -9,6 +9,6 @@ package flow.ast;
  */
 public abstract class ASTNode 
 {
-	abstract public String emit();
+	abstract public String toString();
 	
 }

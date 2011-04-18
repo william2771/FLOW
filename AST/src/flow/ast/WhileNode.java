@@ -5,7 +5,7 @@ public class WhileNode extends StatementNode {
 	private Expression exp;
 	private SequenceNode block;
 	@Override
-	public String emit() {
+	public String toString() {
 		// TODO Auto-generated method stub
 		return null;
 	}

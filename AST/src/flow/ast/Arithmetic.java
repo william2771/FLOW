@@ -6,7 +6,7 @@ public class Arithmetic extends Expression {
 	private Expression e2;
 	private String operator;
 	
-	public String emit(){
+	public String toString(){
 		return null;
 	}
 }
