@@ -1,13 +1,9 @@
-package flow.ast;
-
-public class AttributeListNode extends ASTNode {
-
-	private Attribute head;
-	private AttributeListNode tail;
-	@Override
-	public String emit() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+public class AttributeListNode {
+    Attribute head;
+    AttributeListNode tail;
+    
+    public AttributeListNode(Attribute head, AttributeListNode tail) {
+        this.head = head;
+        this.tail = tail;
+    }
 }
