@@ -1,9 +1,9 @@
 package flow.ast;
 
-public class ListAcess extends Expression {
+public class ListAccess extends Expression {
 	private ID id;
 	private Expression exp;
-	public String emit(){
+	public String toString(){
 		return null;
 	}
 }

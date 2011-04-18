@@ -20,6 +20,7 @@
 %token STR    /* string literal */
 %token FLT    /* floating-point number literal */
 %token INT    /* integer literal */
+%token LIST   /* list literal */
 %token ID     /* identifier */
 
 /* multicharacter operators */
@@ -132,37 +133,60 @@ label_list : label_list ',' ID         { $$.obj = $1.obj;
 
 /* Beginning of graph declaration section */
 
-graph_decl : type_link graph_stmt_list { System.out.println("Syntax is correct for the graph declaration."); }
+graph_decl : type_link graph_stmt_list { /* this will make the java file */}
 ;
 
-type_link : USE STR ';'                { System.out.println($2.sval); }
+type_link : USE STR ';'                { /* this will parse the typedef somehowe */ }
 ;
 
-graph_stmt_list : graph_stmt ';'       {}
-| graph_stmt_list graph_stmt ';'       {}
+graph_stmt_list : graph_stmt ';'       { $$.obj = new SequenceNode(null, $1.obj); }
+| graph_stmt_list graph_stmt ';'       { $$.obj = new SequenceNode($1.obj, $2.obj); }
 ;
 
-graph_stmt : label_app                 {}
-| node_dec                             {}
-| arc_dec                              {}
+graph_stmt : label_app
+| node_dec
+| arc_dec
+| list_dec
+| prim_dec
+| expr                                 { $$.obj = $1.obj; }
 ;
 
-label_app : ID ':' node_dec            {System.out.println("label on line " + lexer.getLine());}
+label_app : ID ':' node_dec            { $$.obj = new LabelDec($1.obj, $2.obj); }
 ;
 
-node_dec : '@' ID attr_list            {}
-| '@' ID                               {}
+node_dec : '@' ID attr_list            { $$.obj = new NodeDec($1.obj, $2.obj); }
+| '@' ID                               { $$.obj = new NodeDec($1.obj, null); }
 ;
 
-arc_dec : ID ARC ID attr_list          {}
-| ID ARC ID                            {}
+arc_dec : ID ARC ID attr_list          { $$.obj = new ArcDec($1.obj, $3.obj, $4.obj); }
+| ID ARC ID                            { $$.obj = new ArcDec($1.obj, $3.obj, null); }
 ;
 
-attr_list : attr                       {}
-| attr_list ',' attr                   {}
+list_dec : LIST_T OF type ID           { $$.obj = new ListDec($3.obj, $4.obj, null); }
+| LIST_T OF type ID '=' '[' attr_list ']' { $$.obj = new ListDec($3.obj, $4.obj, $7.obj); }
 ;
 
-attr : INT                             {System.out.println(yylval.ival + " on line " + lexer.getLine());}
+prim_dec : ptype ID '=' pvalue         { $$.obj = new PrimDec($1.obj, $2.obj, $4.obj); }
+;
+
+attr_list : attr                       { $$.obj = $1.obj; }
+| attr_list ',' attr                   { $$.obj = new AttrList($1.obj, $3.obj); }
+;
+
+attr : pvalue                          { $$.obj = $$.obj; }
+;
+
+expr : ID assignop expr                { $$.obj = new Arithmetic($1.obj, $3.obj, $2.sval); }
+| ID '[' expr ']'                      { $$.obj = new ListAccess($1.obj, $3.obj); }
+;
+
+assignop : '='                         { $$.sval = $1.sval; }
+;
+
+ptype : INT_T                          { $$.obj = new pType($1.sval); }
+;
+
+pvalue : INT                           { $$.obj = new pValue($1.ival); }
 ;
 
 %%

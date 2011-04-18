@@ -9,8 +9,14 @@ public class SequenceNode extends ASTNode {
 	}
 
 	@Override
+<<<<<<< HEAD
 	public String emit() {
 		return prev.emit() + exec.emit();
+=======
+	public String toString() {
+		// TODO Auto-generated method stub
+		return prev.toString() + exec.toString();
+>>>>>>> bf3ff178548136d5ee5d81657ebf39efe61f8790
 	}
 
 	private SequenceNode prev;

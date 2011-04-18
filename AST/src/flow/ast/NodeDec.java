@@ -3,10 +3,12 @@ package flow.ast;
 public class NodeDec extends StatementNode {
 
 	private ID id;
+	private AttributeListNode alist;
 	@Override
-	public String emit() {
+	public String toString() {
 		// TODO Auto-generated method stub
-		return null;
+		return "Node " + id.toString() + " = new Node(" + alist.toString() + ");";
 	}
+	
 
 }
