@@ -8,4 +8,8 @@ public class ID {
     public ID( String idname) {
         this.idname = idname;
     }    
+    
+    public String toString(){
+    	return idname;
+    }
 }

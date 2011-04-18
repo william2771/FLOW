@@ -5,6 +5,6 @@ public class Unary extends Expression {
 	private String operator;
 	
 	public String toString(){
-		return null;
+		return operator+"("+ e + ")";
 	}
 }

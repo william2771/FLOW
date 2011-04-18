@@ -8,7 +8,7 @@ public class Comparison extends Expression {
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return null;
+		return e1 + operator + e2;
 	}
 
 }

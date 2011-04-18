@@ -10,7 +10,7 @@ public class ArcDec extends StatementNode {
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return null;
+		return "edges.append(new Arc("+ id1 + "," + id2 + "," + alist +"))" ;
 	}
 
 }

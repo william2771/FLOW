@@ -8,7 +8,7 @@ public class ListDec extends StatementNode {
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return null;
+		return "ArrayList " + id + " = new ArrayList(Arrays.asList("+aList+"))";
 	}
 
 }

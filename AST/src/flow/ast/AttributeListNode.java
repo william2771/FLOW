@@ -8,4 +8,8 @@ public class AttributeListNode {
         this.head = head;
         this.tail = tail;
     }
+    
+    public String toString(){
+    	return head +","+ tail;
+    }
 }

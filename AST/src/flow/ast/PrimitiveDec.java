@@ -8,7 +8,7 @@ public class PrimitiveDec extends StatementNode {
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return null;
+		return type.toString() + id.toString() + "=" + val;
 	}
 
 }

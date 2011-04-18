@@ -7,6 +7,6 @@ public class Arithmetic extends Expression {
 	private String operator;
 	
 	public String toString(){
-		return null;
+		return e1 + operator + e2 + ";";
 	}
 }
