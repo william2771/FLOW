@@ -172,14 +172,14 @@ prim_dec : ptype ID '=' pvalue         { $$.obj = new PrimDec($1.obj, $2.obj, $4
 ;
 
 attr_list : attr                       { $$.obj = $1.obj; }
-| attr_list ',' attr                   { $$.obj = new AttrList($1.obj, $3.obj); }
+| attr_list ',' attr                   { $$.obj = new AttrList((pValue) $3.obj, (AttrList) $1.obj); }
 ;
 
 attr : pvalue                          { $$.obj = $$.obj; }
 ;
 
-expr : ID assignop expr                { $$.obj = new Arithmetic($1.obj, $3.obj, $2.sval); }
-| ID '[' expr ']'                      { $$.obj = new ListAccess($1.obj, $3.obj); }
+expr : ID assignop expr                { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, (String) $2.sval); }
+| ID '[' expr ']'                      { $$.obj = new ListAccess((ID) $1.obj, (Expression) $3.obj); }
 ;
 
 assignop : '='                         { $$.sval = $1.sval; }

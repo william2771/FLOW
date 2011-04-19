@@ -1,8 +1,8 @@
 package flow.ast;
 
-public class AttributeListNode {
+public class AttrList {
     Attribute head;
-    AttributeListNode tail;
+    AttrList tail;
     
     public AttributeListNode(Attribute head, AttributeListNode tail) {
         this.head = head;
@@ -10,6 +10,6 @@ public class AttributeListNode {
     }
     
     public String toString(){
-    	return head +","+ tail;
+    	return head +", "+ tail;
     }
 }
