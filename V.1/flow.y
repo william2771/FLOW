@@ -1,6 +1,8 @@
 %{
   import java.io.*;
   import java.util.*;
+  import flow.ast.*;
+  import flow.structure.*;
 %}
 
 /* keywords */
@@ -64,7 +66,7 @@ type_def : node_type_def arc_type_def  { try
 
 node_type_def : NODE_T ID '(' param_list ')' label_list ';'
                                        { symbols.put("node_type", $2.sval);
-                                         $$.sval = "public class " + $2.sval + " extends Node {\n  public " + $2.sval + "(";
+                                         $$.sval = "public class " + $2.sval + " extends flow.structure.Node {\n  public " + $2.sval + "(";
                                          boolean comma = false;
                                          for (String s : (ArrayList<String>) $4.obj)
                                          {
@@ -87,7 +89,7 @@ node_type_def : NODE_T ID '(' param_list ')' label_list ';'
 
 arc_type_def : ARC_T ID '(' param_list ')' ';'
                                        { symbols.put("arc_type", $2.sval);
-                                         $$.sval = "public class " + $2.sval + " extends Arc {\n  public " + $2.sval + "(" + symbols.get("node_type") + " source, " + symbols.get("node_type") + " dest, ";
+                                         $$.sval = "public class " + $2.sval + " extends flow.structure.Arc {\n  public " + $2.sval + "(" + symbols.get("node_type") + " source, " + symbols.get("node_type") + " dest, ";
                                          boolean comma = false;
                                          for (String s : (ArrayList<String>) $4.obj)
                                          {
@@ -139,8 +141,8 @@ graph_decl : type_link graph_stmt_list { /* this will make the java file */}
 type_link : USE STR ';'                { /* this will parse the typedef somehowe */ }
 ;
 
-graph_stmt_list : graph_stmt ';'       { $$.obj = new SequenceNode(null, $1.obj); }
-| graph_stmt_list graph_stmt ';'       { $$.obj = new SequenceNode($1.obj, $2.obj); }
+graph_stmt_list : graph_stmt ';'       { $$.obj = new flow.ast.SequenceNode(null, $1.obj); }
+| graph_stmt_list graph_stmt ';'       { $$.obj = new flow.ast.SequenceNode($1.obj, $2.obj); }
 ;
 
 graph_stmt : label_app
