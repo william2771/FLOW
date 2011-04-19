@@ -1,5 +1,5 @@
 package flow.ast;
 
-public class Attribute {
+public abstract class Attr {
 
 }

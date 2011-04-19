@@ -2,12 +2,16 @@ package flow.ast;
 
 public class LabelNode extends StatementNode {
 
-	private ID id;
-	private NodeDec dec;
-	@Override
-	public String toString() {
-		// TODO Auto-generated method stub
-		return "public Node " + id.toString() + "(){\nreturn " + id + ";\n}";
+	public LabelNode(ID label, NodeDec dec)
+	{
+		this.label = label;
+		this.dec = dec;
 	}
 
+	ID label;
+	NodeDec dec;
+	@Override
+	public String toString() {
+		return dec.toString() + ";\n" + label + " = " + dec.id;
+	}
 }

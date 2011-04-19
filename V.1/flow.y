@@ -57,11 +57,11 @@ type_def : node_type_def arc_type_def  { try
                                            writer = new FileWriter(new File(symbols.get("arc_type") + ".java"));
                                            writer.write($2.sval);
                                            writer.flush(); 
-                                          }
-                                          catch(IOException e)
-                                          {
-                                            yyerror("Could not produce type files.");
-                                          } }
+                                         }
+                                         catch(IOException e)
+                                         {
+                                           yyerror("Could not produce type files.");
+                                         } }
 ;
 
 node_type_def : NODE_T ID '(' param_list ')' label_list ';'
@@ -135,14 +135,30 @@ label_list : label_list ',' ID         { $$.obj = $1.obj;
 
 /* Beginning of graph declaration section */
 
-graph_decl : type_link graph_stmt_list { /* this will make the java file */}
+graph_decl : type_link graph_stmt_list { System.out.println($2.obj);
+                                         for (String label : labels)
+                                         {
+                                           System.out.println("private Node " + label + ";\npublic Node " + label + "() {\n  return " + label + ";\n}\n");
+                                         } }
 ;
 
-type_link : USE STR ';'                { /* this will parse the typedef somehowe */ }
+type_link : USE STR ';'                { /* process the typedef file */ 
+                                         labels = new ArrayList<String>();
+                                         try
+                                         {
+                                           String filepath = "../test_files/" + $2.sval;
+                                           System.out.println("\nTryin to open " + filepath + "\n");
+                                           TypeParser tparser = new TypeParser(new FileReader(filepath), new Hashtable());
+                                           tparser.yyparse();
+                                         }
+                                         catch(IOException e)
+                                         {
+                                           yyerror("Could not open typdef file.");
+                                         } }
 ;
 
-graph_stmt_list : graph_stmt ';'       { $$.obj = new flow.ast.SequenceNode(null, $1.obj); }
-| graph_stmt_list graph_stmt ';'       { $$.obj = new flow.ast.SequenceNode($1.obj, $2.obj); }
+graph_stmt_list : graph_stmt ';'       { $$.obj = new SequenceNode(null, (StatementNode) $1.obj); }
+| graph_stmt_list graph_stmt ';'       { $$.obj = new SequenceNode((SequenceNode) $1.obj, (StatementNode) $2.obj); }
 ;
 
 graph_stmt : label_app
@@ -153,36 +169,40 @@ graph_stmt : label_app
 | expr                                 { $$.obj = $1.obj; }
 ;
 
-label_app : ID ':' node_dec            { $$.obj = new LabelDec($1.obj, $2.obj); }
+label_app : id ':' node_dec            { $$.obj = new LabelNode((ID) $1.obj, (NodeDec) $3.obj);
+                                         labels.add($1.sval); }
 ;
 
-node_dec : '@' ID attr_list            { $$.obj = new NodeDec($1.obj, $2.obj); }
-| '@' ID                               { $$.obj = new NodeDec($1.obj, null); }
+node_dec : '@' id attr_list            { $$.obj = new NodeDec((ID) $2.obj, (AttrList) $3.obj); }
+| '@' id                               { $$.obj = new NodeDec((ID) $2.obj, null); }
 ;
 
-arc_dec : ID ARC ID attr_list          { $$.obj = new ArcDec($1.obj, $3.obj, $4.obj); }
-| ID ARC ID                            { $$.obj = new ArcDec($1.obj, $3.obj, null); }
+arc_dec : id ARC id attr_list          { $$.obj = new ArcDec((ID) $1.obj, (ID) $3.obj, (AttrList) $4.obj); }
+| id ARC id                            { $$.obj = new ArcDec((ID) $1.obj, (ID) $3.obj, null); }
 ;
 
-list_dec : LIST_T OF type ID           { $$.obj = new ListDec($3.obj, $4.obj, null); }
-| LIST_T OF type ID '=' '[' attr_list ']' { $$.obj = new ListDec($3.obj, $4.obj, $7.obj); }
+list_dec : LIST_T OF type ID           { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, null); }
+| LIST_T OF type id '=' '[' attr_list ']' { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, (AttrList) $7.obj); }
 ;
 
-prim_dec : ptype ID '=' pvalue         { $$.obj = new PrimDec($1.obj, $2.obj, $4.obj); }
+prim_dec : ptype id '=' pvalue         { $$.obj = new PrimDec((pType) $1.obj, (ID) $2.obj, (pValue) $4.obj); }
 ;
 
-attr_list : attr                       { $$.obj = $1.obj; }
-| attr_list ',' attr                   { $$.obj = new AttrList((pValue) $3.obj, (AttrList) $1.obj); }
+attr_list : attr                       { $$.obj = new AttrList(null, (Attr) $1.obj); }
+| attr_list ',' attr                   { $$.obj = new AttrList((AttrList) $1.obj, (pValue) $3.obj); }
 ;
 
 attr : pvalue                          { $$.obj = $$.obj; }
 ;
 
 expr : ID assignop expr                { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, (String) $2.sval); }
-| ID '[' expr ']'                      { $$.obj = new ListAccess((ID) $1.obj, (Expression) $3.obj); }
+| id '[' expr ']'                      { $$.obj = new ListAccess((ID) $1.obj, (Expression) $3.obj); }
 ;
 
 assignop : '='                         { $$.sval = $1.sval; }
+;
+
+id : ID                                { $$.obj = new ID($1.sval); }
 ;
 
 ptype : INT_T                          { $$.obj = new pType($1.sval); }
@@ -195,6 +215,7 @@ pvalue : INT                           { $$.obj = new pValue($1.ival); }
 
   private Yylex lexer;
   private Hashtable symbols;
+  private ArrayList<String> labels;
 
   private int yylex () {
     int yyl_return = -1;

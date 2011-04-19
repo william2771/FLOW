@@ -6,9 +6,9 @@ public class Graph {
 	private ArrayList<Node> nodes;
 	private ArrayList<Arc> arcs;
 
-	public Graph(ArrayList<Node> vertices, ArrayList<Arc> edges){
-		nodes = vertices;
-		arcs = edges;
+	public Graph(){
+		nodes = new ArrayList<Node>();
+		arcs = new ArrayList<Arc>();
 	}
 	
 	public ArrayList<Node> getNodes(){

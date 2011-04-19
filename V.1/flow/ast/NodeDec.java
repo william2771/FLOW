@@ -2,12 +2,17 @@ package flow.ast;
 
 public class NodeDec extends StatementNode {
 
-	private ID id;
-	private AttributeListNode alist;
+	public NodeDec(ID id, AttrList alist)
+	{
+		this.id = id;
+		this.alist = alist;
+	}
+
+	ID id;
+	AttrList alist;
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
-		return "Node " + id.toString() + " = new Node(" + alist.toString() + ");\nnodes.append("+id+");";
+		return "Node " + id.toString() + " = new Node(" + alist.toString() + ");\nnodes.append("+id+")";
 	}
 	
 

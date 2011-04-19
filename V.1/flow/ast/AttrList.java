@@ -1,15 +1,16 @@
 package flow.ast;
 
 public class AttrList {
-    Attribute head;
-    AttrList tail;
+    Attr tail;
+    AttrList alist;
     
-    public AttributeListNode(Attribute head, AttributeListNode tail) {
-        this.head = head;
+    public AttrList(AttrList alist, Attr tail) {
+        this.alist = alist;
         this.tail = tail;
     }
     
     public String toString(){
-    	return head +", "+ tail;
+	if (alist != null) return alist +", "+ tail;
+	else return tail.toString();
     }
 }
