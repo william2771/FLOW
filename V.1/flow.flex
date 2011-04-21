@@ -30,7 +30,7 @@ LTE     = "<="
 GTE     = ">="
 
 /* error lexemes */
-BAD_ID  = ~{ID}
+BAD_ID  = [^A-Za-z][A-Za-z0-9]+
 
 %state STRING
 %state SQSTRING
@@ -107,6 +107,9 @@ print       { return Parser.PRINT; }
 /* identifier */
 {ID}        { yyparser.yylval = new ParserVal(yytext());
               return Parser.ID; }
+
+.           { yyparser.yylval = new ParserVal(yytext());
+              return Parser.UNK; }
 
 } /* End state YYINITIAL */
 
