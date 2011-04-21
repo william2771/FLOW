@@ -1,5 +1,6 @@
-import java.util.ArrayList;
+package flow.structure;
 
+import java.util.ArrayList;
 
 public class Arc {
 	private Node fromNode;

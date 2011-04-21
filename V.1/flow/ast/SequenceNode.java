@@ -11,7 +11,12 @@ public class SequenceNode extends ASTNode {
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return prev.toString() + exec.toString();
+		if (prev != null){
+			return prev.toString() + exec.toString() + ";\n";
+		}
+		else{
+			return exec + ";\n";
+		}
 	}
 
 	private SequenceNode prev;

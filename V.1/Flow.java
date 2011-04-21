@@ -7,6 +7,9 @@ public class Flow
   {
     if (args.length > 0)
     {
+
+      System.out.println("Reading from " + args[0]);
+
       try
       {
         symbols = new Hashtable();
