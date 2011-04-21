@@ -28,6 +28,10 @@ EQ      = "=="
 NEQ     = "!="
 LTE     = "<="
 GTE     = ">="
+
+/* error lexemes */
+BAD_ID  = ~{ID}
+
 %state STRING
 %state SQSTRING
 
@@ -101,8 +105,7 @@ print       { return Parser.PRINT; }
               return Parser.INT; }
 
 /* identifier */
-{ID}        { //add this id to the symbol table
-              yyparser.yylval = new ParserVal(yytext());
+{ID}        { yyparser.yylval = new ParserVal(yytext());
               return Parser.ID; }
 
 } /* End state YYINITIAL */

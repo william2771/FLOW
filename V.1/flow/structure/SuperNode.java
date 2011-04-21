@@ -2,14 +2,14 @@ package flow.structure;
 
 import java.util.ArrayList;
 
-public class Node{
-   public Node()
+public class SuperNode{
+   public SuperNode()
    {
       /* default constructor does nothing! pretty much */
       degree = inDegree = outDegree = 0;
    }
 
-   void addInArc(Arc in)
+   void addInArc(SuperArc in)
    {
       arcsIn.add(in);
       arcs.add(in);
@@ -17,7 +17,7 @@ public class Node{
       degree++;
    }
 
-   void addOutArc(Arc out)
+   void addOutArc(SuperArc out)
    {
       arcsOut.add(out);
       arcs.add(out);
@@ -29,15 +29,15 @@ public class Node{
    int getInDegree() { return inDegree; }
    int getOutDegree() { return outDegree; }
 
-   ArrayList<Arc> getArcs() { return arcs; }
-   ArrayList<Arc> getArcsIn() { return arcsOut; }
-   ArrayList<Arc> getArcsOut() { return arcsIn; }
+   ArrayList<SuperArc> getArcs() { return arcs; }
+   ArrayList<SuperArc> getArcsIn() { return arcsOut; }
+   ArrayList<SuperArc> getArcsOut() { return arcsIn; }
 
    int inDegree;
    int outDegree;
    int degree;
 
-   ArrayList<Arc> arcsIn;
-   ArrayList<Arc> arcsOut;
-   ArrayList<Arc> arcs;
+   ArrayList<SuperArc> arcsIn;
+   ArrayList<SuperArc> arcsOut;
+   ArrayList<SuperArc> arcs;
 }

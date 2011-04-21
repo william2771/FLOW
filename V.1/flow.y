@@ -32,6 +32,9 @@
 %token LTE    /* less than or equal to <= */
 %token GTE    /* greater than or equal to >= */
 
+/* error tokens */
+%token BAD_ID /* an illegal identifier */
+
 /* operator precedence */
 %nonassoc EQ NEQ
 %nonassoc '<' '>' LTE GTE
@@ -195,7 +198,7 @@ attr_list : attr                       { $$.obj = new AttrList(null, (Attr) $1.o
 attr : pvalue                          { $$.obj = $$.obj; }
 ;
 
-expr : ID assignop expr                { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, (String) $2.sval); }
+expr : id assignop expr                { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, (String) $2.sval); }
 | id '[' expr ']'                      { $$.obj = new ListAccess((ID) $1.obj, (Expression) $3.obj); }
 ;
 
@@ -203,6 +206,8 @@ assignop : '='                         { $$.sval = $1.sval; }
 ;
 
 id : ID                                { $$.obj = new ID($1.sval); }
+| BAD_ID                               { yyerror("Invalid identifier on line " + lexer.getLine());
+                                         $$.obj = new ID($1.sval); }
 ;
 
 ptype : INT_T                          { $$.obj = new pType($1.sval); }
