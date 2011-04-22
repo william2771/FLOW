@@ -14,10 +14,10 @@
 
 type_def : node_type_def arc_type_def  { try
                                          {
-                                           FileWriter writer = new FileWriter(new File(symbols.get("node_type") + ".java"));
+                                           FileWriter writer = new FileWriter(new File("Node.java"));
                                            writer.write($1.sval);
                                            writer.flush();
-                                           writer = new FileWriter(new File(symbols.get("arc_type") + ".java"));
+                                           writer = new FileWriter(new File("Arc.java"));
                                            writer.write($2.sval);
                                            writer.flush(); 
                                          }
@@ -29,7 +29,7 @@ type_def : node_type_def arc_type_def  { try
 
 node_type_def : NODE_T ID '(' param_list ')' label_list ';'
                                        { symbols.put("node_type", $2.sval);
-                                         $$.sval = "public class " + $2.sval + " extends flow.structure.Node {\n  public " + $2.sval + "(";
+                                         $$.sval = "public class Node extends flow.structure.SuperNode {\n  public Node(";
                                          boolean comma = false;
                                          for (String s : (ArrayList<String>) $4.obj)
                                          {
@@ -52,7 +52,7 @@ node_type_def : NODE_T ID '(' param_list ')' label_list ';'
 
 arc_type_def : ARC_T ID '(' param_list ')' ';'
                                        { symbols.put("arc_type", $2.sval);
-                                         $$.sval = "public class " + $2.sval + " extends flow.structure.Arc {\n  public " + $2.sval + "(" + symbols.get("node_type") + " source, " + symbols.get("node_type") + " dest, ";
+                                         $$.sval = "public class Arc extends flow.structure.SuperArc {\n  public Arc(Node source, Node dest, ";
                                          boolean comma = false;
                                          for (String s : (ArrayList<String>) $4.obj)
                                          {

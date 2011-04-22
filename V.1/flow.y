@@ -32,6 +32,9 @@
 %token LTE    /* less than or equal to <= */
 %token GTE    /* greater than or equal to >= */
 
+/* error tokens */
+%token UNK /* an illegal identifier */
+
 /* operator precedence */
 %nonassoc EQ NEQ
 %nonassoc '<' '>' LTE GTE
@@ -43,94 +46,8 @@
       
 %%
 
-valid_program : type_def
-| graph_decl
-;
-
-/* Beginning of typedef section */
-
-type_def : node_type_def arc_type_def  { try
-                                         {
-                                           FileWriter writer = new FileWriter(new File(symbols.get("node_type") + ".java"));
-                                           writer.write($1.sval);
-                                           writer.flush();
-                                           writer = new FileWriter(new File(symbols.get("arc_type") + ".java"));
-                                           writer.write($2.sval);
-                                           writer.flush(); 
-                                         }
-                                         catch(IOException e)
-                                         {
-                                           yyerror("Could not produce type files.");
-                                         } }
-;
-
-node_type_def : NODE_T ID '(' param_list ')' label_list ';'
-                                       { symbols.put("node_type", $2.sval);
-                                         $$.sval = "public class " + $2.sval + " extends flow.structure.Node {\n  public " + $2.sval + "(";
-                                         boolean comma = false;
-                                         for (String s : (ArrayList<String>) $4.obj)
-                                         {
-                                           if (comma) $$.sval += ", ";
-                                           $$.sval += symbols.get(s) + " " + s;
-                                           comma = true;
-                                         } 
-                                         $$.sval += ") {\n";
-                                         for (String s : (ArrayList<String>) $4.obj)
-                                         {
-                                           $$.sval += "    this." + s + " = " + s + ";\n";
-                                         } 
-                                         $$.sval += "  }\n";
-                                         for (String s : (ArrayList<String>) $4.obj)
-                                         {
-                                           $$.sval += "  private " + symbols.get(s) + " " + s + ";\n  public " + symbols.get(s) + " get" + s + "()\n  { return " + s + "; }\n";
-                                         } 
-                                         $$.sval += "}"; }
-;
-
-arc_type_def : ARC_T ID '(' param_list ')' ';'
-                                       { symbols.put("arc_type", $2.sval);
-                                         $$.sval = "public class " + $2.sval + " extends flow.structure.Arc {\n  public " + $2.sval + "(" + symbols.get("node_type") + " source, " + symbols.get("node_type") + " dest, ";
-                                         boolean comma = false;
-                                         for (String s : (ArrayList<String>) $4.obj)
-                                         {
-                                           if (comma) $$.sval += ", ";
-                                           $$.sval += symbols.get(s) + " " + s;
-                                           comma = true;
-                                         } 
-                                         $$.sval += ") {\n    this(source, dest);\n";
-                                         for (String s : (ArrayList<String>) $4.obj)
-                                         {
-                                           $$.sval += "    this." + s + " = " + s + ";\n";
-                                         } 
-                                         $$.sval += "  }\n";
-                                         for (String s : (ArrayList<String>) $4.obj)
-                                         {
-                                           $$.sval += "  private " + symbols.get(s) + " " + s + ";\n  public " + symbols.get(s) + " get" + s + "()\n  { return " + s + "; }\n";
-                                         } 
-                                         $$.sval += "}"; }
-;
-
-param_list : param_list ',' param      { $$.obj = $1.obj;
-                                         ((ArrayList<String>) $$.obj).add($3.sval); }
-| param                                { $$.obj = new ArrayList<String>();
-                                         ((ArrayList<String>) $$.obj).add($1.sval); }
-| /* empty string */                   { /* nothing */ }
-;
-
-param : type ID                        { symbols.put($2.sval, $1.sval);
-                                         $$.sval = $2.sval; }
-;
-
-type : INT_T                           { $$.sval = "int"; }
-| FLT_T                                { $$.sval = "double"; }
-| STR_T                                { $$.sval = "String"; }
-;
-
-label_list : label_list ',' ID         { $$.obj = $1.obj;
-                                         ((ArrayList<String>) $$.obj).add($3.sval); }
-| ID                                   { $$.obj = new ArrayList<String>();
-                                         ((ArrayList<String>) $$.obj).add($1.sval); }
-| /* empty string */                   { /* nothing */ }
+valid_program : graph_decl
+| solver
 ;
 
 /* Beginning of graph declaration section */
@@ -185,6 +102,9 @@ list_dec : LIST_T OF type ID           { $$.obj = new ListDec((Type) $3.obj, (ID
 | LIST_T OF type id '=' '[' attr_list ']' { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, (AttrList) $7.obj); }
 ;
 
+type : ptype                           { $$.obj = $1.obj; }
+;
+
 prim_dec : ptype id '=' pvalue         { $$.obj = new PrimDec((pType) $1.obj, (ID) $2.obj, (pValue) $4.obj); }
 ;
 
@@ -195,20 +115,29 @@ attr_list : attr                       { $$.obj = new AttrList(null, (Attr) $1.o
 attr : pvalue                          { $$.obj = $$.obj; }
 ;
 
-expr : ID assignop expr                { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, (String) $2.sval); }
+expr : id assignop expr                { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, (String) $2.sval); }
 | id '[' expr ']'                      { $$.obj = new ListAccess((ID) $1.obj, (Expression) $3.obj); }
 ;
 
-assignop : '='                         { $$.sval = $1.sval; }
+assignop : '='                         { $$.sval = "="; }
 ;
 
 id : ID                                { $$.obj = new ID($1.sval); }
+| UNK                                  { yyerror("Invalid identifier on line " + lexer.getLine());
+                                         $$.obj = new ID($1.sval); }
 ;
 
-ptype : INT_T                          { $$.obj = new pType($1.sval); }
+ptype : INT_T                          { $$.obj = new pType("int"); }
+| FLT_T                                { $$.obj = new pType("double"); }
+| STR_T                                { $$.obj = new pType("String"); }
 ;
 
 pvalue : INT                           { $$.obj = new pValue($1.ival); }
+;
+
+/* Productions unique to the solver - This is of course ridiculous right now, and solver will not go to ID, but this is a starting point */
+
+solver: ID
 ;
 
 %%
