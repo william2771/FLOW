@@ -47,15 +47,28 @@
 %%
 
 valid_program : graph_decl
-| solver
 ;
 
 /* Beginning of graph declaration section */
 
-graph_decl : type_link graph_stmt_list { System.out.println($2.obj);
+graph_decl : type_link graph_stmt_list { $$.sval = "public class Graph extends flow.structure.SuperGraph\n{\npublic Graph() {\nsuper();\n" + $2.obj.toString() + "\n}\n";
+
                                          for (String label : labels)
                                          {
-                                           System.out.println("private Node " + label + ";\npublic Node " + label + "() {\n  return " + label + ";\n}\n");
+                                           $$.sval += "private Node " + label + ";\npublic Node " + label + "() {\n  return " + label + ";\n}\n";
+                                         }
+
+                                         $$.sval += "\n}\n";
+
+                                         try
+                                         {
+                                           FileWriter graph_file = new FileWriter(new File("Graph.java"));
+                                           graph_file.write($$.sval);
+                                           graph_file.flush();
+                                         }
+                                         catch(IOException e)
+                                         {
+                                           yyerror("Could not create Graph file.");
                                          } }
 ;
 
@@ -63,8 +76,8 @@ type_link : USE STR ';'                { /* process the typedef file */
                                          labels = new ArrayList<String>();
                                          try
                                          {
-                                           String filepath = "../test_files/" + $2.sval;
-                                           System.out.println("\nTryin to open " + filepath + "\n");
+                                           String filepath = symbols.get("filepath") + $2.sval;
+                                           System.out.println("\nTrying to open " + filepath + "\n");
                                            TypeParser tparser = new TypeParser(new FileReader(filepath), new Hashtable());
                                            tparser.yyparse();
                                          }
@@ -133,11 +146,6 @@ ptype : INT_T                          { $$.obj = new pType("int"); }
 ;
 
 pvalue : INT                           { $$.obj = new pValue($1.ival); }
-;
-
-/* Productions unique to the solver - This is of course ridiculous right now, and solver will not go to ID, but this is a starting point */
-
-solver: ID
 ;
 
 %%

@@ -3,8 +3,8 @@ package flow.structure;
 import java.util.ArrayList;
 
 public class SuperGraph {
-	private ArrayList<SuperNode> nodes;
-	private ArrayList<SuperArc> arcs;
+	protected ArrayList<SuperNode> nodes;
+	protected ArrayList<SuperArc> arcs;
 
 	public SuperGraph(){
 		nodes = new ArrayList<SuperNode>();

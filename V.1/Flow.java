@@ -13,7 +13,9 @@ public class Flow
       try
       {
         symbols = new Hashtable();
-        parser = new Parser(new FileReader(args[0]), symbols);
+        File file = new File(args[0]);
+        symbols.put("filepath", file.getParent() + "/");
+        parser = new Parser(new FileReader(file), symbols);
       }
       catch(FileNotFoundException e)
       {
