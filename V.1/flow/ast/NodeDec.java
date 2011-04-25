@@ -12,7 +12,7 @@ public class NodeDec extends StatementNode {
 	AttrList alist;
 	@Override
 	public String toString() {
-		return "Node " + id.toString() + " = new Node(" + alist.toString() + ");\nnodes.append("+id+")";
+		return "Node " + id.toString() + " = new Node(" + alist.toString() + ");\nnodes.add("+id+")";
 	}
 	
 
