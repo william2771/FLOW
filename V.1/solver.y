@@ -49,7 +49,6 @@
 valid_program : solver
 ;
 
-/* Productions unique to the solver - This is of course ridiculous right now, and solver will not go to ID, but this is a starting point */
 
 solver: type_link solver_stmt_list { System.out.println($2.obj); }
 ;
@@ -101,6 +100,42 @@ arithop: '+'    { $$.sval = "+"; }
 ;
 
 //Add in all the statements and expressions from the Graph as well
+list_dec : LIST_T OF type ID           { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, null); }
+| LIST_T OF type id '=' '[' attr_list ']' { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, (AttrList) $7.obj); }
+;
+
+type : ptype                           { $$.obj = $1.obj; }
+;
+
+prim_dec : ptype id '=' pvalue         { $$.obj = new PrimDec((pType) $1.obj, (ID) $2.obj, (pValue) $4.obj); }
+;
+
+attr_list : attr                       { $$.obj = new AttrList(null, (Attr) $1.obj); }
+| attr_list ',' attr                   { $$.obj = new AttrList((AttrList) $1.obj, (pValue) $3.obj); }
+;
+
+attr : pvalue                          { $$.obj = $$.obj; }
+;
+
+expr : id assignop expr                { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, (String) $2.sval); }
+| id '[' expr ']'                      { $$.obj = new ListAccess((ID) $1.obj, (Expression) $3.obj); }
+;
+
+assignop : '='                         { $$.sval = "="; }
+;
+
+id : ID                                { $$.obj = new ID($1.sval); }
+| UNK                                  { yyerror("Invalid identifier on line " + lexer.getLine());
+                                         $$.obj = new ID($1.sval); }
+;
+
+ptype : INT_T                          { $$.obj = new pType("int"); }
+| FLT_T                                { $$.obj = new pType("double"); }
+| STR_T                                { $$.obj = new pType("String"); }
+;
+
+pvalue : INT                           { $$.obj = new pValue($1.ival); }
+;
 
 %%
 
