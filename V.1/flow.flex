@@ -2,14 +2,16 @@
 
 %byaccj
 
+%class SolverLexer
+
 %line
 
 %{
-  private Parser yyparser;
+  private SolverParser yyparser;
 
   private String string; /* used to build up string literals */
 
-  public Yylex(java.io.Reader r, Parser yyparser) {
+  public SolverLexer(java.io.Reader r, SolverParser yyparser) {
     this(r);
     this.yyparser = yyparser;
   }
@@ -45,27 +47,27 @@ BAD_ID  = [^A-Za-z][A-Za-z0-9]+
 {comment}   { }
 
 /* reserved words - more to follow */
-int         { return Parser.INT_T; }
-float       { return Parser.FLT_T; }
-string      { return Parser.STR_T; }
-Node        { return Parser.NODE_T; }
-Arc         { return Parser.ARC_T; }
-Graph       { return Parser.GRAPH; }
-List        { return Parser.LIST_T; }
-while       { return Parser.WHILE; }
-if          { return Parser.IF; }
-of          { return Parser.OF; }
-use         { return Parser.USE; }
-print       { return Parser.PRINT; }
+int         { return SolverParser.INT_T; }
+float       { return SolverParser.FLT_T; }
+string      { return SolverParser.STR_T; }
+Node        { return SolverParser.NODE_T; }
+Arc         { return SolverParser.ARC_T; }
+Graph       { return SolverParser.GRAPH; }
+List        { return SolverParser.LIST_T; }
+while       { return SolverParser.WHILE; }
+if          { return SolverParser.IF; }
+of          { return SolverParser.OF; }
+use         { return SolverParser.USE; }
+print       { return SolverParser.PRINT; }
 
 /* arc connector */
-{ARC}       { return Parser.ARC; }
+{ARC}       { return SolverParser.ARC; }
 
 /* equality and comparison operators */
-{EQ}        { return Parser.EQ; }
-{NEQ}       { return Parser.NEQ; }
-{LTE}       { return Parser.LTE; }
-{GTE}       { return Parser.GTE; }
+{EQ}        { return SolverParser.EQ; }
+{NEQ}       { return SolverParser.NEQ; }
+{LTE}       { return SolverParser.LTE; }
+{GTE}       { return SolverParser.GTE; }
 
 /* single-character operators */
 "@" |
@@ -97,19 +99,19 @@ print       { return Parser.PRINT; }
               string = ""; }
 
 /* float */
-{FLT}       { yyparser.yylval = new ParserVal(Double.parseDouble(yytext()));
-              return Parser.FLT; }
+{FLT}       { yyparser.yylval = new SolverParserVal(Double.parseDouble(yytext()));
+              return SolverParser.FLT; }
 
 /* int */
-{INT}       { yyparser.yylval = new ParserVal(Integer.parseInt(yytext()));
-              return Parser.INT; }
+{INT}       { yyparser.yylval = new SolverParserVal(Integer.parseInt(yytext()));
+              return SolverParser.INT; }
 
 /* identifier */
-{ID}        { yyparser.yylval = new ParserVal(yytext());
-              return Parser.ID; }
+{ID}        { yyparser.yylval = new SolverParserVal(yytext());
+              return SolverParser.ID; }
 
-.           { yyparser.yylval = new ParserVal(yytext());
-              return Parser.UNK; }
+.           { yyparser.yylval = new SolverParserVal(yytext());
+              return SolverParser.UNK; }
 
 } /* End state YYINITIAL */
 
@@ -118,8 +120,8 @@ print       { return Parser.PRINT; }
 /* Closing double quote */
 
 \"          { yybegin(YYINITIAL); 
-              yyparser.yylval = new ParserVal(string);
-              return Parser.STR; }
+              yyparser.yylval = new SolverParserVal(string);
+              return SolverParser.STR; }
 
 /* Escaped characters */
 
@@ -142,8 +144,8 @@ print       { return Parser.PRINT; }
 /* Closing single quote */
 
 \'          { yybegin(YYINITIAL);
-              yyparser.yylval = new ParserVal(string);
-              return Parser.STR; }
+              yyparser.yylval = new SolverParserVal(string);
+              return SolverParser.STR; }
 
 /* Escaped single quote */
 

@@ -14,8 +14,8 @@ public class Flow
       {
         symbols = new Hashtable();
         File file = new File(args[0]);
-        symbols.put("filepath", file.getParent() + "/");
-        parser = new Parser(new FileReader(file), symbols);
+        symbols.put("filepath", file.getParent() + File.pathSeparator);
+        parser = new GraphParser(new FileReader(file), symbols);
       }
       catch(FileNotFoundException e)
       {
@@ -32,6 +32,6 @@ public class Flow
 
   } /* End main method */
 
-  private static Parser parser;
+  private static GraphParser parser;
   private static Hashtable symbols;
 }

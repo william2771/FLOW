@@ -139,14 +139,14 @@ pvalue : INT                           { $$.obj = new pValue($1.ival); }
 
 %%
 
-  private Yylex lexer;
+  private SolverLexer lexer;
   private Hashtable symbols;
   private ArrayList<String> labels;
 
   private int yylex () {
     int yyl_return = -1;
     try {
-      yylval = new ParserVal(0);
+      yylval = new SolverParserVal(0);
       yyl_return = lexer.yylex();
     }
     catch (IOException e) {
@@ -160,12 +160,12 @@ pvalue : INT                           { $$.obj = new pValue($1.ival); }
   }
 
   public Parser(Reader r) {
-    lexer = new Yylex(r, this);
+    lexer = new SolverLexer(r, this);
   }
 
   public Parser(Reader r, Hashtable symbols)
   {
-    lexer = new Yylex(r, this);
+    lexer = new SolverLexer(r, this);
     this.symbols = symbols;
   }
 
