@@ -1,5 +1,5 @@
 package flow.ast;
 
-public abstract class Attr {
+public abstract class Attr extends Expression {
 
 }

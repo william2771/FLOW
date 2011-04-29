@@ -10,9 +10,8 @@ public class SequenceNode extends ASTNode {
 
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
 		if (prev != null){
-			return prev.toString() + exec.toString() + ";\n";
+			return prev.toString() + exec + ";\n";
 		}
 		else{
 			return exec + ";\n";
