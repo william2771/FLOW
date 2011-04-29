@@ -7,14 +7,48 @@ public class Flow
   {
     if (args.length > 0)
     {
-      try
+      filename = args[0];
+      int index = filename.lastIndexOf(".f");
+
+      if (index < 0)
       {
-        symbols = new Hashtable();
-        parser = new Parser(new FileReader(args[0]), symbols);
+        System.out.println("Error: Invalid File");
+        return;
       }
-      catch(FileNotFoundException e)
+
+      filetype = filename.substring(index + 1);
+      symbols = new Hashtable();
+      File file = new File(filename);
+      symbols.put("filepath", file.getParent() + File.separator);
+
+      if (filetype.equals("flowg"))
       {
-        System.out.println("The file you specified cannot be found.");
+        try
+        {
+          gParser = new GraphParser(new FileReader(file), symbols);
+          gParser.yyparse();
+        }
+        catch(FileNotFoundException e)
+        {
+          System.out.println("The file you specified cannot be found.");
+        }
+      }
+      else if (filetype.equals("flow"))
+      {
+        try
+        {
+          sParser = new SolverParser(new FileReader(file), symbols);
+          sParser.yyparse();
+        }
+        catch(FileNotFoundException e)
+        {
+          System.out.println("The file you specified cannot be found.");
+        }
+      }
+      else
+      {
+        System.out.println("Error: Invalid File");
+        return;
       }
     }
     else
@@ -22,11 +56,11 @@ public class Flow
       System.out.println("Please specify a file to compile.");
       return;
     }
-
-    parser.yyparse();
-
   } /* End main method */
 
-  private static Parser parser;
+  private static String filename;
+  private static String filetype;
+  private static GraphParser gParser;
+  private static SolverParser sParser;
   private static Hashtable symbols;
 }

@@ -2,16 +2,16 @@
 
 %byaccj
 
-%class SolverLexer
+%class GraphLexer
 
 %line
 
 %{
-  private SolverParser yyparser;
+  private GraphParser yyparser;
 
   private String string; /* used to build up string literals */
 
-  public SolverLexer(java.io.Reader r, SolverParser yyparser) {
+  public GraphLexer(java.io.Reader r, GraphParser yyparser) {
     this(r);
     this.yyparser = yyparser;
   }
@@ -47,27 +47,27 @@ BAD_ID  = [^A-Za-z][A-Za-z0-9]+
 {comment}   { }
 
 /* reserved words - more to follow */
-int         { return SolverParser.INT_T; }
-float       { return SolverParser.FLT_T; }
-string      { return SolverParser.STR_T; }
-Node        { return SolverParser.NODE_T; }
-Arc         { return SolverParser.ARC_T; }
-Graph       { return SolverParser.GRAPH; }
-List        { return SolverParser.LIST_T; }
-while       { return SolverParser.WHILE; }
-if          { return SolverParser.IF; }
-of          { return SolverParser.OF; }
-use         { return SolverParser.USE; }
-print       { return SolverParser.PRINT; }
+int         { return GraphParser.INT_T; }
+float       { return GraphParser.FLT_T; }
+string      { return GraphParser.STR_T; }
+Node        { return GraphParser.NODE_T; }
+Arc         { return GraphParser.ARC_T; }
+Graph       { return GraphParser.GRAPH; }
+List        { return GraphParser.LIST_T; }
+while       { return GraphParser.WHILE; }
+if          { return GraphParser.IF; }
+of          { return GraphParser.OF; }
+use         { return GraphParser.USE; }
+print       { return GraphParser.PRINT; }
 
 /* arc connector */
-{ARC}       { return SolverParser.ARC; }
+{ARC}       { return GraphParser.ARC; }
 
 /* equality and comparison operators */
-{EQ}        { return SolverParser.EQ; }
-{NEQ}       { return SolverParser.NEQ; }
-{LTE}       { return SolverParser.LTE; }
-{GTE}       { return SolverParser.GTE; }
+{EQ}        { return GraphParser.EQ; }
+{NEQ}       { return GraphParser.NEQ; }
+{LTE}       { return GraphParser.LTE; }
+{GTE}       { return GraphParser.GTE; }
 
 /* single-character operators */
 "@" |
@@ -99,19 +99,19 @@ print       { return SolverParser.PRINT; }
               string = ""; }
 
 /* float */
-{FLT}       { yyparser.yylval = new SolverParserVal(Double.parseDouble(yytext()));
-              return SolverParser.FLT; }
+{FLT}       { yyparser.yylval = new GraphParserVal(Double.parseDouble(yytext()));
+              return GraphParser.FLT; }
 
 /* int */
-{INT}       { yyparser.yylval = new SolverParserVal(Integer.parseInt(yytext()));
-              return SolverParser.INT; }
+{INT}       { yyparser.yylval = new GraphParserVal(Integer.parseInt(yytext()));
+              return GraphParser.INT; }
 
 /* identifier */
-{ID}        { yyparser.yylval = new SolverParserVal(yytext());
-              return SolverParser.ID; }
+{ID}        { yyparser.yylval = new GraphParserVal(yytext());
+              return GraphParser.ID; }
 
-.           { yyparser.yylval = new SolverParserVal(yytext());
-              return SolverParser.UNK; }
+.           { yyparser.yylval = new GraphParserVal(yytext());
+              return GraphParser.UNK; }
 
 } /* End state YYINITIAL */
 
@@ -120,8 +120,8 @@ print       { return SolverParser.PRINT; }
 /* Closing double quote */
 
 \"          { yybegin(YYINITIAL); 
-              yyparser.yylval = new SolverParserVal(string);
-              return SolverParser.STR; }
+              yyparser.yylval = new GraphParserVal(string);
+              return GraphParser.STR; }
 
 /* Escaped characters */
 
@@ -144,8 +144,8 @@ print       { return SolverParser.PRINT; }
 /* Closing single quote */
 
 \'          { yybegin(YYINITIAL);
-              yyparser.yylval = new SolverParserVal(string);
-              return SolverParser.STR; }
+              yyparser.yylval = new GraphParserVal(string);
+              return GraphParser.STR; }
 
 /* Escaped single quote */
 
