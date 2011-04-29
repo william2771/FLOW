@@ -13,6 +13,7 @@ public class NodeDec extends StatementNode {
 	@Override
 	public String toString() {
 		return "Node " + id.toString() + " = new Node(" + alist.toString() + ");\nnodes.add("+id+")";
+
 	}
 	
 
