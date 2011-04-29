@@ -7,7 +7,7 @@ public class NodeDec extends StatementNode {
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return "Node " + id.toString() + " = new Node(" + alist.toString() + ");\nnodes.append("+id+");";
+		return "Node " + id.toString() + " = new Node(" + alist.toString() + ");\nnodes.append("+id+")";
 	}
 	
 
