@@ -1,6 +1,6 @@
 package flow.ast;
 
-public class ID {
+public class ID extends Expression {
     
     String idname;
     

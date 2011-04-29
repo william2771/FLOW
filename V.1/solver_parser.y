@@ -36,6 +36,7 @@
 %token UNK /* an illegal identifier */
 
 /* operator precedence */
+%right '='
 %nonassoc EQ NEQ
 %nonassoc '<' '>' LTE GTE
 %left '-' '+'
@@ -53,8 +54,24 @@ valid_program : solver
 solver: type_link solver_stmt_list { System.out.println($2.obj); }
 ;
 
+type_link : USE STR ';'                { /* process the typedef file */ 
+                                         labels = new ArrayList<String>();
+                                         try
+                                         {
+                                           String filepath = symbols.get("filepath") + $2.sval;
+                                           System.out.println("\nTrying to open " + filepath + "\n");
+                                           TypeParser tparser = new TypeParser(new FileReader(filepath), new Hashtable());
+                                           tparser.yyparse();
+                                         }
+                                         catch(IOException e)
+                                         {
+                                           yyerror("Could not open typdef file.");
+                                         } }
+;
+
 solver_stmt_list : solver_stmt ';'  { $$.obj = new SequenceNode(null, (StatementNode) $1.obj); }
 | solver_stmt_list solver_stmt ';'  { $$.obj = new SequenceNode((SequenceNode) $1.obj, (StatementNode) $2.obj); }
+;
 
 solver_stmt: 
 | list_dec
@@ -64,40 +81,31 @@ solver_stmt:
 | expr  { $$.obj = $1.obj; }
 ;
 
-while_stmt : WHILE '(' expr ')' '{' stmt_list '}' { $$.obj = new WhileNode((Expression) $3.obj, (SequenceNode) $6.obj ); }
+while_stmt : WHILE '(' expr ')' '{' solver_stmt_list '}' { $$.obj = new WhileNode((Expression) $3.obj, (SequenceNode) $6.obj ); }
 ;
 
-if_stmt: IF '(' expr ')' '{' stmt_list '}' { $$.obj = new IfNode((Expression) $3.obj, (SequenceNode) $6.obj ); }
+if_stmt: IF '(' expr ')' '{' solver_stmt_list '}' { $$.obj = new IfNode((Expression) $3.obj, (SequenceNode) $6.obj ); }
 ;
 
-expr: '(' expr ')' { $$.obj = $2.obj; }
+expr: '(' expr ')'         { $$.obj = $2.obj; }
+| '-' expr %prec NEG       { $$.obj = new Unary((Expression) $2.obj, $1.sval); }
+| expr '>' expr            { $$.obj = new Comparison((Expression) $1.obj, (Expression) $3.obj, ">"); }
+| expr GTE expr            { $$.obj = new Comparison((Expression) $1.obj, (Expression) $3.obj, ">="); }
+| expr '<' expr            { $$.obj = new Comparison((Expression) $1.obj, (Expression) $3.obj, "<"); }
+| expr LTE expr            { $$.obj = new Comparison((Expression) $1.obj, (Expression) $3.obj, "<="); }
+| expr NEQ expr            { $$.obj = new Comparison((Expression) $1.obj, (Expression) $3.obj, "!="); }
+| expr EQ expr             { $$.obj = new Comparison((Expression) $1.obj, (Expression) $3.obj, "=="); }
+| expr '+' expr            { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, "+"); }
+| expr '-' expr            { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, "-"); }
+| expr '*' expr            { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, "*"); }
+| expr '/' expr            { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, "/"); }
+| expr '%' expr            { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, "%"); }
+| id '=' expr              { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, "="); }
+| id '[' expr ']'          { $$.obj = new ListAccess((ID) $1.obj, (Expression) $3.obj); }
+| id                       { $$.obj = $1.obj; }
+| pvalue                   { $$.obj = $1.obj; }
 ;
 
-expr: unop expr { $$.obj = new Unary((Expression) $2.obj, $1.sval); }
-
-unop: '-' { $$.sval = "-"; };
-;
-
-expr: expr compop expr { $$.obj = new Comparison((Expression) $1.obj, (Expression) $3.obj, $2.sval); }
-;
-
-compop: '>' { $$.sval = ">"; }
-|   GTE    { $$.sval = ">="; }
-|   '<' { $$.sval = "<"; }
-|   LTE { $$.sval = "<="; }
-|   NEQ    { $$.sval = "!="; }
-|   EQ    { $$.sval = "=="; }
-;
-
-expr: expr arithop expr { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, $2.sval); }
-;
-
-arithop: '+'    { $$.sval = "+"; }
-|   '-' { $$.sval = "-"; }
-|   '*' { $$.sval = "*"; }
-|   '/' { $$.sval = "/"; }
-|   '%' { $$.sval = "%"; }
-;
 
 //Add in all the statements and expressions from the Graph as well
 list_dec : LIST_T OF type ID           { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, null); }
@@ -107,7 +115,7 @@ list_dec : LIST_T OF type ID           { $$.obj = new ListDec((Type) $3.obj, (ID
 type : ptype                           { $$.obj = $1.obj; }
 ;
 
-prim_dec : ptype id '=' pvalue         { $$.obj = new PrimDec((pType) $1.obj, (ID) $2.obj, (pValue) $4.obj); }
+prim_dec : ptype id '=' expr           { $$.obj = new PrimDec((pType) $1.obj, (ID) $2.obj, (Expression) $4.obj); }
 ;
 
 attr_list : attr                       { $$.obj = new AttrList(null, (Attr) $1.obj); }
@@ -115,13 +123,6 @@ attr_list : attr                       { $$.obj = new AttrList(null, (Attr) $1.o
 ;
 
 attr : pvalue                          { $$.obj = $$.obj; }
-;
-
-expr : id assignop expr                { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, (String) $2.sval); }
-| id '[' expr ']'                      { $$.obj = new ListAccess((ID) $1.obj, (Expression) $3.obj); }
-;
-
-assignop : '='                         { $$.sval = "="; }
 ;
 
 id : ID                                { $$.obj = new ID($1.sval); }
@@ -152,6 +153,9 @@ pvalue : INT                           { $$.obj = new pValue($1.ival); }
     catch (IOException e) {
       System.err.println("IO error :"+e);
     }
+
+    System.out.println(yyl_return);
+
     return yyl_return;
   }
 

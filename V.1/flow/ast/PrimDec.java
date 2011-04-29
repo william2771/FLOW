@@ -2,7 +2,7 @@ package flow.ast;
 
 public class PrimDec extends StatementNode {
 
-	public PrimDec(pType type, ID id, pValue val)
+	public PrimDec(pType type, ID id, Expression val)
 	{
 		this.type = type;
 		this.id = id;
@@ -11,11 +11,11 @@ public class PrimDec extends StatementNode {
 
 	private pType type;
 	private ID id;
-	private pValue val;
+	private Expression val;
+	
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
-		return type.toString() + id.toString() + "=" + val;
+		return type + " " + id + " = " + val;
 	}
 
 }

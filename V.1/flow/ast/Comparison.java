@@ -16,7 +16,7 @@ public class Comparison extends Expression {
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return e1 + operator + e2;
+		return e1 + " " + operator + " " + e2;
 	}
 
 }

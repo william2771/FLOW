@@ -1,9 +1,9 @@
-use valid.flowt;
+use "valid.flowt";
 
 int x = 0;
 
 /* just testing for syntax */
-x+2;
+x = 2;
 int w = 2;
 x = w;
 int y = w;
@@ -15,12 +15,12 @@ int i = 0;
 while (x > 0)
 {
 	i = i % 2;
-}
+};
 
 if(y <= x)
 {
 	w >= z;
 	w != x;
-}
+};
 
 /* COMMENTS SHOULD BE IGNORED */

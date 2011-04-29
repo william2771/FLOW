@@ -14,6 +14,6 @@ public class Arithmetic extends Expression {
 	private String operator;
 	
 	public String toString(){
-		return e1 + operator + e2 + ";";
+		return e1 + " " + operator + " " + e2;
 	}
 }
