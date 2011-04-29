@@ -36,9 +36,9 @@
 %token UNK /* an illegal identifier */
 
 /* operator precedence */
-%right '='
 %nonassoc EQ NEQ
 %nonassoc '<' '>' LTE GTE
+%right '='
 %left '-' '+'
 %left '%'
 %left '*' '/'
@@ -51,22 +51,28 @@ valid_program : solver
 ;
 
 
-solver: type_link solver_stmt_list { System.out.println($2.obj); }
+solver: type_link solver_stmt_list { $$.sval = "public class Solver {\npublic static void main(String[] args) {\n" + $2.obj.toString() + "}\n}"; 
+                                     try {
+                                       FileWriter graph_file = new FileWriter(new File("Solver.java"));
+                                       graph_file.write($$.sval);
+                                       graph_file.flush();
+                                     }
+                                     catch(IOException e) {
+                                       yyerror("Could not create Solver file.");
+                                     } }
 ;
 
-type_link : USE STR ';'                { /* process the typedef file */ 
-                                         labels = new ArrayList<String>();
-                                         try
-                                         {
-                                           String filepath = symbols.get("filepath") + $2.sval;
-                                           System.out.println("\nTrying to open " + filepath + "\n");
-                                           TypeParser tparser = new TypeParser(new FileReader(filepath), new Hashtable());
-                                           tparser.yyparse();
-                                         }
-                                         catch(IOException e)
-                                         {
-                                           yyerror("Could not open typdef file.");
-                                         } }
+type_link : USE STR ';'    { /* process the typedef file */ 
+                             labels = new ArrayList<String>();
+                             try {
+                               String filepath = symbols.get("filepath") + $2.sval;
+                               System.out.println("\nTrying to open " + filepath + "\n");
+                               TypeParser tparser = new TypeParser(new FileReader(filepath), new Hashtable());
+                               tparser.yyparse();
+                              }
+                              catch(IOException e) {
+                                yyerror("Could not open typdef file.");
+                            } }
 ;
 
 solver_stmt_list : solver_stmt ';'  { $$.obj = new SequenceNode(null, (StatementNode) $1.obj); }
@@ -79,20 +85,16 @@ solver_stmt:
 | while_stmt
 | if_stmt
 | expr  { $$.obj = $1.obj; }
-|func-dec : param '(' param-list ')' '{' stmt-list '}'
-	{ $$.obj = new FunctionNode( (Type) $1.obj,  (ParamList)$3.obj, (SequenceNode) $6.obj ); }
-|RET : 'return' expr
-
 ;
 
 while_stmt : WHILE '(' expr ')' '{' solver_stmt_list '}' { $$.obj = new WhileNode((Expression) $3.obj, (SequenceNode) $6.obj ); }
 ;
 
-if_stmt: IF '(' expr ')' '{' solver_stmt_list '}' { $$.obj = new IfNode((Expression) $3.obj, (SequenceNode) $6.obj ); }
+if_stmt : IF '(' expr ')' '{' solver_stmt_list '}' { $$.obj = new IfNode((Expression) $3.obj, (SequenceNode) $6.obj ); }
 ;
 
-expr: '(' expr ')'         { $$.obj = $2.obj; }
-| '-' expr %prec NEG       { $$.obj = new Unary((Expression) $2.obj, $1.sval); }
+expr : '(' expr ')'        { $$.obj = $2.obj; }
+| '-' expr %prec NEG       { $$.obj = new Unary((Expression) $2.obj, "-"); }
 | expr '>' expr            { $$.obj = new Comparison((Expression) $1.obj, (Expression) $3.obj, ">"); }
 | expr GTE expr            { $$.obj = new Comparison((Expression) $1.obj, (Expression) $3.obj, ">="); }
 | expr '<' expr            { $$.obj = new Comparison((Expression) $1.obj, (Expression) $3.obj, "<"); }
@@ -104,12 +106,11 @@ expr: '(' expr ')'         { $$.obj = $2.obj; }
 | expr '*' expr            { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, "*"); }
 | expr '/' expr            { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, "/"); }
 | expr '%' expr            { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, "%"); }
-| id '=' expr              { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, "="); }
+| id '=' expr              { $$.obj = new Arithmetic((ID) $1.obj, (Expression) $3.obj, "="); }
 | id '[' expr ']'          { $$.obj = new ListAccess((ID) $1.obj, (Expression) $3.obj); }
 | id                       { $$.obj = $1.obj; }
 | pvalue                   { $$.obj = $1.obj; }
 ;
-
 
 //Add in all the statements and expressions from the Graph as well
 list_dec : LIST_T OF type ID           { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, null); }
@@ -142,18 +143,6 @@ ptype : INT_T                          { $$.obj = new pType("int"); }
 pvalue : INT                           { $$.obj = new pValue($1.ival); }
 ;
 
-/*add to graph/solver stmt*/
-
-
-param_list : param_list ',' param      { $$.obj = new ParamList((ParamList)$1.obj, (Param)$3.obj); }
-| param                                { $$.obj = new ParamList(null, (Param)$1.obj); }
-| /* empty string */                   { $$.obj = null; }
-;
-
-
-param : type ID                        { $$.obj = new Param((Type) $1.obj, (ID) $obj); }
-;
-
 %%
 
   private SolverLexer lexer;
@@ -169,8 +158,6 @@ param : type ID                        { $$.obj = new Param((Type) $1.obj, (ID) 
     catch (IOException e) {
       System.err.println("IO error :"+e);
     }
-
-    System.out.println(yyl_return);
 
     return yyl_return;
   }
