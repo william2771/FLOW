@@ -159,37 +159,12 @@ pvalue : INT                           { $$.obj = new pValue($1.ival); }
     System.err.println ("Error: " + error);
   }
 
-  public Parser(Reader r) {
+  public SolverParser(Reader r) {
     lexer = new SolverLexer(r, this);
   }
 
-  public Parser(Reader r, Hashtable symbols)
+  public SolverParser(Reader r, Hashtable symbols)
   {
     lexer = new SolverLexer(r, this);
     this.symbols = symbols;
-  }
-
-  static boolean interactive;
-
-  public static void main(String args[]) throws IOException {
-
-    Parser yyparser;
-    if ( args.length > 0 ) {
-      // parse a file
-      yyparser = new Parser(new FileReader(args[0]));
-    }
-    else {
-      // interactive mode
-      System.out.println("[Quit with CTRL-D]");
-      System.out.print("Expression: ");
-      interactive = true;
-      yyparser = new Parser(new InputStreamReader(System.in));
-    }
-
-    yyparser.yyparse();
-
-    if (interactive) {
-      System.out.println();
-      System.out.println("Have a nice day");
-    }
   }

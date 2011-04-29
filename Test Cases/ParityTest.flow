@@ -1,0 +1,32 @@
+use SimpleGraph;
+
+list of int binary = {1,0,1,1,0,0,1,0};//The value to be checked
+
+
+int count = binary.length;
+Node current = START;
+while(count > 0)
+{
+	list of Arc fromArcs = current.arcsFrom();
+	int k = fromArcs.length - 1;
+	while(k >= 0)
+	{
+		if(fromArcs[k] == binary[count])
+		{
+			current = fromArcs[k].destinationNode();
+		}
+		else
+		{
+			print("Error!");
+		}
+	}
+}
+
+if(current.value == 1)//1 is accepting 0 is not
+{
+	print("Even parity");
+}
+else
+{
+	print("Odd parity");
+}
