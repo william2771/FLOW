@@ -6,28 +6,28 @@ an even number of a's and an even number of b's. */
 
 use 'DFA.flowt';
 
-START s0 = dfa("s0", false);  //state s0 is labeled as the START state
-s1 = dfa("s1", false);
-s2 = dfa("s2", false); 
-s3 = dfa("s3", false); 
-s4 = dfa("s4", false); 
-s5 = dfa("s5", false); 
-s6 = dfa("s6", false); 
-s7 = dfa("s7", false); 
-s8 = dfa("s8", false); 
-s9 = dfa("s9", false); 
-s10 = dfa("s10", false); 
-s11 = dfa("s11", false);
-s12 = dfa("s12", true);
-skill = dfa("kill", false);
+START: @s0 "s0", false;  //state s0 is labeled as the START state
+@s1 "s1", false;
+@s2 "s2", false; 
+@s3 "s3", false;
+@s4 "s4", false; 
+@s5 "s5", false; 
+@s6 "s6", false; 
+@s7 "s7", false; 
+@s8 "s8", false; 
+@s9 "s9", false; 
+@s10 "s10", false; 
+@s11 "s11", false;
+@s12 "s12", true;
+@skill "kill", false;
 
 /* path definition:  source, then destination, then attributes */
 
-lst = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P','Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z','a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
+List of string lst = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P','Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z','a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
  'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',' ','!'];
 
-dfaLst = [s0,s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,skill];
-strLst = ["h","e","l","l","o"," ","w","o","r","l","d","!",""];
+List of Node dfaLst = [s0,s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,skill];
+List of string strLst = ["h","e","l","l","o"," ","w","o","r","l","d","!",""];
 
 
 for (int pos = 0; pos < dfaLst.length; x++){
@@ -35,20 +35,20 @@ for (int pos = 0; pos < dfaLst.length; x++){
     for (elt in lst){
 
 	if (elt != strLst[pos]){
-	    path(dfaLst[pos],skill);
+	    dfaLst[pos],skill);
 	}
     }
 }
 
-path(s0, s1, "h");
-path(s1, s2, "e");
-path(s2, s3, "l"); 
-path(s3, s4, "l"); 
-path(s4, s5, "o"); 
-path(s5, s6, " "); 
-path(s6, s7, "w"); 
-path(s7, s8, "o"); 
-path(s8, s9, "r"); 
-path(s9, s10, "l"); 
-path(s10, s11, "d"); 
-path(s11, s12, "!"); 
+s0 -> s1 "h";
+s1 -> s2 "e";
+s2 -> s3 "l"; 
+s3 -> s4 "l"; 
+s4 -> s5 "o"; 
+s5 -> s6 " "; 
+s6 -> s7 "w"; 
+s7 -> s8 "o"; 
+s8 -> s9 "r"); 
+s9 -> s10 "l"; 
+s10 -> s11 "d"; 
+s11 -> s12 "!"; 
