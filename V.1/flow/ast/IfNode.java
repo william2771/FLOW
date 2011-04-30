@@ -12,7 +12,6 @@ public class IfNode extends StatementNode {
 
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
 		return "if (" + exp + ") {\n" + block +"}\n";
 	}
 
