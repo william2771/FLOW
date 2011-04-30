@@ -77,15 +77,27 @@ type_link : USE STR ';'    { /* process the typedef file */
 ;
 
 solver_stmt_list : solver_stmt ';'  { $$.obj = new SequenceNode(null, (StatementNode) $1.obj); }
+|
+block_stmt  { $$.obj = new SequenceNode(null, (StatementNode) $1.obj); }
 | solver_stmt_list solver_stmt ';'  { $$.obj = new SequenceNode((SequenceNode) $1.obj, (StatementNode) $2.obj); }
+| solver_stmt_list block_stmt  { $$.obj = new SequenceNode((SequenceNode) $1.obj, (StatementNode) $2.obj); }
+;
+
+
+block_stmt:
+while_stmt
+| if_stmt
 ;
 
 solver_stmt: 
-| list_dec
+list_dec
 | prim_dec
-| while_stmt
-| if_stmt
 | assignment  { $$.obj = $1.obj; }
+|func-dec : param '(' param-list ')' '{' stmt-list '}'
+	{ $$.obj = new FunctionNode( (Type) $1.obj,  (ParamList)$3.obj, (SequenceNode) $6.obj ); }
+
+|RET : 'return' expr;
+
 ;
 
 while_stmt : WHILE '(' expr ')' '{' solver_stmt_list '}' { $$.obj = new WhileNode((Expression) $3.obj, (SequenceNode) $6.obj ); }
@@ -166,6 +178,16 @@ expr: '(' expr ')'             { $$.obj = $2.obj; }
 | pvalue                       { $$.obj = $1.obj; ((Expression) $$.obj).type = new Type("int"); }
 ;
 
+param_list : param_list ',' param      { $$.obj = new ParamList((ParamList)$1.obj, (Param)$3.obj); }
+| param                                { $$.obj = new ParamList(null, (Param)$1.obj); }
+| /* empty string */                   { $$.obj = null; }
+;
+
+
+param : type ID                        { $$.obj = new Param((Type) $1.obj, (ID) $obj); }
+;
+
+
 assignment : lval '=' expr { $$.obj = new Assignment((Expression) $1.obj, (Expression) $3.obj); }
 ;
 
@@ -177,7 +199,9 @@ access : id '[' expr ']'   { $$.obj = new ListAccess((ID) $1.obj, (Expression) $
 ;
 
 list_dec : LIST_T OF type ID           { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, null); }
-| LIST_T OF type id '=' '[' attr_list ']' { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, (AttrList) $7.obj); }
+| LIST_T OF type id '=' '[' attr_list ']' { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, (AttrList) $7.obj); 
+  ((Expression) $$.obj).type = new Type("list" + type.sval);
+}
 ;
 
 type : ptype                           { $$.obj = $1.obj; }
@@ -203,7 +227,11 @@ ptype : INT_T                          { $$.obj = new pType("int"); }
 | STR_T                                { $$.obj = new pType("String"); }
 ;
 
+<<<<<<< HEAD
 pvalue : INT                           { $$.obj = new pValue($1.ival); }
+=======
+pvalue : INT                           { $$.obj = new pValue($1.ival); ((Expression) $$.obj).type = new pType("int") }
+>>>>>>> ef087e8bbbf7c306ec2a8cf05bf36c3ada23a8cc
 ;
 
 %%
