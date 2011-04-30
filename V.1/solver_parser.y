@@ -164,7 +164,9 @@ $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, "="); }
     }
 else if (((Expression) $3.obj).type.type != 'int'){ yyerror("Lists can only be indexed by ints.");}
 
-$$.obj = new ListAccess((ID) $1.obj, (Expression) $3.obj); }
+$$.obj = new ListAccess((ID) $1.obj, (Expression) $3.obj); 
+ ((Expression) $$.obj).type = new Type(((Expression) $1).substring(4));
+}
 | assignment               { $$.obj = $1.obj; }
 | access                   { $$.obj = $1.obj; }
 | id                       { $$.obj = $1.obj; }
@@ -182,7 +184,9 @@ access : id '[' expr ']'   { $$.obj = new ListAccess((ID) $1.obj, (Expression) $
 ;
 
 list_dec : LIST_T OF type ID           { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, null); }
-| LIST_T OF type id '=' '[' attr_list ']' { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, (AttrList) $7.obj); }
+| LIST_T OF type id '=' '[' attr_list ']' { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, (AttrList) $7.obj); 
+  ((Expression) $$.obj).type = new Type("list" + type.sval);
+}
 ;
 
 type : ptype                           { $$.obj = $1.obj; }
@@ -209,7 +213,7 @@ ptype : INT_T                          { $$.obj = new pType("int"); }
 | STR_T                                { $$.obj = new pType("String"); }
 ;
 
-pvalue : INT                           { $$.obj = new pValue($1.ival); ((Expression) $$.obj).type = new Type("int") }
+pvalue : INT                           { $$.obj = new pValue($1.ival); ((Expression) $$.obj).type = new pType("int") }
 ;
 
 %%
