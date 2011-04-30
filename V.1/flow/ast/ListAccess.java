@@ -10,6 +10,6 @@ public class ListAccess extends Expression {
 	private ID id;
 	private Expression exp;
 	public String toString(){
-		return id+".get("+exp+")";
+		return id + ".get(" + exp + ")";
 	}
 }

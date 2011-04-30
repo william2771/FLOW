@@ -85,7 +85,7 @@ solver_stmt:
 | prim_dec
 | while_stmt
 | if_stmt
-| expr  { $$.obj = $1.obj; }
+| assignment  { $$.obj = $1.obj; }
 ;
 
 while_stmt : WHILE '(' expr ')' '{' solver_stmt_list '}' { $$.obj = new WhileNode((Expression) $3.obj, (SequenceNode) $6.obj ); }
@@ -161,15 +161,25 @@ $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, "="); }
       System.out.println("Only lists should be indexed.");
     }
 else if (((Expression) $3).type.type != 'int'){ System.out.println("Lists can only be indexed by ints.");}
-$$.obj = new ListAccess((ID) $1.obj, (Expression) $3.obj);
- ((Expression) $$.obj).type = new Type(((Expression) $1).type.type.substring(4)) }
+$$.obj = new ListAccess((ID) $1.obj, (Expression) $3.obj); }
+| assignment               { $$.obj = $1.obj; }
+| access                   { $$.obj = $1.obj; }
 | id                       { $$.obj = $1.obj; }
 | pvalue                   { $$.obj = $1.obj;}
 ;
 
-//Add in all the statements and expressions from the Graph as well
-list_dec : LIST_T OF type ID           { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, null); ((ID) $4.obj).type = new Type("list " + type.sval);}
-| LIST_T OF type id '=' '[' attr_list ']' { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, (AttrList) $7.obj); ((ID) $4.obj).type = new Type("list " + type.sval);}
+assignment : lval '=' expr { $$.obj = new Assignment((Expression) $1.obj, (Expression) $3.obj); }
+;
+
+lval : id                  { $$.obj = $1.obj; }
+access                     { $$.obj = $1.obj; }
+;
+
+access : id '[' expr ']'   { $$.obj = new ListAccess((ID) $1.obj, (Expression) $3.obj); }
+;
+
+list_dec : LIST_T OF type ID           { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, null); }
+| LIST_T OF type id '=' '[' attr_list ']' { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, (AttrList) $7.obj); }
 ;
 
 type : ptype                           { $$.obj = $1.obj; }
