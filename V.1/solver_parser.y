@@ -84,7 +84,7 @@ solver_stmt:
 | prim_dec
 | while_stmt
 | if_stmt
-| expr  { $$.obj = $1.obj; }
+| assignment  { $$.obj = $1.obj; }
 ;
 
 while_stmt : WHILE '(' expr ')' '{' solver_stmt_list '}' { $$.obj = new WhileNode((Expression) $3.obj, (SequenceNode) $6.obj ); }
@@ -106,13 +106,23 @@ expr : '(' expr ')'        { $$.obj = $2.obj; }
 | expr '*' expr            { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, "*"); }
 | expr '/' expr            { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, "/"); }
 | expr '%' expr            { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, "%"); }
-| id '=' expr              { $$.obj = new Arithmetic((ID) $1.obj, (Expression) $3.obj, "="); }
+| assigment                { $$.obj = $1.obj; }
+| access                   { $$.obj = $1.obj; }
 | id '[' expr ']'          { $$.obj = new ListAccess((ID) $1.obj, (Expression) $3.obj); }
 | id                       { $$.obj = $1.obj; }
 | pvalue                   { $$.obj = $1.obj; }
 ;
 
-//Add in all the statements and expressions from the Graph as well
+assignment : lval '=' expr { $$.obj = new Assignment((Expression) $1.obj, (Expression) $3.obj); }
+;
+
+lval : id                  { $$.obj = $1.obj; }
+access                     { $$.obj = $1.obj; }
+;
+
+access : id '[' expr ']'   { $$.obj = new ListAccess((ID) $1.obj, (Expression) $3.obj); }
+;
+
 list_dec : LIST_T OF type ID           { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, null); }
 | LIST_T OF type id '=' '[' attr_list ']' { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, (AttrList) $7.obj); }
 ;
