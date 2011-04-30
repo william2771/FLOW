@@ -77,14 +77,21 @@ type_link : USE STR ';'    { /* process the typedef file */
 ;
 
 solver_stmt_list : solver_stmt ';'  { $$.obj = new SequenceNode(null, (StatementNode) $1.obj); }
+|
+block_stmt  { $$.obj = new SequenceNode(null, (StatementNode) $1.obj); }
 | solver_stmt_list solver_stmt ';'  { $$.obj = new SequenceNode((SequenceNode) $1.obj, (StatementNode) $2.obj); }
+| solver_stmt_list block_stmt  { $$.obj = new SequenceNode((SequenceNode) $1.obj, (StatementNode) $2.obj); }
+;
+
+
+block_stmt:
+while_stmt
+| if_stmt
 ;
 
 solver_stmt: 
-| list_dec
+list_dec
 | prim_dec
-| while_stmt
-| if_stmt
 | assignment  { $$.obj = $1.obj; }
 |func-dec : param '(' param-list ')' '{' stmt-list '}'
 	{ $$.obj = new FunctionNode( (Type) $1.obj,  (ParamList)$3.obj, (SequenceNode) $6.obj ); }
