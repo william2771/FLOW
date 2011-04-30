@@ -1,3 +1,5 @@
+package flow.ast;
+
 public class FunctionNode {
 	Param ftype;
 	ParamList signature;

@@ -1,3 +1,5 @@
+package flow.ast;
+
 public class Cast{
     Expression expr;
     String type;
