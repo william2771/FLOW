@@ -86,6 +86,11 @@ solver_stmt:
 | while_stmt
 | if_stmt
 | assignment  { $$.obj = $1.obj; }
+|func-dec : param '(' param-list ')' '{' stmt-list '}'
+	{ $$.obj = new FunctionNode( (Type) $1.obj,  (ParamList)$3.obj, (SequenceNode) $6.obj ); }
+
+|RET : 'return' expr;
+
 ;
 
 while_stmt : WHILE '(' expr ')' '{' solver_stmt_list '}' { $$.obj = new WhileNode((Expression) $3.obj, (SequenceNode) $6.obj ); }
@@ -172,6 +177,16 @@ $$.obj = new ListAccess((ID) $1.obj, (Expression) $3.obj);
 | id                       { $$.obj = $1.obj; }
 | pvalue                   { $$.obj = $1.obj;}
 ;
+
+param_list : param_list ',' param      { $$.obj = new ParamList((ParamList)$1.obj, (Param)$3.obj); }
+| param                                { $$.obj = new ParamList(null, (Param)$1.obj); }
+| /* empty string */                   { $$.obj = null; }
+;
+
+
+param : type ID                        { $$.obj = new Param((Type) $1.obj, (ID) $obj); }
+;
+
 
 assignment : lval '=' expr { $$.obj = new Assignment((Expression) $1.obj, (Expression) $3.obj); }
 ;
