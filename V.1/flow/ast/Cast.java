@@ -10,7 +10,7 @@ public class Cast{
     }
 
     public String toString(){
-	return  '(' + type + ') (' + e + ')';
+	return  "(" + type + ") (" + expr + ")";
     }
 
 }
