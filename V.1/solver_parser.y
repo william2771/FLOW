@@ -17,6 +17,7 @@
 %token IF     /* keyword if */
 %token OF     /* keyword of */
 %token USE    /* keyword use */
+%token RET    /* keyword return */
 %token PRINT  /* keyword print */
 
 %token STR    /* string literal */
@@ -72,32 +73,28 @@ type_link : USE STR ';'    { /* process the typedef file */
                                tparser.yyparse();
                               }
                               catch(IOException e) {
-                                yyerror("Could not open typdef file.");
+                                yyerror("Could not open typedef file.");
                             } }
 ;
 
 solver_stmt_list : solver_stmt ';'  { $$.obj = new SequenceNode(null, (StatementNode) $1.obj); }
-|
-block_stmt  { $$.obj = new SequenceNode(null, (StatementNode) $1.obj); }
+| block_stmt                        { $$.obj = new SequenceNode(null, (StatementNode) $1.obj); }
 | solver_stmt_list solver_stmt ';'  { $$.obj = new SequenceNode((SequenceNode) $1.obj, (StatementNode) $2.obj); }
-| solver_stmt_list block_stmt  { $$.obj = new SequenceNode((SequenceNode) $1.obj, (StatementNode) $2.obj); }
+| solver_stmt_list block_stmt       { $$.obj = new SequenceNode((SequenceNode) $1.obj, (StatementNode) $2.obj); }
 ;
 
-
-block_stmt:
-while_stmt
+block_stmt: while_stmt
 | if_stmt
+| func_dec                          { $$.obj = $1.obj; }
 ;
 
-solver_stmt: 
-list_dec
+solver_stmt: list_dec
 | prim_dec
+| RET expr
 | assignment  { $$.obj = $1.obj; }
-|func-dec : param '(' param-list ')' '{' stmt-list '}'
-	{ $$.obj = new FunctionNode( (Type) $1.obj,  (ParamList)$3.obj, (SequenceNode) $6.obj ); }
+;
 
-|RET : 'return' expr;
-
+func_dec : param '(' param_list ')' '{' solver_stmt_list '}' { $$.obj = new FunctionNode((Param) $1.obj,  (ParamList) $3.obj, (SequenceNode) $6.obj); }
 ;
 
 while_stmt : WHILE '(' expr ')' '{' solver_stmt_list '}' { $$.obj = new WhileNode((Expression) $3.obj, (SequenceNode) $6.obj ); }
@@ -108,74 +105,104 @@ if_stmt : IF '(' expr ')' '{' solver_stmt_list '}' { $$.obj = new IfNode((Expres
 
 expr: '(' expr ')'             { $$.obj = $2.obj; }
 | '(' type ')' expr %prec CAST { $$.obj = new Cast($2.sval,(Expression) $4.obj); }
-| '-' expr %prec NEG           { $$.obj = new Unary((Expression) $2.obj, $1.sval); ((Expression) $$).type = ((Expression) $2).type; }
-| expr '>' expr                { if (((Expression) $1).type.type != ((Expression) $3).type.type){yyerror("Type error at line" + SolverLexer.getLine() + "!");}
+| '-' expr %prec NEG           { $$.obj = new Unary((Expression) $2.obj, $1.sval);
+                                 ((Expression) $$.obj).type = ((Expression) $2.obj).type; }
+| expr '>' expr                { if (((Expression) $1.obj).type.type != ((Expression) $3.obj).type.type) {
+                                   yyerror("Type error at line" + lexer.getLine() + "!");
+                                 }
                                  else {
-                                   ((Expression) $$).type = ((Expression) $2).type;
+                                   ((Expression) $$.obj).type = ((Expression) $2.obj).type;
                                  }
                                  $$.obj = new Comparison((Expression) $1.obj, (Expression) $3.obj, ">"); }
-| expr GTE expr                { if (((Expression) $1).type.type != ((Expression) $3).type.type){yyerror("Type error at line" + SolverLexer.getLine() + "!");}
-                                 else{
-                                   ((Expression) $1).type = ((Expression) $3).type;
+| expr GTE expr                { if (((Expression) $1.obj).type.type != ((Expression) $3.obj).type.type) {
+                                   yyerror("Type error at line" + lexer.getLine() + "!");
+                                 }
+                                 else {
+                                   ((Expression) $1.obj).type = ((Expression) $3.obj).type;
                                  }
                                  $$.obj = new Comparison((Expression) $1.obj, (Expression) $3.obj, ">="); }
-| expr '<' expr                { if (((Expression) $1).type.type != ((Expression) $3).type.type){yyerror("Type error at line" + SolverLexer.getLine() + "!");}
-                                 else{
-                                   ((Expression) $1).type = ((Expression) $3).type;
+| expr '<' expr                { if (((Expression) $1.obj).type.type != ((Expression) $3.obj).type.type) {
+                                   yyerror("Type error at line" + lexer.getLine() + "!");
+                                 }
+                                 else {
+                                   ((Expression) $1.obj).type = ((Expression) $3.obj).type;
                                  }
                                  $$.obj = new Comparison((Expression) $1.obj, (Expression) $3.obj, "<"); }
-| expr LTE expr                { if (((Expression) $1).type.type != ((Expression) $3).type.type){yyerror("Type error at line" + SolverLexer.getLine() + "!");}
-                                 else{
-                                   ((Expression) $1).type = ((Expression) $3).type;
+| expr LTE expr                { if (((Expression) $1.obj).type.type != ((Expression) $3.obj).type.type) {
+                                   yyerror("Type error at line" + lexer.getLine() + "!");
+                                 }
+                                 else {
+                                   ((Expression) $1.obj).type = ((Expression) $3.obj).type;
                                  }
                                  $$.obj = new Comparison((Expression) $1.obj, (Expression) $3.obj, "<="); }
-| expr NEQ expr                { if (((Expression) $1).type.type != ((Expression) $3).type.type){yyerror("Type error at line" + SolverLexer.getLine() + "!");}
-                                 else{
-                                   ((Expression) $1).type = ((Expression) $3).type;
+| expr NEQ expr                { if (((Expression) $1.obj).type.type != ((Expression) $3.obj).type.type) {
+                                   yyerror("Type error at line" + lexer.getLine() + "!");
+                                 }
+                                 else {
+                                   ((Expression) $1.obj).type = ((Expression) $3.obj).type;
                                  }
                                  $$.obj = new Comparison((Expression) $1.obj, (Expression) $3.obj, "!="); }
-| expr EQ expr                 { if (((Expression) $1).type.type != ((Expression) $3).type.type){yyerror("Type error at line" + SolverLexer.getLine() + "!");}
-                                 else{
-                                   ((Expression) $1).type = ((Expression) $3).type;
+| expr EQ expr                 { if (((Expression) $1.obj).type.type != ((Expression) $3.obj).type.type) {
+                                   yyerror("Type error at line" + lexer.getLine() + "!");
+                                 }
+                                 else {
+                                   ((Expression) $1.obj).type = ((Expression) $3.obj).type;
                                  }
                                  $$.obj = new Comparison((Expression) $1.obj, (Expression) $3.obj, "=="); }
-| expr '+' expr                { if (((Expression) $1).type.type != ((Expression) $3).type.type){yyerror("Type error at line" + SolverLexer.getLine() + "!");}
-                                 else{
-                                   ((Expression) $1).type = ((Expression) $3).type;
+| expr '+' expr                { if (((Expression) $1.obj).type.type != ((Expression) $3.obj).type.type) {
+                                   yyerror("Type error at line" + lexer.getLine() + "!");
+                                 }
+                                 else {
+                                   ((Expression) $1.obj).type = ((Expression) $3.obj).type;
                                  }
                                  $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, "+"); }
-| expr '-' expr                { if (((Expression) $1).type.type != ((Expression) $3).type.type){yyerror("Type error at line" + SolverLexer.getLine() + "!");}
-                                 else{
-                                   ((Expression) $1).type = ((Expression) $3).type;
+| expr '-' expr                { if (((Expression) $1.obj).type.type != ((Expression) $3.obj).type.type) {
+                                   yyerror("Type error at line" + lexer.getLine() + "!");
+                                 }
+                                 else {
+                                   ((Expression) $1.obj).type = ((Expression) $3.obj).type;
                                  }
                                  $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, "-"); }
-| expr '*' expr                { if (((Expression) $1).type.type != ((Expression) $3).type.type){yyerror("Type error at line" + SolverLexer.getLine() + "!");}
-                                 else{
-                                   ((Expression) $1).type = ((Expression) $3).type;
+| expr '*' expr                { if (((Expression) $1.obj).type.type != ((Expression) $3.obj).type.type) {
+                                   yyerror("Type error at line" + lexer.getLine() + "!");
+                                 }
+                                 else {
+                                   ((Expression) $1.obj).type = ((Expression) $3.obj).type;
                                  }
                                  $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, "*"); }
-| expr '/' expr                { if (((Expression) $1).type.type != ((Expression) $3).type.type){yyerror("Type error at line" + SolverLexer.getLine() + "!");}
-                                 else{
-                                   ((Expression) $1).type = ((Expression) $3).type;
+| expr '/' expr                { if (((Expression) $1.obj).type.type != ((Expression) $3.obj).type.type) {
+                                   yyerror("Type error at line" + lexer.getLine() + "!");
+                                 }
+                                 else {
+                                   ((Expression) $1.obj).type = ((Expression) $3.obj).type;
                                  }
                                  $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, "/"); }
-| expr '%' expr                { if (((Expression) $1)).type.type != ((Expression) $3).type.type){yyerror("Type error at line" + SolverLexer.getLine() + "!");}
-                                 else{
-                                   ((Expression) $1).type = ((Expression) $3).type;
+| expr '%' expr                { if (((Expression) $1.obj).type.type != ((Expression) $3.obj).type.type) {
+                                   yyerror("Type error at line" + lexer.getLine() + "!");
+                                 }
+                                 else {
+                                   ((Expression) $1.obj).type = ((Expression) $3.obj).type;
                                  }
                                  $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, "%"); }
-| id '=' expr                  { if (((Expression) $1).type.type != ((Expression) $3).type.type){yyerror("Type error at line" + SolverLexer.getLine() + "!");}
-                                 else{
-                                   ((Expression) $1).type = ((Expression) $3).type;
+| id '=' expr                  { if (((Expression) $1.obj).type.type != ((Expression) $3.obj).type.type) {
+                                   yyerror("Type error at line" + lexer.getLine() + "!");
+                                 }
+                                 else {
+                                   ((Expression) $1.obj).type = ((Expression) $3.obj).type;
                                  }
                                  $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, "="); }
-| id '[' expr ']'              { if (((Expression) $1).type.type.substring(0,4) != "list"){ yyerror("Only lists should be indexed."); }
-                                 else if (((Expression) $3).type.type != 'int'){ yyerror("Lists can only be indexed by ints.");}
+| id '[' expr ']'              { if (((Expression) $1.obj).type.type.substring(0,4) != "list") {
+                                   yyerror("Only lists should be indexed.");
+                                 }
+                                 else if (((Expression) $3.obj).type.type != "int") {
+                                   yyerror("Lists can only be indexed by ints.");
+                                 }
                                  $$.obj = new ListAccess((ID) $1.obj, (Expression) $3.obj); }
 | assignment                   { $$.obj = $1.obj; }
 | access                       { $$.obj = $1.obj; }
 | id                           { $$.obj = $1.obj; }
-| pvalue                       { $$.obj = $1.obj; ((Expression) $$.obj).type = new Type("int"); }
+| pvalue                       { $$.obj = $1.obj; 
+                                 ((Expression) $$.obj).type = new Type("int"); }
 ;
 
 param_list : param_list ',' param      { $$.obj = new ParamList((ParamList)$1.obj, (Param)$3.obj); }
@@ -184,7 +211,7 @@ param_list : param_list ',' param      { $$.obj = new ParamList((ParamList)$1.ob
 ;
 
 
-param : type ID                        { $$.obj = new Param((Type) $1.obj, (ID) $obj); }
+param : type ID                        { $$.obj = new Param((Type) $1.obj, (ID) $2.obj); }
 ;
 
 
@@ -198,10 +225,9 @@ access                     { $$.obj = $1.obj; }
 access : id '[' expr ']'   { $$.obj = new ListAccess((ID) $1.obj, (Expression) $3.obj); }
 ;
 
-list_dec : LIST_T OF type ID           { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, null); }
-| LIST_T OF type id '=' '[' attr_list ']' { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, (AttrList) $7.obj); 
-  ((Expression) $$.obj).type = new Type("list" + type.sval);
-}
+list_dec : LIST_T OF type ID                { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, null); }
+| LIST_T OF type id '=' '[' attr_list ']'   { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, (AttrList) $7.obj); 
+                                              ((Expression) $$.obj).type = new Type("list" + $3.obj); }
 ;
 
 type : ptype                           { $$.obj = $1.obj; }
@@ -227,11 +253,8 @@ ptype : INT_T                          { $$.obj = new pType("int"); }
 | STR_T                                { $$.obj = new pType("String"); }
 ;
 
-<<<<<<< HEAD
-pvalue : INT                           { $$.obj = new pValue($1.ival); }
-=======
-pvalue : INT                           { $$.obj = new pValue($1.ival); ((Expression) $$.obj).type = new pType("int") }
->>>>>>> ef087e8bbbf7c306ec2a8cf05bf36c3ada23a8cc
+pvalue : INT                           { $$.obj = new pValue($1.ival);
+                                         ((Expression) $$.obj).type = new pType("int"); }
 ;
 
 %%

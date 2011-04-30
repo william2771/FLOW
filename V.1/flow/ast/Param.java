@@ -1,13 +1,11 @@
 package flow.ast;
 
-////////////////////
 public class Param {
-	Type type;
+	public Type type;
 	ID id;
 
-	Param(Type type, ID id) {
-	
-	this.type = type;
+	public Param(Type type, ID id) {
+		this.type = type;
 		this.id = id;
 	}
 

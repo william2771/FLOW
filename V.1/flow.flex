@@ -58,6 +58,7 @@ while       { return SolverParser.WHILE; }
 if          { return SolverParser.IF; }
 of          { return SolverParser.OF; }
 use         { return SolverParser.USE; }
+return      { return SolverParser.RET; }
 print       { return SolverParser.PRINT; }
 
 /* arc connector */

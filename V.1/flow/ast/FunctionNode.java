@@ -12,7 +12,7 @@ public class FunctionNode {
 	}
 
 	public String toString() {
-		return "public " + ftype + "(" + signature + ")" + "{" + statements + "}";
+		return "public " + ftype + " (" + signature + ")" + " {\n" + statements + "\n}\n";
 	}
 	
 }
