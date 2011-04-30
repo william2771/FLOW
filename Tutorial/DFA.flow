@@ -22,15 +22,17 @@ function simulate(string input) {
 
 	path next;
 
-	for (path connected: current.arcsOut()){
-
-	    if (connected.symbol == input.substring(i,i+1)){
-
-		next = connected;
-		print "Went to the next edge.";
-
-	    }
-
+	List of path pathlist = current.arcsOut();
+	int j = 0;
+	while(j < path.length)
+	{
+		path connected = pathlist[j];
+		if(connected.symbol == input.substring(i, i+1)
+		{
+			next = connected;
+			print "Went to the net edge.";
+		}
+		j++;
 	}
 
 	if (next){
