@@ -1,4 +1,4 @@
-use SimpleGraph;
+use "SimpleGraph.flowt";
 //This is the graph associated with the parity tester DFA
 START: @Evenstate 1;
 @Oddstate 0;
