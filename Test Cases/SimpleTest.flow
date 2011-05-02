@@ -1,0 +1,25 @@
+use SimpleGraph;
+
+//Sum of all Arc values
+List of Arc arcList = Graph.arcs;
+
+int k = 0;
+int arcSum = 0;
+while(k < arcList.length)
+{
+	arcSum = arcSum + arcList[k].value;
+}
+
+print(arcSum);
+
+//Sum of all Node values
+List of Node nodeList = Graph.nodes;
+
+int j = 0;
+int nodeSum = 0;
+while(j < nodeSum.length)
+{
+	nodeSum = nodeSum + arcList[j].value;
+}
+
+print(nodeSum);

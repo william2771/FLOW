@@ -89,8 +89,12 @@ block_stmt: while_stmt
 
 solver_stmt: list_dec
 | prim_dec
-| assignment                        { $$.obj = $1.obj; }
+| assignment
+| func_call                         { $$.obj = $1.obj; }
 | RET expr                          { /*This is different - make it somehow*/ }
+;
+
+func_call : ID '(' param_list ')' { $$.obj = new FunctionCall((ID) $1,(ParamList) $3); $$.obj.type = $1.obj.type;}
 ;
 
 func_dec : param '(' param_list ')' '{' solver_stmt_list '}'  { $$.obj = new FunctionNode((Param) $1.obj, (ParamList) $3.obj, (SequenceNode) $6.obj); }
@@ -132,7 +136,9 @@ expr : '(' expr ')'            { $$.obj = $2.obj; }
 | assignment                   { $$.obj = $1.obj; }
 | access                       { $$.obj = $1.obj; }
 | id                           { $$.obj = $1.obj; }
-| pvalue                       { $$.obj = $1.obj; }
+| func_call                    { $$.obj = $1.obj; }
+| pvalue                       { $$.obj = $1.obj; 
+                                 ((Expression) $$.obj).type = new Type("int"); }
 ;
 
 param_list : param_list ',' param      { $$.obj = new ParamList((ParamList)$1.obj, (Param)$3.obj); }

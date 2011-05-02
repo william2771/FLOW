@@ -1,0 +1,1 @@
+list of Node nodes = Graph.nodes;
