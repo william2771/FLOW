@@ -1,5 +1,11 @@
 package flow.ast;
 
-public abstract class Type {
-    String type;
+public class Type {
+
+	public Type(String type)
+	{
+		this.type = type;
+	}
+
+	public String type;
 }

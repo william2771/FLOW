@@ -1,4 +1,4 @@
-use "valid.flowt";
+use "valid_v1.flowt";
 
 int x = 0;
 
