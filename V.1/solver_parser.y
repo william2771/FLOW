@@ -90,6 +90,7 @@ block_stmt: while_stmt
 solver_stmt: list_dec
 | prim_dec
 | assignment
+| print_stmt
 | func_call                         { $$.obj = $1.obj; }
 | RET expr                          { /*This is different - make it somehow*/ }
 ;
@@ -178,7 +179,7 @@ type : ptype                           { $$.obj = $1.obj; }
 ;
 
 prim_dec : type id '=' expr            { $$.obj = new PrimDec((pType) $1.obj, (ID) $2.obj, (Expression) $4.obj);
-                                         ((Expression) $2.obj).type = (pType) $1.obj; System.out.println("Assigned type to id");
+                                         ((Expression) $2.obj).type = (pType) $1.obj;
                                          symbols.put(((ID) $2.obj).toString(), $2.obj); }
 ;
 
@@ -190,7 +191,7 @@ attr : pvalue                          { $$.obj = $$.obj; }
 ;
 
 id : ID                                { if (symbols.containsKey($1.sval)) {
-                                           $$.obj = symbols.get($1.sval); System.out.println("Identified symbol from the table");
+                                           $$.obj = symbols.get($1.sval);
                                          }
                                          else {
                                            $$.obj = new ID($1.sval);
@@ -208,6 +209,9 @@ pvalue : INT                           { $$.obj = new pValue($1.ival);
                                          ((Expression) $$.obj).type = new pType("double"); }
 | STR                                  { $$.obj = new pValue($1.sval);
                                          ((Expression) $$.obj).type = new pType("String"); }
+;
+
+print_stmt : PRINT expr                { $$.obj = new Print((Expression) $2.obj); }
 ;
 
 %%
@@ -234,8 +238,8 @@ pvalue : INT                           { $$.obj = new pValue($1.ival);
 
   private Type check_type(Expression e1, Expression e2) {
     if (e1.type.type != e2.type.type) {
-      yyerror("Type error at line" + lexer.getLine() + "!");
-      return null;
+      yyerror("Type error at line " + lexer.getLine() + "!");
+      return new pType("error");
     }
     else return e1.type;
   }

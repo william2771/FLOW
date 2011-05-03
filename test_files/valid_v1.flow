@@ -1,11 +1,15 @@
 use "valid_v1.flowt";
 
 int x = 0;
+float ram = 4.9;
 
 /* just testing for syntax */
 x = 2;
 int w = 2;
 x = w;
+
+print ram = ram * (float) w;
+
 int y = w;
 y = w * 3;
 y = x / w;
