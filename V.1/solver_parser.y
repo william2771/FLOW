@@ -94,7 +94,8 @@ solver_stmt: list_dec
 | RET expr                          { /*This is different - make it somehow*/ }
 ;
 
-func_call : ID '(' param_list ')' { $$.obj = new FunctionCall((ID) $1,(ParamList) $3); $$.obj.type = $1.obj.type;}
+func_call : ID '(' param_list ')'                             { $$.obj = new FunctionCall((ID) $1.obj,(ParamList) $3.obj);
+                                                                ((Expression) $$.obj).type = ((Expression) $1.obj).type; }
 ;
 
 func_dec : param '(' param_list ')' '{' solver_stmt_list '}'  { $$.obj = new FunctionNode((Param) $1.obj, (ParamList) $3.obj, (SequenceNode) $6.obj); }
@@ -203,6 +204,10 @@ ptype : INT_T                          { $$.obj = new pType("int"); }
 
 pvalue : INT                           { $$.obj = new pValue($1.ival);
                                          ((Expression) $$.obj).type = new pType("int"); }
+| FLT                                  { $$.obj = new pValue($1.dval);
+                                         ((Expression) $$.obj).type = new pType("double"); }
+| STR                                  { $$.obj = new pValue($1.sval);
+                                         ((Expression) $$.obj).type = new pType("String"); }
 ;
 
 %%
