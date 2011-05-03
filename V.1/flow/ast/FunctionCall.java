@@ -10,6 +10,6 @@ public class FunctionCall extends Expression{
     }
 
     public String toString(){
-	return name.toString() + '(' + params.toString() + ')';
+	return name.toString() + "(" + params.toString() + ")";
     }
 }

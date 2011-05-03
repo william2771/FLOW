@@ -18,12 +18,16 @@ int z = y - 4;
 int i = 0;
 while (x > 0)
 {
-	i = i % 2;
+	x = x / 2;
 }
 
 if(y <= x)
 {
    x = y;
 }
+
+List of int i_list = [3];
+
+i_list[1] = 5;
 
 /* COMMENTS SHOULD BE IGNORED */

@@ -4,18 +4,19 @@ public class ListDec extends StatementNode {
 
 	public ListDec( Type type, ID id, AttrList alist)
 	{
-		this.type = type;
 		this.id = id;
 		this.aList = aList;
+		if (type.type == "int") this.type = "Integer";
+		else if (type.type == "double") this.type = "Double";
+		else this.type = type.toString();
 	}
 
-	private Type type;
+	private String type;
 	private ID id;
 	private AttrList aList;
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
-		return "ArrayList " + id + " = new ArrayList(Arrays.asList("+aList+"))";
+		return "ArrayList<" + type + "> " + id + " = new ArrayList<" + type + ">(Arrays.asList("+aList+"))"; 
 	}
 
 }

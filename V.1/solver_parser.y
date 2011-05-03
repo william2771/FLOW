@@ -52,7 +52,7 @@
 valid_program : solver
 ;
 
-solver: type_link solver_stmt_list { $$.sval = "public class Solver {\npublic static void main(String[] args) {\n" + $2.obj.toString() + "}\n}"; 
+solver: type_link solver_stmt_list { $$.sval = "import java.util.*;\n\npublic class Solver {\npublic static void main(String[] args) {\n" + $2.obj.toString() + "}\n}"; 
                                      try {
                                        FileWriter graph_file = new FileWriter(new File("Solver.java"));
                                        graph_file.write($$.sval);
@@ -153,26 +153,28 @@ param : type ID                        { $$.obj = new Param((Type) $1.obj, (ID) 
 ;
 
 
-assignment : lval '=' expr             { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, "=");
+assignment : access '=' expr           { $$.obj = ((ListAccess) $1.obj).makeLVal((Expression) $3.obj);
+                                         ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
+| id '=' expr                          { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, "=");
                                          ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
 ;
 
-lval : id                                { $$.obj = $1.obj; }
-| access                                 { $$.obj = $1.obj; }
-;
-
-access : id '[' expr ']'               { if (((Expression) $1.obj).type.type.substring(0,4) != "list") {
-                                           yyerror("Only lists should be indexed.");
+access : id '[' expr ']'               { if (!((Expression) $1.obj).type.type.substring(0,4).equals("list")) {
+                                           yyerror("Only lists should be indexed. " + ((Expression) $1.obj).type.type.substring(0,4));
                                          }
                                          else if (((Expression) $3.obj).type.type != "int") {
                                            yyerror("Lists can only be indexed by ints.");
                                          }
-                                         $$.obj = new ListAccess((ID) $1.obj, (Expression) $3.obj); }
+                                         $$.obj = new ListAccess((ID) $1.obj, (Expression) $3.obj);
+                                         ((Expression) $$.obj).type = new Type(((ID) $1.obj).type.type.substring(4)); }
 ;
 
-list_dec : LIST_T OF type ID                { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, null); }
+list_dec : LIST_T OF type id                { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, null);
+                                              ((ID) $4.obj).type = new Type("list" + $3.obj);
+                                              symbols.put(((ID) $4.obj).toString(), $4.obj); }
 | LIST_T OF type id '=' '[' attr_list ']'   { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, (AttrList) $7.obj); 
-                                               ((Expression) $$.obj).type = new Type("list" + $3.obj); }
+                                              ((ID) $4.obj).type = new Type("list" + $3.obj);
+                                              symbols.put(((ID) $4.obj).toString(), $4.obj); }
 ;
 
 type : ptype                           { $$.obj = $1.obj; }
@@ -237,8 +239,8 @@ print_stmt : PRINT expr                { $$.obj = new Print((Expression) $2.obj)
   }
 
   private Type check_type(Expression e1, Expression e2) {
-    if (e1.type.type != e2.type.type) {
-      yyerror("Type error at line " + lexer.getLine() + "!");
+    if (!e1.type.type.equals(e2.type.type)) {
+      yyerror("Type mismatch error at line " + (lexer.getLine() + 1) + "! " + e1.type.type + " != " + e2.type.type);
       return new pType("error");
     }
     else return e1.type;

@@ -12,4 +12,9 @@ public class ListAccess extends Expression {
 	public String toString(){
 		return id + ".get(" + exp + ")";
 	}
+
+	public ListAssign makeLVal(Expression value)
+	{
+		return new ListAssign(id, exp, value);
+	}
 }
