@@ -21,7 +21,7 @@ Test1 :	Flow.class SimpleTest.flow SimpleGraph.flowg
 	java Flow ../Test\ Cases/SimpleGraph.flowg
 	
 Test2 : Flow.class ParityTest.flow SimpleGraph.flowg
-	java Flow ParityTest.flow
+	java Flow ../Test\ Cases/ParityTest.flow
 	java Flow SimpleGraph.flowg
 	
 clean :

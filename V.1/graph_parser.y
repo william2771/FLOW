@@ -78,7 +78,7 @@ type_link : USE STR ';'                { /* process the typedef file */
                                          {
                                            String filepath = symbols.get("filepath") + $2.sval;
                                            System.out.println("\nTrying to open " + filepath + "\n");
-                                           TypeParser tparser = new TypeParser(new FileReader(filepath), new Hashtable());
+                                           TypeParser tparser = new TypeParser(new FileReader(filepath), symbols);
                                            tparser.yyparse();
                                          }
                                          catch(IOException e)
