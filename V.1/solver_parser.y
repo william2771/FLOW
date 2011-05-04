@@ -201,7 +201,7 @@ type : ptype                           { $$.obj = $1.obj; }
 | ARC_T                                { $$.obj = new Type("Arc"); }
 ;
 
-prim_dec : type id '=' expr           { type_check((Type)$1.obj, (Expr)$4.obj);
+prim_dec : type id '=' expr           { type_check((Type) $1.obj, (Expression) $4.obj);
                                         $$.obj = new PrimDec((pType) $1.obj, (ID) $2.obj, (Expression) $4.obj);
                                         ((Expression) $2.obj).type = (Type) $1.obj;
                                         symbols.put(((ID) $2.obj).toString(), $2.obj); }
