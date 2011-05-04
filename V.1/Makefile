@@ -1,4 +1,6 @@
-YACC = yacc.macosx
+#YACC = yacc.macosx
+YACC = yacc.linux
+
 AST_FILES = 	flow/ast/ASTNode.java		flow/ast/Expression.java	flow/ast/NodeDec.java		flow/ast/Symbol.java \
 		flow/ast/ArcDec.java		flow/ast/FunctionCall.java	flow/ast/Param.java		flow/ast/SymbolTable.java \
 		flow/ast/Arithmetic.java	flow/ast/FunctionNode.java	flow/ast/ParamList.java		flow/ast/Type.java \
