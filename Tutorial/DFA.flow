@@ -12,7 +12,6 @@ an even number of a's and an even number of b's. */
 use 'DFA.flowt';
 
 function simulate(string input) { 
-
     @current = Graph.START; 
     print "The first current variable is set.";
 
