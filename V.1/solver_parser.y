@@ -52,14 +52,19 @@
 valid_program : solver
 ;
 
-solver: type_link solver_stmt_list { $$.sval = "import java.util.*;\n\npublic class Solver {\npublic static void main(String[] args) {\n" + $2.obj.toString() + "}\n}"; 
-                                     try {
-                                       FileWriter graph_file = new FileWriter(new File("Solver.java"));
-                                       graph_file.write($$.sval);
-                                       graph_file.flush();
+solver: type_link solver_stmt_list { $$.sval = "import java.util.*;\n\npublic class Solver {\npublic static void main(String[] args) {\n" + $2.obj.toString() + "}\n}";
+                                     if (errors == 0) {
+                                       try {
+                                         FileWriter graph_file = new FileWriter(new File("Solver.java"));
+                                         graph_file.write($$.sval);
+                                         graph_file.flush();
+                                       }
+                                       catch(IOException e) {
+                                         yyerror("Could not create Solver file.");
+                                       }
                                      }
-                                     catch(IOException e) {
-                                       yyerror("Could not create Solver file.");
+                                     else {
+                                       System.out.println("\n" + errors + " errors\n");
                                      } }
 ;
 
@@ -67,7 +72,7 @@ type_link : USE STR ';'    { /* process the typedef file */
                              labels = new ArrayList<String>();
                              try {
                                String filepath = symbols.get("filepath") + $2.sval;
-                               System.out.println("\nTrying to open " + filepath + "\n");
+                               //System.out.println("\nTrying to open " + filepath + "\n");
                                TypeParser tparser = new TypeParser(new FileReader(filepath), new Hashtable());
                                tparser.yyparse();
                               }
@@ -152,7 +157,6 @@ param_list : param_list ',' param      { $$.obj = new ParamList((ParamList)$1.ob
 param : type ID                        { $$.obj = new Param((Type) $1.obj, (ID) $2.obj); }
 ;
 
-
 assignment : access '=' expr           { $$.obj = ((ListAccess) $1.obj).makeLVal((Expression) $3.obj);
                                          ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
 | id '=' expr                          { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, "=");
@@ -178,6 +182,8 @@ list_dec : LIST_T OF type id                { $$.obj = new ListDec((Type) $3.obj
 ;
 
 type : ptype                           { $$.obj = $1.obj; }
+| NODE_T                               { $$.obj = new Type("Node"); }
+| ARC_T                                { $$.obj = new Type("Arc"); }
 ;
 
 prim_dec : type id '=' expr            { $$.obj = new PrimDec((pType) $1.obj, (ID) $2.obj, (Expression) $4.obj);
@@ -221,6 +227,7 @@ print_stmt : PRINT expr                { $$.obj = new Print((Expression) $2.obj)
   private SolverLexer lexer;
   private Hashtable symbols;
   private ArrayList<String> labels;
+  private int errors; //Keeps track of syntax errors
 
   private int yylex () {
     int yyl_return = -1;
@@ -241,6 +248,7 @@ print_stmt : PRINT expr                { $$.obj = new Print((Expression) $2.obj)
   private Type check_type(Expression e1, Expression e2) {
     if (!e1.type.type.equals(e2.type.type)) {
       yyerror("Type mismatch error at line " + (lexer.getLine() + 1) + "! " + e1.type.type + " != " + e2.type.type);
+      errors++;
       return new pType("error");
     }
     else return e1.type;
@@ -250,12 +258,9 @@ print_stmt : PRINT expr                { $$.obj = new Print((Expression) $2.obj)
     System.err.println ("Error: " + error);
   }
 
-  public SolverParser(Reader r) {
-    lexer = new SolverLexer(r, this);
-  }
-
   public SolverParser(Reader r, Hashtable symbols)
   {
     lexer = new SolverLexer(r, this);
     this.symbols = symbols;
+    errors = 0; //no errors yet
   }

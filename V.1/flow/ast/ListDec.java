@@ -14,9 +14,14 @@ public class ListDec extends StatementNode {
 	private String type;
 	private ID id;
 	private AttrList aList;
-	@Override
+
 	public String toString() {
-		return "ArrayList<" + type + "> " + id + " = new ArrayList<" + type + ">(Arrays.asList("+aList+"))"; 
+		if (aList != null) {
+			return "ArrayList<" + type + "> " + id + " = new ArrayList<" + type + ">(Arrays.asList("+aList+"))";
+		}
+		else {
+			return "ArrayList<" + type + "> " + id + " = new ArrayList<" + type + ">()";
+		}
 	}
 
 }

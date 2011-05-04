@@ -8,4 +8,9 @@ public class Type {
 	}
 
 	public String type;
+
+	public String toString()
+	{
+		return type;
+	}
 }
