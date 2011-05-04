@@ -9,8 +9,8 @@ public class AttrList {
         this.tail = tail;
     }
     
-    public String toString(){
-	if (alist != null) return alist +", "+ tail;
+    public String toString() {
+	if (alist != null) return alist.toString() + ", " + tail.toString();
 	else return tail.toString();
     }
 }

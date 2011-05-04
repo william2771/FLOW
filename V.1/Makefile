@@ -30,10 +30,10 @@ TypeParser.java :	type_parser.y
 Test1 :	Flow.class SimpleTest.flow SimpleGraph.flowg
 	java Flow SimpleTest.flow
 	java Flow SimpleGraph.flowg
-	
+
 Test2 : Flow.class ParityTest.flow SimpleGraph.flowg
 	java Flow ParityTest.flow
 	java Flow SimpleGraph.flowg
-	
+
 clean :
 	rm *~ *.class SolverLexer.java SolverParser.java SolverParserVal.java GraphLexer.java GraphParser.java GraphParserVal.java TypeParser.java TypeParserVal.java TypeLexer.java Node.java Arc.java Graph.java Solver.java flow/ast/*.class flow/structure/*.class

@@ -29,7 +29,7 @@ if(y <= x)
   	x = y;
 }
 
-List of Arc ghate;
+//List of Arc ghate;
 
 List of int i_list = [2,3,5,7,11,13];
 
