@@ -2,9 +2,9 @@ package flow.ast;
 
 public class FunctionCall extends Expression{
     ID name;
-    ParamList params;
+    AttrList params;
 
-    public FunctionCall(ID myName, ParamList myParams){
+    public FunctionCall(ID myName, AttrList myParams){
 	name = myName;
 	params = myParams;
     }

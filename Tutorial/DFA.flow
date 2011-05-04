@@ -44,17 +44,17 @@ function simulate(string input) {
 	else{
 
 	    print "There was a problem.  Now exiting.";
-	    return false;
+	    return 0;
 
 	}
 
     }
 
     if (current.isAccepting) {
-    	return true;
+    	return 1;
     }
 
-   return false; 
+   return 0; 
 
 }
 
