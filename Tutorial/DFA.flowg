@@ -2,63 +2,53 @@
 This DFA represents all strings of a's and b's with 
 an even number of a's and an even number of b's. */
 
-/* Building the graph */ 
-
 use 'DFA.flowt';
+
+/* Building the graph */ 
 
 START: @s0 "s0", 0;  //state s0 is labeled as the START state
 @s1 "s1", 0;
+s0 -> s1 "h";
 @s2 "s2", 0; 
+s1 -> s2 "e";
 @s3 "s3", 0;
+s2 -> s3 "l"; 
 @s4 "s4", 0; 
+s3 -> s4 "l"; 
 @s5 "s5", 0; 
+s4 -> s5 "o"; 
 @s6 "s6", 0; 
+s5 -> s6 " "; 
 @s7 "s7", 0; 
+s6 -> s7 "w"; 
 @s8 "s8", 0; 
+s7 -> s8 "o"; 
 @s9 "s9", 0; 
+s8 -> s9 "r";
 @s10 "s10", 0; 
+s9 -> s10 "l"; 
 @s11 "s11", 0;
+s10 -> s11 "d"; 
 @s12 "s12", 1;
+s11 -> s12 "!"; 
 @skill "kill", 0;
 
-/* path definition:  source, then destination, then attributes */
-
-List of string lst = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P','Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z','a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
+List of string ltrLst = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P','Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z','a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
  'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',' ','!'];
-
 List of Node dfaLst = [s0,s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,skill];
 List of string strLst = ["h","e","l","l","o"," ","w","o","r","l","d","!",""];
 
 
 int pos = 0;
-while (pos < dfaLst.length){
-    
-
-
-	
+while (pos < dfaLst.length){	
 	int k = 0;
-	while (k < lst.length)
-	{
-		
-		string character = lst[k];
+	while (k < ltrLst.length)
+	{	
+		string character = ltrLst[k];
 		if(character != strLst[pos])
 		{
 			n -> skill character;
 		}
 	}
-	
 	pos = pos + 1;
 }
-
-s0 -> s1 "h";
-s1 -> s2 "e";
-s2 -> s3 "l"; 
-s3 -> s4 "l"; 
-s4 -> s5 "o"; 
-s5 -> s6 " "; 
-s6 -> s7 "w"; 
-s7 -> s8 "o"; 
-s8 -> s9 "r"); 
-s9 -> s10 "l"; 
-s10 -> s11 "d"; 
-s11 -> s12 "!"; 
