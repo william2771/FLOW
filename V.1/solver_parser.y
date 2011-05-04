@@ -192,7 +192,7 @@ access : id '[' expr ']'               { $$.obj = new ListAccess((ID) $1.obj, (E
 list_dec : LIST_T OF type id                { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, null);
                                               ((ID) $4.obj).type = new Type("list" + $3.obj);
                                               symbols.put(((ID) $4.obj).toString(), $4.obj); }
-| LIST_T OF type id '=' '[' attr_list ']'   { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, (AttrList) $7.obj); 
+| LIST_T OF type id '=' '[' attr_list ']'   { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, (AttrList) $7.obj);
                                               ((ID) $4.obj).type = new Type("list" + $3.obj);
                                               symbols.put(((ID) $4.obj).toString(), $4.obj); }
 ;
@@ -202,13 +202,13 @@ type : ptype                           { $$.obj = $1.obj; }
 | ARC_T                                { $$.obj = new Type("Arc"); }
 ;
 
-prim_dec : ptype id '=' expr           { $$.obj = new PrimDec((pType) $1.obj, (ID) $2.obj, (Expression) $4.obj);
+prim_dec : type id '=' expr           { $$.obj = new PrimDec((pType) $1.obj, (ID) $2.obj, (Expression) $4.obj);
                                          ((Expression) $2.obj).type = (Type) $1.obj;
                                          symbols.put(((ID) $2.obj).toString(), $2.obj); }
 ;
 
 attr_list : attr                       { $$.obj = new AttrList(null, (Attr) $1.obj); }
-| attr_list ',' attr                   { $$.obj = new AttrList((AttrList) $1.obj, (pValue) $3.obj); }
+| attr_list ',' attr                   { $$.obj = new AttrList((AttrList) $1.obj, (Attr) $3.obj); }
 ;
 
 attr : pvalue                          { $$.obj = $1.obj; }
