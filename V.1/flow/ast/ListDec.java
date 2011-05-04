@@ -18,9 +18,10 @@ public class ListDec extends StatementNode {
 
 	public String toString() {
 	    if (aList != null) {
+		String temp_name = id.toString() + "_tmp";
 		String str;
-		str = type + "[] tmp = {" + aList.toString() + "};\n";
-		str +=  "ArrayList<" + type + "> " + id + " = new ArrayList<" + type + ">((List<" + type + ">) Arrays.asList(tmp))";
+		str = type + "[] " + temp_name + " = {" + aList.toString() + "};\n";
+		str +=  "ArrayList<" + type + "> " + id + " = new ArrayList<" + type + ">((List<" + type + ">) Arrays.asList(" + temp_name + "))";
 		return str;
 	    }
 	    else {
