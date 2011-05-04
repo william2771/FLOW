@@ -101,7 +101,7 @@ solver_stmt: list_dec
 | RET expr                          { /*This is different - make it somehow*/ }
 ;
 
-func_call : ID '(' param_list ')'                             { $$.obj = new FunctionCall((ID) $1.obj,(ParamList) $3.obj);
+func_call : id '(' attr_list ')'                              { $$.obj = new FunctionCall((ID) $1.obj, (AttrList) $3.obj);
                                                                 ((Expression) $$.obj).type = ((Expression) $1.obj).type; }
 ;
 
