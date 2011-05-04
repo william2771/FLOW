@@ -33,7 +33,11 @@ if(y <= x)
 
 List of int i_list = [2,3,5,7,11,13];
 
+print i_list;
+
 i_list[1] = 5;
+
+print i_list;
 
 List of int list2 = [4,5,6];
 
