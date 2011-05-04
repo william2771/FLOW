@@ -13,59 +13,52 @@ use 'DFA.flowt';
 
 function simulate(string input) { 
 
-    dfa current = START; 
+    @current = Graph.START; 
     print "The first current variable is set.";
 
     print "Entering the for loop to look through the arcs.";
 
-    for (int i = 0; i < input.length; i++) {
-
-	path next;
-
-	List of path pathlist = current.arcsOut();
+    int i = 0;
+    while(i < input.length) {
+	Arc next;
+	List of Arc pathLst = current.arcsOut();
+	
 	int j = 0;
-	while(j < path.length)
+	while(j < pathLst.length)
 	{
-		path connected = pathlist[j];
-		if(connected.symbol == input.substring(i, i+1)
-		{
-			next = connected;
-			print "Went to the net edge.";
-		}
-		j++;
+	    Arc connected = pathLst[j];
+	    if(connected.symbol == input.substring(i, i+1)
+	    {
+		next = connected;
+		print "Went to the next edge.";
+	    }
+	    j++;
 	}
 
-	if (next){
-
+	if (next) {
 	    print "Navigating to the node at the end of that edge.";
 	    current = next.to;
-
 	}
-	else{
-
+	else {
 	    print "There was a problem.  Now exiting.";
 	    return 0;
-
 	}
-
+	i = i + 1;
     }
 
     if (current.isAccepting) {
     	return 1;
     }
-
-   return 0; 
-
+	
+    return 0;
 }
 
 /* All code not within a function definition will execute every time */
 
 string input = "Hello World";
-
 print "Input is '" + input + "'\n"; 
 
 if (simulate(input)) {
 	print "Input is accepted.\n";
 }
-
 else print "Input is not accepted.\n";
