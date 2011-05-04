@@ -43,8 +43,8 @@
 %left '%'
 %left '*' '/'
 %right CAST
-%right OF           /* used for defining List types */
 %right NEG          /* negation--unary minus */
+%left '.'           /* attribute access for aggregate types */
 
 %%
 
@@ -65,6 +65,8 @@ solver: type_link solver_stmt_list { $$.sval = "import java.util.*;\n\npublic cl
                                      else {
                                        System.out.println("\n" + errors + " errors\n");
                                      } }
+| solver_stmt_list                 { yyerror("The first statement in the file must be a typelink.");
+                                     System.out.println("\n" + errors + " errors\n"); }
 ;
 
 type_link : USE STR ';'    { /* process the typedef file */ 
@@ -144,11 +146,12 @@ expr : '(' expr ')'            { $$.obj = $2.obj; }
 | id                           { $$.obj = $1.obj;
                                  if (!symbols.containsKey(((ID) $1.obj).toString())) {
                                    yyerror("Undeclared variable on line " + lexer.getLine());
-                                   ((Expression) $$.obj).type = new Type("error");
+                                   ((Expression) $$.obj).type = new pType("error");
                                  }
                                  else {
                                    ((Expression) $$.obj).type = ((ID) $1.obj).type;
                                  } }
+| id '.' id                    {}
 | func_call                    { $$.obj = $1.obj; }
 | pvalue                       { $$.obj = $1.obj; 
                                  ((Expression) $$.obj).type = new Type("int"); }
@@ -171,15 +174,15 @@ assignment : access '=' expr           { $$.obj = ((ListAccess) $1.obj).makeLVal
 access : id '[' expr ']'               { $$.obj = new ListAccess((ID) $1.obj, (Expression) $3.obj);
                                          if (!symbols.containsKey(((ID) $1.obj).toString())) {
                                            yyerror("Undeclared list at line " + lexer.getLine());
-                                           ((Expression) $$.obj).type = new Type("error");
+                                           ((Expression) $$.obj).type = new pType("error");
                                          }
                                          else if (!((Expression) $1.obj).type.type.substring(0,4).equals("list")) {
                                            yyerror("Only Lists can be indexed. " + ((Expression) $1.obj).type.type.substring(0,4));
-                                           ((Expression) $$.obj).type = new Type("error");
+                                           ((Expression) $$.obj).type = new pType("error");
                                          }
                                          else if (((Expression) $3.obj).type.type != "int") {
                                            yyerror("Lists can only be indexed by ints.");
-                                           ((Expression) $$.obj).type = new Type("error");
+                                           ((Expression) $$.obj).type = new pType("error");
                                          }
                                          else {
                                            ((Expression) $$.obj).type = new Type(((ID) $1.obj).type.type.substring(4));
@@ -199,8 +202,8 @@ type : ptype                           { $$.obj = $1.obj; }
 | ARC_T                                { $$.obj = new Type("Arc"); }
 ;
 
-prim_dec : type id '=' expr            { $$.obj = new PrimDec((pType) $1.obj, (ID) $2.obj, (Expression) $4.obj);
-                                         ((Expression) $2.obj).type = (pType) $1.obj;
+prim_dec : ptype id '=' expr           { $$.obj = new PrimDec((pType) $1.obj, (ID) $2.obj, (Expression) $4.obj);
+                                         ((Expression) $2.obj).type = (Type) $1.obj;
                                          symbols.put(((ID) $2.obj).toString(), $2.obj); }
 ;
 
@@ -253,7 +256,7 @@ print_stmt : PRINT expr                { $$.obj = new Print((Expression) $2.obj)
     }
 
     //Print the token value - used for debugging
-    //System.out.println(yyl_return);
+    System.out.println(yyl_return);
 
     return yyl_return;
   }
@@ -267,7 +270,7 @@ print_stmt : PRINT expr                { $$.obj = new Print((Expression) $2.obj)
   }
 
   public void yyerror (String error) {
-    System.err.println ("Error: " + error);
+    System.err.println("Error: " + error);
     errors++;
   }
 

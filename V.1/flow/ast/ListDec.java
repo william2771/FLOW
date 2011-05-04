@@ -16,12 +16,11 @@ public class ListDec extends StatementNode {
 	private AttrList aList;
 
 	public String toString() {
-		if (aList != null) {
-			return "ArrayList<" + type + "> " + id + " = new ArrayList<" + type + ">(Arrays.asList("+aList+"))";
-		}
-		else {
-			return "ArrayList<" + type + "> " + id + " = new ArrayList<" + type + ">()";
-		}
+		//if (aList != null) {
+			return "ArrayList<" + type + "> " + id + " = new ArrayList<" + type + ">((List<" + type + ">) Arrays.asList("+aList+"))";
+		//}
+		//else {
+		//	return "ArrayList<" + type + "> " + id + " = new ArrayList<" + type + ">()";
+		//}
 	}
-
 }
