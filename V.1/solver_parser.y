@@ -19,7 +19,6 @@
 %token USE    /* keyword use */
 %token RET    /* keyword return */
 %token PRINT  /* keyword print */
-
 %token STR    /* string literal */
 %token FLT    /* floating-point number literal */
 %token INT    /* integer literal */
@@ -53,7 +52,7 @@ valid_program : solver
 ;
 
 solver: type_link solver_stmt_list { $$.sval = "import java.util.*;\n\npublic class Solver {\npublic static void main(String[] args) {\n" + $2.obj.toString() + "}\n}";
-                                     if (errors == 0) {
+                                     if (errors == 0) { //only create output java file if there are no syntax errors
                                        try {
                                          FileWriter graph_file = new FileWriter(new File("Solver.java"));
                                          graph_file.write($$.sval);
@@ -142,7 +141,14 @@ expr : '(' expr ')'            { $$.obj = $2.obj; }
                                  ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
 | assignment                   { $$.obj = $1.obj; }
 | access                       { $$.obj = $1.obj; }
-| id                           { $$.obj = $1.obj; }
+| id                           { $$.obj = $1.obj;
+                                 if (!symbols.containsKey(((ID) $1.obj).toString())) {
+                                   yyerror("Undeclared variable on line " + lexer.getLine());
+                                   ((Expression) $$.obj).type = new Type("error");
+                                 }
+                                 else {
+                                   ((Expression) $$.obj).type = ((ID) $1.obj).type;
+                                 } }
 | func_call                    { $$.obj = $1.obj; }
 | pvalue                       { $$.obj = $1.obj; 
                                  ((Expression) $$.obj).type = new Type("int"); }
@@ -153,7 +159,6 @@ param_list : param_list ',' param      { $$.obj = new ParamList((ParamList)$1.ob
 | /* empty string */                   { $$.obj = null; }
 ;
 
-
 param : type ID                        { $$.obj = new Param((Type) $1.obj, (ID) $2.obj); }
 ;
 
@@ -163,14 +168,22 @@ assignment : access '=' expr           { $$.obj = ((ListAccess) $1.obj).makeLVal
                                          ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
 ;
 
-access : id '[' expr ']'               { if (!((Expression) $1.obj).type.type.substring(0,4).equals("list")) {
-                                           yyerror("Only lists should be indexed. " + ((Expression) $1.obj).type.type.substring(0,4));
+access : id '[' expr ']'               { $$.obj = new ListAccess((ID) $1.obj, (Expression) $3.obj);
+                                         if (!symbols.containsKey(((ID) $1.obj).toString())) {
+                                           yyerror("Undeclared list at line " + lexer.getLine());
+                                           ((Expression) $$.obj).type = new Type("error");
+                                         }
+                                         else if (!((Expression) $1.obj).type.type.substring(0,4).equals("list")) {
+                                           yyerror("Only Lists can be indexed. " + ((Expression) $1.obj).type.type.substring(0,4));
+                                           ((Expression) $$.obj).type = new Type("error");
                                          }
                                          else if (((Expression) $3.obj).type.type != "int") {
                                            yyerror("Lists can only be indexed by ints.");
+                                           ((Expression) $$.obj).type = new Type("error");
                                          }
-                                         $$.obj = new ListAccess((ID) $1.obj, (Expression) $3.obj);
-                                         ((Expression) $$.obj).type = new Type(((ID) $1.obj).type.type.substring(4)); }
+                                         else {
+                                           ((Expression) $$.obj).type = new Type(((ID) $1.obj).type.type.substring(4));
+                                         } }
 ;
 
 list_dec : LIST_T OF type id                { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, null);
@@ -195,7 +208,7 @@ attr_list : attr                       { $$.obj = new AttrList(null, (Attr) $1.o
 | attr_list ',' attr                   { $$.obj = new AttrList((AttrList) $1.obj, (pValue) $3.obj); }
 ;
 
-attr : pvalue                          { $$.obj = $$.obj; }
+attr : pvalue                          { $$.obj = $1.obj; }
 ;
 
 id : ID                                { if (symbols.containsKey($1.sval)) {
@@ -240,15 +253,14 @@ print_stmt : PRINT expr                { $$.obj = new Print((Expression) $2.obj)
     }
 
     //Print the token value - used for debugging
-    System.out.println(yyl_return);
+    //System.out.println(yyl_return);
 
     return yyl_return;
   }
 
   private Type check_type(Expression e1, Expression e2) {
     if (!e1.type.type.equals(e2.type.type)) {
-      yyerror("Type mismatch error at line " + (lexer.getLine() + 1) + "! " + e1.type.type + " != " + e2.type.type);
-      errors++;
+      yyerror("Type mismatch error at line " + (lexer.getLine() + 1) + ":  " + e1.type.type + " != " + e2.type.type);
       return new pType("error");
     }
     else return e1.type;
@@ -256,6 +268,7 @@ print_stmt : PRINT expr                { $$.obj = new Print((Expression) $2.obj)
 
   public void yyerror (String error) {
     System.err.println ("Error: " + error);
+    errors++;
   }
 
   public SolverParser(Reader r, Hashtable symbols)

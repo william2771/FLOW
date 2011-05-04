@@ -4,6 +4,7 @@ int x = 0;
 float ram = 4.9;
 
 /* just testing for syntax */
+
 x = 2;
 int w = 2;
 x = w;
@@ -25,13 +26,13 @@ while (x > 0)
 
 if(y <= x)
 {
-   x = y;
+  	x = y;
 }
 
 List of Arc ghate;
 
-//List of int i_list = [3];
+List of int i_list = [3];
 
-//i_list[1] = 5;
+i_list[1] = 5;
 
 /* COMMENTS SHOULD BE IGNORED */
