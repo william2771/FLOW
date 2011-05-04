@@ -1,1 +1,2 @@
 list of Node nodes = Graph.nodes;
+list of int distance;
