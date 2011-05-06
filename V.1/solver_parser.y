@@ -193,8 +193,10 @@ access : id '[' expr ']'               { $$.obj = new ListAccess((ID) $1.obj, (E
 list_dec : LIST_T OF type id                { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, null);
                                                 //added space, was new Type("list" ...) -> new Type("list " ...)
                                               ((ID) $4.obj).type = new Type("list " + $3.obj);
+						//This line below is unneccessary as id was already put into the symbol table when it was parsed
                                               symbols.put(((ID) $4.obj).toString(), $4.obj); }
-| LIST_T OF type id '=' '[' attr_list ']'   { //Make a for loop across attr_list and check for type
+| LIST_T OF type id '=' '[' attr_list ']'   { //Do typechecking
+						check_type((Type) $3.obj, (AttrList) $7);
                                                 $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, (AttrList) $7.obj);
                                               ((ID) $4.obj).type = new Type("list " + $3.obj);
                                               symbols.put(((ID) $4.obj).toString(), $4.obj); 
