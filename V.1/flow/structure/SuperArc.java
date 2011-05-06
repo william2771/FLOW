@@ -1,7 +1,5 @@
 package flow.structure;
 
-import java.util.ArrayList;
-
 public class SuperArc {
 	private SuperNode fromNode;
 	
@@ -36,10 +34,10 @@ public class SuperArc {
 		return true;
 	}
 	
-	public ArrayList<SuperNode> getNodes(SuperNode from, SuperNode to){
+	public FlowList<SuperNode> getNodes(SuperNode from, SuperNode to){
 		fromNode = from;
 		toNode = to;
-		ArrayList<SuperNode> twoNodes = new ArrayList<SuperNode>();
+		FlowList<SuperNode> twoNodes = new FlowList<SuperNode>();
 		twoNodes.add(from);
 		twoNodes.add(to);
 		return twoNodes;
