@@ -34,11 +34,13 @@ function simulate(string input) {
 	    j++;
 	}
 
+	int isNext = 0;
 	if (next) {
+	    isNext = 1;
 	    print "Navigating to the node at the end of that edge.";
 	    current = next.to;
 	}
-	else {
+	if (isNext == 0) {
 	    print "There was a problem.  Now exiting.";
 	    return 0;
 	}
@@ -57,7 +59,11 @@ function simulate(string input) {
 string input = "Hello World";
 print "Input is '" + input + "'\n"; 
 
+int truth = 0;
 if (simulate(input)) {
+	truth = 1;
 	print "Input is accepted.\n";
 }
-else print "Input is not accepted.\n";
+if (truth == 0) {
+	print "Input is not accepted.\n";
+}
