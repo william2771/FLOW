@@ -10,13 +10,13 @@ AST_FILES = 	flow/ast/ASTNode.java		flow/ast/Expression.java	flow/ast/NodeDec.ja
 		flow/ast/Cast.java		flow/ast/ListAccess.java	flow/ast/SequenceNode.java	flow/ast/pValue.java \
 		flow/ast/Comparison.java	flow/ast/ListDec.java		flow/ast/StatementNode.java	flow/ast/ListAssign.java
 
-FLAGS = -Xlint
+
 TESTDIR = ../Test\ Cases/
 
 
 all :	Flow.class
 Flow.class :	Flow.java SolverLexer.java SolverParser.java GraphLexer.java GraphParser.java TypeParser.java TypeLexer.java $(AST_FILES)
-	javac $(FLAGS) Flow.java
+	javac Flow.java
 SolverLexer.java :	flow.flex
 	jflex flow.flex
 SolverParser.java :	solver_parser.y
