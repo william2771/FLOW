@@ -88,9 +88,32 @@ solver_stmt_list : solver_stmt ';'  { $$.obj = new SequenceNode(null, (Statement
 | solver_stmt_list block_stmt       { $$.obj = new SequenceNode((SequenceNode) $1.obj, (StatementNode) $2.obj); }
 ;
 
+func_stmt_list : func_stmt ';'  { $$.obj = new FuncSequenceNode(null, (StatementNode) $1.obj); }
+| func_block_stmt                        { $$.obj = new FuncSequenceNode(null, (StatementNode) $1.obj); }
+| func_stmt_list func_stmt ';'  { $$.obj = new FuncSequenceNode((FuncSequenceNode) $1.obj, (StatementNode) $2.obj); }
+| func_stmt_list func_block_stmt       { $$.obj = new FuncSequenceNode((FuncSequenceNode) $1.obj, (StatementNode) $2.obj); 
+   if (((StatementNode) $2.obj).type == null){
+     ((FuncSequenceNode) $$.obj).type = ((FuncSequenceNode) $1.obj).type;
+   }
+   else if(((FuncSequenceNode) $1.obj).type == null){
+     ((FuncSequenceNode) $$.obj).type = ((FuncSequenceNode) $1.obj).type;   
+   }
+   else if (((FuncSequenceNode) $1.obj).type != ((StatementNode) $2.obj).type){
+     yyerror("You are returning the wrong type.");
+   }
+   else{
+     ((FuncSequenceNode) $$.obj).type = ((StatementNode) $2.obj).type;   
+   }
+ }
+;
+
 block_stmt: while_stmt
 | if_stmt
 | func_dec                          { $$.obj = $1.obj; }
+;
+
+func_block_stmt: while_stmt
+| if_stmt
 ;
 
 solver_stmt: list_dec
@@ -98,14 +121,25 @@ solver_stmt: list_dec
 | assignment
 | print_stmt
 | func_call                         { $$.obj = $1.obj; }
-| RET expr                          { /*This is different - make it somehow*/ }
+;
+
+func_stmt: list_dec
+| prim_dec
+| assignment
+| print_stmt
+| func_call                         { $$.obj = $1.obj; }
+| RET expr                          { $$.obj = $2.obj; ((Expression) $$.obj).type = ((Expression) $2.obj).type}
 ;
 
 func_call : id '(' attr_list ')'                              { $$.obj = new FunctionCall((ID) $1.obj, (AttrList) $3.obj);
                                                                 ((Expression) $$.obj).type = ((Expression) $1.obj).type; }
 ;
 
-func_dec : param '(' param_list ')' '{' solver_stmt_list '}'  { $$.obj = new FunctionNode((Param) $1.obj, (ParamList) $3.obj, (SequenceNode) $6.obj); }
+func_dec : param '(' param_list ')' '{' func_stmt_list '}'  { $$.obj = new FunctionNode((Param) $1.obj, (ParamList) $3.obj, (SequenceNode) $6.obj); 
+   if (((Param) $1).type != ((FuncSequenceNode $3).type)){
+     yyerror("You are returning the wrong type.");
+   }
+}
 ;
 
 while_stmt : WHILE '(' expr ')' '{' solver_stmt_list '}'      { $$.obj = new WhileNode((Expression) $3.obj, (SequenceNode) $6.obj ); }

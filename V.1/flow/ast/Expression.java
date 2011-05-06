@@ -2,7 +2,9 @@ package flow.ast;
 
 public class Expression extends StatementNode {
 
-        public Type type;
+    public Expression(){
+	type = null;
+    }
 
 	@Override
 	public String toString() {

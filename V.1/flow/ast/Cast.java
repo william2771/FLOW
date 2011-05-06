@@ -4,6 +4,7 @@ public class Cast extends Expression {
     Expression expr;
 
     public Cast(String t,Expression e){
+	super();
 	expr = e;
     }
 

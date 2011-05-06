@@ -5,6 +5,7 @@ public class Unary extends Expression {
 	private String operator;
 
     public Unary(Expression expr, String oper){
+	super();
 	e = expr;
 	operator = oper;
     }
