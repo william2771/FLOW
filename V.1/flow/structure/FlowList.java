@@ -1,4 +1,7 @@
+package flow.structure;
+
 import java.util.ArrayList;
+
 
 @SuppressWarnings("serial")
 public class FlowList<E> extends ArrayList<E>
