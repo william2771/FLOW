@@ -38,5 +38,9 @@ Test2 : Flow.class $(TESTDIR)ParityTest.flow $(TESTDIR)SimpleGraph.flowg $(TESTD
 	java Flow $(TESTDIR)SimpleGraph.flowg
 	java Flow $(TESTDIR)ParityTest.flow
 
+Function : Flow.class $(TESTDIR)SimpleGraph.flowg $(TESTDIR)SimpleGraph.flowt $(TESTDIR)FunctionTest.flow
+	java Flow $(TESTDIR)SimpleGraph.flowg
+	java Flow $(TESTDIR)FunctionTest.flow
+
 clean :
 	rm *~ *.class SolverLexer.java SolverParser.java SolverParserVal.java GraphLexer.java GraphParser.java GraphParserVal.java TypeParser.java TypeParserVal.java TypeLexer.java Node.java Arc.java Graph.java Solver.java flow/ast/*.class flow/structure/*.class
