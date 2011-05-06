@@ -45,7 +45,10 @@ string a = "this is a string";
 
 string b = " and so is this";
 
+
+if (x) {
 print a == b;
+}
 
 //Node node1 = Graph.START;
 

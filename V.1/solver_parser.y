@@ -74,12 +74,12 @@ type_link : USE STR ';'    { /* process the typedef file */
                              try {
                                String filepath = symbols.get("filepath") + $2.sval;
                                //System.out.println("\nTrying to open " + filepath + "\n");
-                               TypeParser tparser = new TypeParser(new FileReader(filepath), new Hashtable());
+                               TypeParser tparser = new TypeParser(new FileReader(filepath), symbols);
                                tparser.yyparse();
                               }
                               catch(IOException e) {
                                 yyerror("Could not open typedef file.");
-                            } }
+                              } }
 ;
 
 solver_stmt_list : solver_stmt ';'  { $$.obj = new SequenceNode(null, (StatementNode) $1.obj); }
