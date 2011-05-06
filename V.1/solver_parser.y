@@ -150,8 +150,18 @@ expr : '(' expr ')'            { $$.obj = $2.obj; }
                                  else if (((Expression) $1.obj).type.type.equals("Node")) {
                                    if (((Hashtable) symbols.get("node_attributes")).containsKey(((ID) $3.obj).toString()))
                                      ((Expression) $$.obj).type = ((Type) ((Hashtable) symbols.get("node_attributes")).get(((ID) $3.obj).toString()));
+                                   else {
+                                     yyerror("Node attribute '" + ((Expression) $3.obj).type.type + "' does not exist");
+                                     ((Expression) $$.obj).type = new pType("error");
+                                   }
                                  }
                                  else if (((Expression) $1.obj).type.type.equals("Arc")) {
+                                   if (((Hashtable) symbols.get("arc_attributes")).containsKey(((ID) $3.obj).toString()))
+                                     ((Expression) $$.obj).type = ((Type) ((Hashtable) symbols.get("arc_attributes")).get(((ID) $3.obj).toString()));
+                                   else {
+                                     yyerror("Arc attribute '" + ((Expression) $3.obj).type.type + "' does not exist");
+                                     ((Expression) $$.obj).type = new pType("error");
+                                   }
                                  }
                                  else {
                                    yyerror("Dot operator applied to invalid type: " + ((Expression) $1.obj).type.type);
