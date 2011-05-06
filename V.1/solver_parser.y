@@ -150,7 +150,7 @@ expr : '(' expr ')'            { $$.obj = $2.obj; }
                                    if (((Hashtable) symbols.get("node_attributes")).containsKey(((ID) $3.obj).toString()))
                                      ((Expression) $$.obj).type = ((Type) ((Hashtable) symbols.get("node_attributes")).get(((ID) $3.obj).toString()));
                                    else {
-                                     yyerror("Node attribute '" + ((Expression) $3.obj).type.type + "' does not exist");
+                                     yyerror("Node attribute '" + ((Expression) $3.obj).toString() + "' is not defined");
                                      ((Expression) $$.obj).type = new pType("error");
                                    }
                                  }
@@ -158,7 +158,7 @@ expr : '(' expr ')'            { $$.obj = $2.obj; }
                                    if (((Hashtable) symbols.get("arc_attributes")).containsKey(((ID) $3.obj).toString()))
                                      ((Expression) $$.obj).type = ((Type) ((Hashtable) symbols.get("arc_attributes")).get(((ID) $3.obj).toString()));
                                    else {
-                                     yyerror("Arc attribute '" + ((Expression) $3.obj).type.type + "' does not exist");
+                                     yyerror("Arc attribute '" + ((Expression) $3.obj).toString() + "' is not defined");
                                      ((Expression) $$.obj).type = new pType("error");
                                    }
                                  }
@@ -171,6 +171,7 @@ expr : '(' expr ')'            { $$.obj = $2.obj; }
                                    ((Expression) $$.obj).type = ((ID) symbols.get(((ID) $3.obj).toString())).type;
                                  }
                                  else {
+                                   yyerror("Graph attribute '" + ((Expression) $3.obj).toString() + "' is not defined");
                                    ((Expression) $$.obj).type = new pType("error");
                                  } }
 | assignment                   { $$.obj = $1.obj; }
@@ -184,7 +185,6 @@ expr : '(' expr ')'            { $$.obj = $2.obj; }
                                    ((Expression) $$.obj).type = ((ID) $1.obj).type;
                                  } }
 | func_call                    { $$.obj = $1.obj; }
-
 | pvalue                       { $$.obj = $1.obj; }
 
 ;
@@ -222,11 +222,11 @@ access : id '[' expr ']'               { $$.obj = new ListAccess((ID) $1.obj, (E
 ;
 
 list_dec : LIST_T OF type id                { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, null);
-                                                //added space, was new Type("list" ...) -> new Type("list " ...)
+                                              //added space, was new Type("list" ...) -> new Type("list " ...)
                                               ((ID) $4.obj).type = new Type("list " + $3.obj);
                                               symbols.put(((ID) $4.obj).toString(), $4.obj); }
 | LIST_T OF type id '=' '[' attr_list ']'   { //Make a for loop across attr_list and check for type
-                                                $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, (AttrList) $7.obj);
+                                              $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, (AttrList) $7.obj);
                                               ((ID) $4.obj).type = new Type("list " + $3.obj);
                                               symbols.put(((ID) $4.obj).toString(), $4.obj); 
                                               }
@@ -238,10 +238,10 @@ type : ptype                           { $$.obj = $1.obj; }
 ;
 
 
-prim_dec : type id '=' expr           { check_type((Type) $1.obj, (Expression) $4.obj);
-                                        $$.obj = new PrimDec((Type) $1.obj, (ID) $2.obj, (Expression) $4.obj);
-                                        ((Expression) $2.obj).type = (Type) $1.obj;
-                                        symbols.put(((ID) $2.obj).toString(), $2.obj); }
+prim_dec : type id '=' expr            { check_type((Type) $1.obj, (Expression) $4.obj);
+                                         $$.obj = new PrimDec((Type) $1.obj, (ID) $2.obj, (Expression) $4.obj);
+                                         ((Expression) $2.obj).type = (Type) $1.obj;
+                                         symbols.put(((ID) $2.obj).toString(), $2.obj); }
 ;
 
 attr_list : attr                       { $$.obj = new AttrList(null, (Attr) $1.obj); }
@@ -294,7 +294,7 @@ print_stmt : PRINT expr                { $$.obj = new Print((Expression) $2.obj)
     }
 
     //Print the token value - used for debugging
-    System.out.println(yyl_return);
+    //System.out.println(yyl_return);
 
     return yyl_return;
   }
