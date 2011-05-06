@@ -8,16 +8,21 @@ public class pValue extends Attr {
 
 	public pValue(int val)
 	{
+	    super();
 		ival = val;
 	}
 
 	public pValue(double val)
 	{
+	    super();
+
 		dval = val;
 	}
 
 	public pValue(String val)
 	{
+	    super();
+
 		sval = val;
 	}
 
