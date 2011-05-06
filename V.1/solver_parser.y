@@ -120,6 +120,7 @@ expr : '(' expr ')'            { $$.obj = $2.obj; }
 | '-' expr %prec NEG           { $$.obj = new Unary((Expression) $2.obj, $1.sval);
                                  ((Expression) $$.obj).type = ((Expression) $2.obj).type; }
 | expr '>' expr                { $$.obj = new Comparison((Expression) $1.obj, (Expression) $3.obj, ">");
+                                 /* comparison and arithmetic operators must be applied to operands of the same type */
                                  ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
 | expr GTE expr                { $$.obj = new Comparison((Expression) $1.obj, (Expression) $3.obj, ">=");
                                  ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
@@ -141,12 +142,26 @@ expr : '(' expr ')'            { $$.obj = $2.obj; }
                                  ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
 | expr '%' expr                { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, "%");
                                  ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
-| id '.' id                    {  }
+| id '.' id                    { $$.obj = new Dot((ID) $1.obj, (ID) $3.obj);
+                                 if (((Expression) $1.obj).type.type.equals("List")) {
+                                   /* copy the type of the accessed attribute */
+                                   ((Expression) $$.obj).type = ((Expression) $3.obj).type;
+                                 }
+                                 else if (((Expression) $1.obj).type.type.equals("Node")) {
+                                   if (((Hashtable) symbols.get("node_attributes")).containsKey(((ID) $3.obj).toString()))
+                                     ((Expression) $$.obj).type = ((Type) ((Hashtable) symbols.get("node_attributes")).get(((ID) $3.obj).toString()));
+                                 }
+                                 else if (((Expression) $1.obj).type.type.equals("Arc")) {
+                                 }
+                                 else {
+                                   yyerror("Dot operator applied to invalid type: " + ((Expression) $1.obj).type.type);
+                                   ((Expression) $$.obj).type = new pType("error");
+                                 } }
 | assignment                   { $$.obj = $1.obj; }
 | access                       { $$.obj = $1.obj; }
 | id                           { $$.obj = $1.obj;
                                  if (!symbols.containsKey(((ID) $1.obj).toString())) {
-                                   yyerror("Undeclared variable on line " + lexer.getLine());
+                                   yyerror("Undeclared variable '" + ((ID) $1.obj).toString() + "'");
                                    ((Expression) $$.obj).type = new pType("error");
                                  }
                                  else {
@@ -263,7 +278,7 @@ print_stmt : PRINT expr                { $$.obj = new Print((Expression) $2.obj)
 
   private Type check_type(Expression e1, Expression e2) {
     if (!e1.type.type.equals(e2.type.type)) {
-      yyerror("Type mismatch error at line " + (lexer.getLine() + 1) + ":  " + e1.type.type + " != " + e2.type.type);
+      yyerror("Type mismatch error:  " + e1.type.type + " != " + e2.type.type);
       return new pType("error");
     }
     else return e1.type;
@@ -271,14 +286,14 @@ print_stmt : PRINT expr                { $$.obj = new Print((Expression) $2.obj)
   
   private Type check_type(Type t1, Expression e2) {
     if (!t1.type.equals(e2.type.type)) {
-      yyerror("Type mismatch error at line " + (lexer.getLine() + 1) + ":  " + t1.type + " != " + e2.type.type);
+      yyerror("Type mismatch error:  " + t1.type + " != " + e2.type.type);
       return new pType("error");
     }
     else return t1;
   }  
 
   public void yyerror (String error) {
-    System.err.println("Error: " + error);
+    System.err.println("Error: " + error + "\n\tat line " + (lexer.getLine() + 1));
     errors++;
   }
 

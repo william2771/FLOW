@@ -34,7 +34,8 @@ node_type_def : NODE_T ID '(' param_list ')' label_list ';'
                                          for (String s : (ArrayList<String>) $4.obj)
                                          {
                                            if (comma) $$.sval += ", ";
-                                           $$.sval += symbols.get(s) + " " + s;
+                                           $$.sval += inter.get(s) + " " + s;
+                                           ((Hashtable) symbols.get("node_attributes")).put(s, inter.get(s));
                                            comma = true;
                                          }
                                          $$.sval += ") {\n";
@@ -45,7 +46,7 @@ node_type_def : NODE_T ID '(' param_list ')' label_list ';'
                                          $$.sval += "  }\n";
                                          for (String s : (ArrayList<String>) $4.obj)
                                          {
-                                           $$.sval += "  private " + symbols.get(s) + " " + s + ";\n  public " + symbols.get(s) + " get" + s + "()\n  { return " + s + "; }\n";
+                                           $$.sval += "  private " + inter.get(s) + " " + s + ";\n  public " + inter.get(s) + " get" + s + "()\n  { return " + s + "; }\n";
                                          }
                                          $$.sval += "}"; }
 ;
@@ -57,7 +58,8 @@ arc_type_def : ARC_T ID '(' param_list ')' ';'
                                          for (String s : (ArrayList<String>) $4.obj)
                                          {
                                            if (comma) $$.sval += ", ";
-                                           $$.sval += symbols.get(s) + " " + s;
+                                           $$.sval += inter.get(s) + " " + s;
+                                           ((Hashtable) symbols.get("arc_attributes")).put(s, inter.get(s));
                                            comma = true;
                                          }
                                          $$.sval += ") {\n    super(source, dest);\n";
@@ -68,7 +70,7 @@ arc_type_def : ARC_T ID '(' param_list ')' ';'
                                          $$.sval += "  }\n";
                                          for (String s : (ArrayList<String>) $4.obj)
                                          {
-                                           $$.sval += "  private " + symbols.get(s) + " " + s + ";\n  public " + symbols.get(s) + " get" + s + "()\n  { return " + s + "; }\n";
+                                           $$.sval += "  private " + inter.get(s) + " " + s + ";\n  public " + inter.get(s) + " get" + s + "()\n  { return " + s + "; }\n";
                                          }
                                          $$.sval += "}"; }
 ;
@@ -80,7 +82,7 @@ param_list : param_list ',' param      { $$.obj = $1.obj;
 | /* empty string */                   { /* nothing */ }
 ;
 
-param : type ID                        { symbols.put($2.sval, $1.sval);
+param : type ID                        { inter.put($2.sval, $1.sval);
                                          $$.sval = $2.sval; }
 ;
 
@@ -100,6 +102,7 @@ label_list : label_list ',' ID         { $$.obj = $1.obj;
 
   private TypeLexer lexer;
   private Hashtable symbols;
+  private Hashtable inter;
 
   private int yylex () {
     int yyl_return = -1;
@@ -125,4 +128,7 @@ label_list : label_list ',' ID         { $$.obj = $1.obj;
   {
     lexer = new TypeLexer(r, this);
     this.symbols = symbols;
+    symbols.put("node_attributes", new Hashtable());
+    symbols.put("arc_attributes", new Hashtable());
+    inter = new Hashtable();
   }
