@@ -1,12 +1,24 @@
 package flow.ast;
 
-public class SequenceNode extends ASTNode {
+public class FuncSequenceNode extends ASTNode {
 
     public Type type;
-
-	public SequenceNode(SequenceNode prev, StatementNode exec)
+    private FuncSequenceNode prev;
+    private StatementNode exec;
+    
+	public FuncSequenceNode(FuncSequenceNode prev, StatementNode exec)
 	{
-	    super();
+	    this.prev = prev;
+	    this.exec = exec;
 	    type = null;
+	}
+	
+    public String toString() {
+		if (prev != null){
+			return prev.toString() + exec + ";\n";
+		}
+		else{
+			return exec + ";\n";
+		}
 	}
 }

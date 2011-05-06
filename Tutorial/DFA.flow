@@ -4,7 +4,7 @@ an even number of a's and an even number of b's. */
 
 /* Solver Section */
 
-/* This function simulates the dfa specified above on its parameter input string */
+/* This function simulates the DFA specified above on its parameter input string */
 
 //precondition: dfa, e.g. every character in
 //the alphabet is represented uniquely by an out-arc on each node
@@ -15,7 +15,7 @@ function simulate(string input) {
     @current = Graph.START; 
     print "The first current variable is set.";
 
-    print "Entering the for loop to look through the arcs.";
+    print "Entering the loop to look through the arcs.";
 
     int i = 0;
     while(i < input.length) {
@@ -34,11 +34,13 @@ function simulate(string input) {
 	    j++;
 	}
 
+	int isNext = 0;
 	if (next) {
+	    isNext = 1;
 	    print "Navigating to the node at the end of that edge.";
 	    current = next.to;
 	}
-	else {
+	if (isNext == 0) {
 	    print "There was a problem.  Now exiting.";
 	    return 0;
 	}
@@ -57,7 +59,11 @@ function simulate(string input) {
 string input = "Hello World";
 print "Input is '" + input + "'\n"; 
 
+int truth = 0;
 if (simulate(input)) {
+	truth = 1;
 	print "Input is accepted.\n";
 }
-else print "Input is not accepted.\n";
+if (truth == 0) {
+	print "Input is not accepted.\n";
+}
