@@ -17,12 +17,12 @@ public class Comparison extends Expression {
 	public String toString() {
 		// TODO Auto-generated method stub
 	    if (operator.equals("==")){
-		if (this.type.type.equals("string")){
+		if (this.type.type.equals("String")){
 		    return e1 + ".equals(" + e2 + ")";
 		}
 	    }
 	    else if(operator.equals("!=")){
-		if (this.type.type.equals("string")){
+		if (this.type.type.equals("String")){
 		    return "!" + e1 + ".equals(" + e2 + ")";
 		}
 	    }
