@@ -141,6 +141,7 @@ expr : '(' expr ')'            { $$.obj = $2.obj; }
                                  ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
 | expr '%' expr                { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, "%");
                                  ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
+| id '.' id                    { /*$$.obj = new AggAccess();*/ }
 | assignment                   { $$.obj = $1.obj; }
 | access                       { $$.obj = $1.obj; }
 | id                           { $$.obj = $1.obj;
@@ -151,10 +152,8 @@ expr : '(' expr ')'            { $$.obj = $2.obj; }
                                  else {
                                    ((Expression) $$.obj).type = ((ID) $1.obj).type;
                                  } }
-| id '.' id                    {}
 | func_call                    { $$.obj = $1.obj; }
-| pvalue                       { $$.obj = $1.obj; 
-                                 ((Expression) $$.obj).type = new Type("int"); }
+| pvalue                       { $$.obj = $1.obj; }
 ;
 
 param_list : param_list ',' param      { $$.obj = new ParamList((ParamList)$1.obj, (Param)$3.obj); }
@@ -202,9 +201,10 @@ type : ptype                           { $$.obj = $1.obj; }
 | ARC_T                                { $$.obj = new Type("Arc"); }
 ;
 
-prim_dec : type id '=' expr           { $$.obj = new PrimDec((pType) $1.obj, (ID) $2.obj, (Expression) $4.obj);
-                                         ((Expression) $2.obj).type = (Type) $1.obj;
-                                         symbols.put(((ID) $2.obj).toString(), $2.obj); }
+prim_dec : type id '=' expr           { type_check((Type) $1.obj, (Expression) $4.obj);
+                                        $$.obj = new PrimDec((pType) $1.obj, (ID) $2.obj, (Expression) $4.obj);
+                                        ((Expression) $2.obj).type = (Type) $1.obj;
+                                        symbols.put(((ID) $2.obj).toString(), $2.obj); }
 ;
 
 attr_list : attr                       { $$.obj = new AttrList(null, (Attr) $1.obj); }
@@ -268,6 +268,14 @@ print_stmt : PRINT expr                { $$.obj = new Print((Expression) $2.obj)
     }
     else return e1.type;
   }
+  
+  private Type check_type(Type t1, Expression e2) {
+    if (!t1.type.equals(e2.type.type)) {
+      yyerror("Type mismatch error at line " + (lexer.getLine() + 1) + ":  " + t1.type + " != " + e2.type.type);
+      return new pType("error");
+    }
+    else return t1;
+  }  
 
   public void yyerror (String error) {
     System.err.println("Error: " + error);
