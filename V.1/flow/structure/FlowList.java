@@ -1,30 +1,34 @@
+package flow.structure;
+
 import java.util.ArrayList;
 
-public class FlowList<E>
+
+@SuppressWarnings("serial")
+public class FlowList<E> extends ArrayList<E>
 {
 
-	private ArrayList<E> myList;
+	
 
 	public FlowList()
 	{
-			myList = new ArrayList<E>();
+			super();
 			
 	}
 	
 	public void push(E item)
 	{
-		myList.add(0, item);
+		this.add(0, item);
 	}
 	
 	public E peek()
 	{
-		return myList.get(0);
+		return this.get(0);
 	}
 	
 	public E pop()
 	{
-		E item = myList.get(0);
-		myList.remove(0);
+		E item = this.get(0);
+		this.remove(0);
 		
 		return item;
 		
@@ -33,7 +37,7 @@ public class FlowList<E>
 	public void enqueue(E item)
 	{
 	
-		myList.add(item);
+		this.add(item);
 		
 	}
 	
@@ -52,28 +56,13 @@ public class FlowList<E>
 		this.push(item);
 	}
 	
-	public void remove(int index)
-	{
-	
-		myList.remove(index);
-	
-	}
+
 	
 	public void join(FlowList<E> other)
 	{
-		myList.addAll(other.getList());
+		this.addAll(other);
 	}
+
 	
-	public ArrayList<E> getList()
-	{
-	
-		return myList;
-		
-	}
-	
-	public E get(int index)
-	{
-		return myList.get(index);
-	}
 
 }
