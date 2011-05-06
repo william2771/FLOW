@@ -12,7 +12,7 @@ public class IfNode extends StatementNode {
 
 	@Override
 	public String toString() {
-		return "if (" + exp + ") {\n" + block +"}\n";
+		return "if (" + exp + " != 0) {\n" + block +"}\n";
 	}
 
 }
