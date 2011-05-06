@@ -141,10 +141,9 @@ expr : '(' expr ')'            { $$.obj = $2.obj; }
                                  ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
 | expr '%' expr                { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, "%");
                                  ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
-<<<<<<< HEAD
 | id '.' id                    { $$.obj = new Dot((ID) $1.obj, (ID) $3.obj);
                                  if (((Expression) $1.obj).type.type.equals("List")) {
-                                   /* copy the type of the accessed attribute */
+                                   /* Some kind of magic needed here */
                                    ((Expression) $$.obj).type = ((Expression) $3.obj).type;
                                  }
                                  else if (((Expression) $1.obj).type.type.equals("Node")) {
@@ -174,14 +173,11 @@ expr : '(' expr ')'            { $$.obj = $2.obj; }
                                  else {
                                    ((Expression) $$.obj).type = new pType("error");
                                  } }
-=======
-| id '.' id                    {  }
->>>>>>> af51b929ddec19a66c558bc34ab3ca4f28bfe28d
 | assignment                   { $$.obj = $1.obj; }
 | access                       { $$.obj = $1.obj; }
 | id                           { $$.obj = $1.obj;
                                  if (!symbols.containsKey(((ID) $1.obj).toString())) {
-                                   yyerror("Undeclared variable on line " + lexer.getLine());
+                                   yyerror("Undeclared variable '" + ((ID) $1.obj).toString() + "'");
                                    ((Expression) $$.obj).type = new pType("error");
                                  }
                                  else {
@@ -209,7 +205,7 @@ assignment : access '=' expr           { $$.obj = ((ListAccess) $1.obj).makeLVal
 
 access : id '[' expr ']'               { $$.obj = new ListAccess((ID) $1.obj, (Expression) $3.obj);
                                          if (!symbols.containsKey(((ID) $1.obj).toString())) {
-                                           yyerror("Undeclared list at line " + lexer.getLine());
+                                           yyerror("Undeclared list '" + ((ID) $1.obj).toString() + "'");
                                            ((Expression) $$.obj).type = new pType("error");
                                          }
                                          else if (!((Expression) $1.obj).type.type.substring(0,4).equals("list")) {
@@ -243,7 +239,7 @@ type : ptype                           { $$.obj = $1.obj; }
 
 
 prim_dec : type id '=' expr           { check_type((Type) $1.obj, (Expression) $4.obj);
-                                        $$.obj = new PrimDec((pType) $1.obj, (ID) $2.obj, (Expression) $4.obj);
+                                        $$.obj = new PrimDec((Type) $1.obj, (ID) $2.obj, (Expression) $4.obj);
                                         ((Expression) $2.obj).type = (Type) $1.obj;
                                         symbols.put(((ID) $2.obj).toString(), $2.obj); }
 ;
@@ -253,7 +249,7 @@ attr_list : attr                       { $$.obj = new AttrList(null, (Attr) $1.o
 ;
 
 //attr no longer goes to pvalue
-attr : expr                          { $$.obj = $1.obj; }
+attr : expr                            { $$.obj = $1.obj; }
 ;
 
 id : ID                                { if (symbols.containsKey($1.sval)) {
@@ -305,7 +301,7 @@ print_stmt : PRINT expr                { $$.obj = new Print((Expression) $2.obj)
 
   private Type check_type(Expression e1, Expression e2) {
     if (!e1.type.type.equals(e2.type.type)) {
-      yyerror("Type mismatch error at line " + (lexer.getLine() + 1) + ":  " + e1.type.type + " != " + e2.type.type);
+      yyerror("Type mismatch error:  " + e1.type.type + " != " + e2.type.type);
       return new pType("error");
     }
     else return e1.type;
@@ -313,7 +309,7 @@ print_stmt : PRINT expr                { $$.obj = new Print((Expression) $2.obj)
   
   private Type check_type(Type t1, Expression e2) {
     if (!t1.type.equals(e2.type.type)) {
-      yyerror("Type mismatch error at line " + (lexer.getLine() + 1) + ":  " + t1.type + " != " + e2.type.type);
+      yyerror("Type mismatch error:  " + t1.type + " != " + e2.type.type);
       return new pType("error");
     }
     else return t1;
@@ -333,7 +329,7 @@ print_stmt : PRINT expr                { $$.obj = new Print((Expression) $2.obj)
   }  
   
   public void yyerror (String error) {
-    System.err.println("Error: " + error);
+    System.err.println("Error: " + error + "\n\tat line " + (lexer.getLine() + 1));
     errors++;
   }
 
