@@ -16,7 +16,18 @@ public class Comparison extends Expression {
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-	    return "(" + e1 + " " + operator + " " + e2 + " ? 1 : 0)";
+
+	    if (operator.equals("==")){
+		if (this.type.type.equals("String")){
+		    return "((" +e1 + ".equals(" + e2 + ")) ? 1 : 0 )";
+		}
+	    }
+	    else if(operator.equals("!=")){
+		if (this.type.type.equals("String")){
+		    return "((!" + e1 + ".equals(" + e2 + ")) ? 1 : 0";
+		}
+	    }
+		return "(" + e1 + " " + operator + " " + e2 + " ? 1 : 0)";
 	}
 
 }

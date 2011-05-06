@@ -2,14 +2,14 @@ package flow.ast;
 
 public class PrimDec extends StatementNode {
 
-	public PrimDec(pType type, ID id, Expression val)
+	public PrimDec(Type type, ID id, Expression val)
 	{
 		this.type = type;
 		this.id = id;
 		this.val = val;
 	}
 
-	private pType type;
+	private Type type;
 	private ID id;
 	private Expression val;
 	
