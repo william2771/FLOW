@@ -133,6 +133,17 @@ func_dec : param '(' param_list ')'
             old = symbols;
             //Create a new symbol table (clone because we want access to higher scoped ids too)
             symbols = (Hashtable)old.clone();
+            //Add the symbols from the param_list into the symbol table
+            for(Param p : params.toArrayList()) {
+                ID id = p.id;
+                id.type = p.type;
+                //Check that the parameter name is not the same as the function name
+                if(id.toString().equals(function_id.toString())) {
+                    yyerror("Your parameter cannot be the same as your function name " + function_id.toString());
+                }
+                //Add the id/overwrite the id into the symbol table
+                symbols.put(id.toString(), id);
+            }
             } 
             
             '{' solver_stmt_list '}'  { $$.obj = new FunctionNode((Param) $1.obj, (ParamList) $3.obj, (SequenceNode) $6.obj);
