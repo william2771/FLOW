@@ -167,6 +167,13 @@ expr : '(' expr ')'            { $$.obj = $2.obj; }
                                    yyerror("Dot operator applied to invalid type: " + ((Expression) $1.obj).type.type);
                                    ((Expression) $$.obj).type = new pType("error");
                                  } }
+| GRAPH '.' id                 { $$.obj = new Dot(new ID("Graph"), (ID) $3.obj);
+                                 if (symbols.containsKey(((ID) $3.obj).toString())) {
+                                   ((Expression) $$.obj).type = ((ID) symbols.get(((ID) $3.obj).toString())).type;
+                                 }
+                                 else {
+                                   ((Expression) $$.obj).type = new pType("error");
+                                 } }
 | assignment                   { $$.obj = $1.obj; }
 | access                       { $$.obj = $1.obj; }
 | id                           { $$.obj = $1.obj;
