@@ -1,13 +1,15 @@
 use "SimpleGraph.flowt";
 
 //Sum of all Arc values
-List of Arc arcList = Graph.arcs;
+List of Arc arcList;
+arcList = Graph.arcs;
 
 int k = 0;
 int arcSum = 0;
 while(k < arcList.length)
 {
-	arcSum = arcSum + arcList[k].value;
+	Arc arc = arcList[k];
+	arcSum = arcSum + arc.value;
 }
 
 print(arcSum);
@@ -19,7 +21,8 @@ int j = 0;
 int nodeSum = 0;
 while(j < nodeSum.length)
 {
-	nodeSum = nodeSum + arcList[j].value;
+	Arc arc = arcList[j];
+	nodeSum = nodeSum + arc.value;
 }
 
 print(nodeSum);
