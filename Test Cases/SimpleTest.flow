@@ -1,7 +1,8 @@
 use "SimpleGraph.flowt";
 
 //Sum of all Arc values
-List of Arc arcList = Graph.arcs;
+List of Arc arcList;
+arcList = Graph.arcs;
 
 int k = 0;
 int arcSum = 0;
