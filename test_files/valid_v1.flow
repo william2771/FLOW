@@ -41,4 +41,8 @@ print i_list;
 
 List of int list2 = [4,5,6];
 
+Node node1 = Graph.START;
+
+print node1.value;
+
 /* COMMENTS SHOULD BE IGNORED */
