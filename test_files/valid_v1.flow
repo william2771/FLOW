@@ -41,8 +41,17 @@ print i_list;
 
 List of int list2 = [4,5,6];
 
-Node node1 = Graph.START;
+string a = "this is a string";
 
-print node1.value;
+string b = " and so is this";
+
+
+if (x) {
+print a == b;
+}
+
+//Node node1 = Graph.START;
+
+//print node1.value;
 
 /* COMMENTS SHOULD BE IGNORED */
