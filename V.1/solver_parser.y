@@ -118,14 +118,29 @@ expr : '(' expr ')'            { $$.obj = $2.obj; }
 | '(' type ')' expr %prec CAST { $$.obj = new Cast($2.sval,(Expression) $4.obj);
                                  ((Expression) $$.obj).type = (pType) $2.obj; }
 | '-' expr %prec NEG           { $$.obj = new Unary((Expression) $2.obj, $1.sval);
+   if (((Expression) $1.obj).type.type.equals("string")){
+     yyerror("NEG is not a string operation.");
+   }
                                  ((Expression) $$.obj).type = ((Expression) $2.obj).type; }
 | expr '>' expr                { $$.obj = new Comparison((Expression) $1.obj, (Expression) $3.obj, ">");
+   if (((Expression) $1.obj).type.type.equals("string") || ((Expression) $3.obj).type.type.equals("string")){
+     yyerror("> is not a string operation.");
+   }
                                  ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
 | expr GTE expr                { $$.obj = new Comparison((Expression) $1.obj, (Expression) $3.obj, ">=");
+   if (((Expression) $1.obj).type.type.equals("string") || ((Expression) $3.obj).type.type.equals("string")){
+     yyerror(">= is not a string operation.");
+   }
                                  ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
 | expr '<' expr                { $$.obj = new Comparison((Expression) $1.obj, (Expression) $3.obj, "<");
+   if (((Expression) $1.obj).type.type.equals("string") || ((Expression) $3.obj).type.type.equals("string")){
+     yyerror("< is not a string operation.");
+   }
                                  ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
 | expr LTE expr                { $$.obj = new Comparison((Expression) $1.obj, (Expression) $3.obj, "<=");
+   if (((Expression) $1.obj).type.type.equals("string") || ((Expression) $3.obj).type.type.equals("string")){
+     yyerror("LTE is not a string operation.");
+   }
                                  ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
 | expr NEQ expr                { $$.obj = new Comparison((Expression) $1.obj, (Expression) $3.obj, "!=");
                                  ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
@@ -134,12 +149,24 @@ expr : '(' expr ')'            { $$.obj = $2.obj; }
 | expr '+' expr                { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, "+");
                                  ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
 | expr '-' expr                { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, "-");
+   if (((Expression) $1.obj).type.type.equals("string") || ((Expression) $3.obj).type.type.equals("string")){
+     yyerror("Subtraction is not a string operation.");
+   }
                                  ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
 | expr '*' expr                { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, "*");
+   if (((Expression) $1.obj).type.type.equals("string") || ((Expression) $3.obj).type.type.equals("string")){
+     yyerror("Multiplication is not a string operation.");
+   }
                                  ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
 | expr '/' expr                { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, "/");
+   if (((Expression) $1.obj).type.type.equals("string") || ((Expression) $3.obj).type.type.equals("string")){
+     yyerror("Division is not a string operation.");
+   }
                                  ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
 | expr '%' expr                { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, "%");
+   if (((Expression) $1.obj).type.type.equals("string") || ((Expression) $3.obj).type.type.equals("string")){
+     yyerror("Modulus is not a string operation.");
+   }
                                  ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
 | id '.' id                    {  }
 | assignment                   { $$.obj = $1.obj; }
