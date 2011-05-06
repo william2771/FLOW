@@ -1,4 +1,6 @@
-YACC = yacc.macosx
+#YACC = yacc.macosx
+YACC = yacc.linux
+
 AST_FILES = 	flow/ast/ASTNode.java		flow/ast/Expression.java	flow/ast/NodeDec.java		flow/ast/Symbol.java \
 		flow/ast/ArcDec.java		flow/ast/FunctionCall.java	flow/ast/Param.java		flow/ast/SymbolTable.java \
 		flow/ast/Arithmetic.java	flow/ast/FunctionNode.java	flow/ast/ParamList.java		flow/ast/Type.java \
@@ -7,6 +9,9 @@ AST_FILES = 	flow/ast/ASTNode.java		flow/ast/Expression.java	flow/ast/NodeDec.ja
 		flow/ast/AttrList.java		flow/ast/LabelNode.java		flow/ast/ReturnNode.java	flow/ast/pType.java \
 		flow/ast/Cast.java		flow/ast/ListAccess.java	flow/ast/SequenceNode.java	flow/ast/pValue.java \
 		flow/ast/Comparison.java	flow/ast/ListDec.java		flow/ast/StatementNode.java	flow/ast/ListAssign.java
+
+
+TESTDIR = ../Test\ Cases/
 
 
 all :	Flow.class
@@ -25,13 +30,13 @@ TypeLexer.java :	flowt.flex
 TypeParser.java :	type_parser.y
 	$(YACC) -Jclass='TypeParser' type_parser.y
 
-Test1 :	Flow.class SimpleTest.flow SimpleGraph.flowg
-	java Flow SimpleTest.flow
-	java Flow SimpleGraph.flowg
+Test1 :	Flow.class $(TESTDIR)SimpleTest.flow $(TESTDIR)SimpleGraph.flowg $(TESTDIR)SimpleGraph.flowt
+	java Flow $(TESTDIR)SimpleTest.flow
+	java Flow $(TESTDIR)SimpleGraph.flowg
 
-Test2 : Flow.class ParityTest.flow SimpleGraph.flowg
-	java Flow ParityTest.flow
-	java Flow SimpleGraph.flowg
+Test2 : Flow.class $(TESTDIR)ParityTest.flow $(TESTDIR)SimpleGraph.flowg $(TESTDIR)SimpleGraph.flowt
+	java Flow $(TESTDIR)ParityTest.flow
+	java Flow $(TESTDIR)SimpleGraph.flowg
 
 clean :
 	rm *~ *.class SolverLexer.java SolverParser.java SolverParserVal.java GraphLexer.java GraphParser.java GraphParserVal.java TypeParser.java TypeParserVal.java TypeLexer.java Node.java Arc.java Graph.java Solver.java flow/ast/*.class flow/structure/*.class
