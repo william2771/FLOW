@@ -1,0 +1,19 @@
+//Function Test
+use "SimpleGraph.flowt";
+
+int k = 0;
+k = foo(k);
+k = foo(1);
+k = foo(1 + k);
+print(foo(bar(k)));
+
+
+int foo(int x)
+{
+	return x + 1;
+}
+
+int bar(int y)
+{
+	return y - 1;
+}
