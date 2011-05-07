@@ -14,10 +14,7 @@ while(count > 0)
 		{
 			current = fromArcs[k].destinationNode();
 		}
-		else
-		{
-			print("Error!");
-		}
+		k = k - 1;
 	}
 	count = count - 1;
 }
