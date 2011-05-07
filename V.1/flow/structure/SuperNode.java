@@ -25,9 +25,10 @@ public class SuperNode{
       degree++;
    }
 
-   int getDegree() { return degree; }
-   int getInDegree() { return inDegree; }
-   int getOutDegree() { return outDegree; }
+   int getdegree() { return degree; }
+   int getdnDegree() { return inDegree; }
+   int getoutDegree() { return outDegree; }
+
 
    FlowList<SuperArc> getArcs() { return arcs; }
    FlowList<SuperArc> getArcsIn() { return arcsOut; }

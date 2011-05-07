@@ -19,11 +19,11 @@ public class SuperGraph {
 		return arcs;
 	}
 	
-	public int getNumNodes(){
+	public int getnumNodes(){
 		return nodes.size();
 	}
 	
-	public int getNumArcs(){
+	public int getnumArcs(){
 		return arcs.size();
 	}
 }

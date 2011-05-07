@@ -51,7 +51,7 @@
 valid_program : solver
 ;
 
-solver: type_link solver_stmt_list { $$.sval = "import java.util.*;\n\npublic class Solver {\npublic static void main(String[] args) {\n" + $2.obj.toString() + "}\n}";
+solver: type_link solver_stmt_list { $$.sval = "import java.util.*;\n\npublic class Solver {\npublic static void main(String[] args) {\ngraph = new Graph();\n" + $2.obj.toString() + "}\nprivate static Graph graph;\n}";
                                      if (errors == 0) { //only create output java file if there are no syntax errors
                                        try {
                                          FileWriter graph_file = new FileWriter(new File("Solver.java"));
@@ -247,14 +247,14 @@ expr : '(' expr ')'            { $$.obj = $2.obj; }
                                    yyerror("Modulus is not a string operation.");
                                  }
                                  ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
-| id '.' id                    { $$.obj = new Dot((ID) $1.obj, (ID) $3.obj);
+| id '.' id                    { $$.obj = new Dot((ID) $1.obj, $3.obj.toString());
                                  if (((Expression) $1.obj).type.type.equals("List")) {
                                    /* Some kind of magic needed here */
                                    ((Expression) $$.obj).type = ((Expression) $3.obj).type;
                                  }
                                  else if (((Expression) $1.obj).type.type.equals("Node")) {
                                    if (((Hashtable) symbols.get("node_attributes")).containsKey(((ID) $3.obj).toString()))
-                                     ((Expression) $$.obj).type = ((Type) ((Hashtable) symbols.get("node_attributes")).get(((ID) $3.obj).toString()));
+                                     ((Expression) $$.obj).type = new Type(((Hashtable) symbols.get("node_attributes")).get($3.obj.toString()).toString());
                                    else {
                                      yyerror("Node attribute '" + ((Expression) $3.obj).toString() + "' is not defined");
                                      ((Expression) $$.obj).type = new pType("error");
@@ -269,15 +269,15 @@ expr : '(' expr ')'            { $$.obj = $2.obj; }
                                    }
                                  }
                                  else {
-                                   yyerror("Dot operator applied to invalid type: " + ((Expression) $1.obj).type.type);
+                                   yyerror("Dot operator applied to invalid type: " + ((ID) $1.obj).toString() + " is of type " + ((Expression) $1.obj).type.type);
                                    ((Expression) $$.obj).type = new pType("error");
                                  } }
-| GRAPH '.' id                 { $$.obj = new Dot(new ID("Graph"), (ID) $3.obj);
-                                 if (symbols.containsKey(((ID) $3.obj).toString())) {
-                                   ((Expression) $$.obj).type = ((ID) symbols.get(((ID) $3.obj).toString())).type;
+| GRAPH '.' id                 { $$.obj = new Dot(new ID("graph"), $3.obj.toString());
+                                 if (((Hashtable) symbols.get("labels")).containsKey($3.obj.toString())) {
+                                   ((Expression) $$.obj).type = new Type(((Hashtable) symbols.get("labels")).get($3.obj.toString()).toString());
                                  }
                                  else {
-                                   yyerror("Graph attribute '" + ((ID) $3.obj).toString() + "' is not defined");
+                                   yyerror("Graph attribute '" + $3.obj.toString() + "' is not defined");
                                    ((Expression) $$.obj).type = new pType("error");
                                  } }
 | assignment                   { $$.obj = $1.obj; }
@@ -348,9 +348,8 @@ type : ptype                           { $$.obj = $1.obj; }
 ;
 
 
-prim_dec : type id '=' expr            { check_type((Type) $1.obj, (Expression) $4.obj);
-                                         $$.obj = new PrimDec((Type) $1.obj, (ID) $2.obj, (Expression) $4.obj);
-                                         ((Expression) $2.obj).type = (Type) $1.obj;
+prim_dec : type id '=' expr            { $$.obj = new PrimDec((Type) $1.obj, (ID) $2.obj, (Expression) $4.obj);
+                                         ((Expression) $2.obj).type = check_type((Type) $1.obj, (Expression) $4.obj);
                                          symbols.put(((ID) $2.obj).toString(), $2.obj); }
 ;
 
