@@ -5,6 +5,10 @@ float ram;
 
 /* just testing for syntax */
 
+print "This is a great program";
+print "Escaped newline\n";
+print "Escaped \" char";
+
 x = 2;
 ram = (float) x;
 int w = 2;

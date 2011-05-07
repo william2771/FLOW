@@ -61,17 +61,19 @@ graph_decl : type_link graph_stmt_list { $$.sval = "import flow.structure.*;\nim
                                          }
 
                                          $$.sval += "\n}\n";
-
-                                         try
-                                         {
+                                         //if (errors == 0) { //only create output java file if there are no syntax errors
+                                         try {
                                            FileWriter graph_file = new FileWriter(new File("Graph.java"));
                                            graph_file.write($$.sval);
                                            graph_file.flush();
                                          }
-                                         catch(IOException e)
-                                         {
-                                           yyerror("Could not create Graph file.");
-                                         } }
+                                         catch(IOException e) {
+                                           yyerror("Could not create Solver file.");
+                                         }
+                                       //}
+                                       //else {
+                                         System.out.println("\n" + errors + " errors\n");
+                                       } //}
 ;
 
 type_link : USE STR ';'                { /* process the typedef file */ 
