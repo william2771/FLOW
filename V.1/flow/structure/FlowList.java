@@ -1,7 +1,6 @@
 package flow.structure;
 
-import java.util.ArrayList;
-
+import java.util.*;
 
 @SuppressWarnings("serial")
 public class FlowList<E> extends ArrayList<E>
@@ -14,6 +13,16 @@ public class FlowList<E> extends ArrayList<E>
 			super();
 			
 	}
+
+	public FlowList(Collection<E> c)
+	    {
+		super();
+
+		this.addAll(c);
+
+	    }
+
+
 	
 	public void push(E item)
 	{
