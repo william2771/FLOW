@@ -3,7 +3,8 @@ use "SimpleGraph.flowt";
 
 int foo(int x)
 {
-	return x + 1;
+	int y = 4;
+	return x + y;
 }
 
 int bar(int y)
