@@ -57,7 +57,7 @@ graph_decl : type_link graph_stmt_list { $$.sval = "public class Graph extends f
 
                                          for (String label : labels)
                                          {
-                                           $$.sval += "private Node " + label + ";\npublic Node " + label + "() {\n  return " + label + ";\n}\n";
+                                           $$.sval += "private Node " + label + ";\npublic Node get" + label + "() {\n  return " + label + ";\n}\n";
                                          }
 
                                          $$.sval += "\n}\n";
@@ -185,14 +185,14 @@ expr : '(' expr ')'            { $$.obj = $2.obj; }
                                    yyerror("Modulus is not a string operation.");
                                  }
                                  ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
-| id '.' id                    { $$.obj = new Dot((ID) $1.obj, (ID) $3.obj);
+| id '.' id                    { $$.obj = new Dot((ID) $1.obj, $3.obj.toString());
                                  if (((Expression) $1.obj).type.type.equals("List")) {
                                    /* Some kind of magic needed here */
                                    ((Expression) $$.obj).type = ((Expression) $3.obj).type;
                                  }
                                  else if (((Expression) $1.obj).type.type.equals("Node")) {
                                    if (((Hashtable) symbols.get("node_attributes")).containsKey(((ID) $3.obj).toString()))
-                                     ((Expression) $$.obj).type = ((Type) ((Hashtable) symbols.get("node_attributes")).get(((ID) $3.obj).toString()));
+                                     ((Expression) $$.obj).type = new Type(((Hashtable) symbols.get("node_attributes")).get($3.obj.toString()).toString());
                                    else {
                                      yyerror("Node attribute '" + ((Expression) $3.obj).toString() + "' is not defined");
                                      ((Expression) $$.obj).type = new pType("error");
@@ -207,7 +207,7 @@ expr : '(' expr ')'            { $$.obj = $2.obj; }
                                    }
                                  }
                                  else {
-                                   yyerror("Dot operator applied to invalid type: " + ((Expression) $1.obj).type.type);
+                                   yyerror("Dot operator applied to invalid type: " + ((ID) $1.obj).toString() + " is of type " + ((Expression) $1.obj).type.type);
                                    ((Expression) $$.obj).type = new pType("error");
                                  } }
 | assignment                   { $$.obj = $1.obj; }
