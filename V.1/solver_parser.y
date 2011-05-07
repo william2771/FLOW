@@ -51,13 +51,7 @@
 valid_program : solver
 ;
 
-
-solver: type_link solver_stmt_list { $$.sval = "import flow.structure.*;\n\npublic class Solver {\npublic static void main(String[] args) {\ngraph = new Graph();\n" + $2.obj.toString() + "}";  
-                                    for(String string : functions) {
-                                        $$.sval += string;
-                                        } 
-                                    $$.sval += "\nprivate static Graph graph;\n}";
-
+solver: type_link solver_stmt_list { $$.sval = "import java.util.*;\nimport flow.structure.*;\n\npublic class Solver {\npublic static void main(String[] args) {\ngraph = new Graph();\n" + $2.obj.toString() + "}\nprivate static Graph graph;\n}";
                                      //if (errors == 0) { //only create output java file if there are no syntax errors
                                        try {
                                          FileWriter graph_file = new FileWriter(new File("Solver.java"));
@@ -94,13 +88,14 @@ solver_stmt_list : solver_stmt ';'  { $$.obj = new SequenceNode(null, (Statement
 | solver_stmt_list block_stmt       { $$.obj = new SequenceNode((SequenceNode) $1.obj, (StatementNode) $2.obj); }
 ;
 
+
 func_stmt_list : func_stmt ';'           { System.out.println($1.obj.toString());
-                                            System.out.println("1.obj? " + ($1.obj.toString().equals("returny - 1")));
                                             $$.obj = new FuncSequenceNode(null, (StatementNode) $1.obj);
                                            ((FuncSequenceNode) $$.obj).type = ((StatementNode) $1.obj).type;}
 | func_block_stmt                        { $$.obj = new FuncSequenceNode(null, (StatementNode) $1.obj);
+
                                            ((FuncSequenceNode) $$.obj).type = ((StatementNode) $1.obj).type; }
-| func_stmt_list func_stmt ';'           { $$.obj = new FuncSequenceNode((FuncSequenceNode) $1.obj, (StatementNode) $2.obj);
+| func_stmt_list func_stmt ';'           { $$.obj = new FuncSequenceNode((FuncSequenceNode) $1.obj, (StatementNode) $2.obj); System.out.println($1.obj);
                                            if (((StatementNode) $2.obj).type == null) {
                                              ((FuncSequenceNode) $$.obj).type = ((FuncSequenceNode) $1.obj).type;
                                            }
@@ -113,7 +108,7 @@ func_stmt_list : func_stmt ';'           { System.out.println($1.obj.toString())
                                            else{
                                              ((FuncSequenceNode) $$.obj).type = ((StatementNode) $2.obj).type;   
                                            } }
-| func_stmt_list func_block_stmt         { $$.obj = new FuncSequenceNode((FuncSequenceNode) $1.obj, (StatementNode) $2.obj); 
+| func_stmt_list func_block_stmt         { $$.obj = new FuncSequenceNode((FuncSequenceNode) $1.obj, (StatementNode) $2.obj);  System.out.println($1.obj);
                                            if (((StatementNode) $2.obj).type == null) {
                                              ((FuncSequenceNode) $$.obj).type = ((FuncSequenceNode) $1.obj).type;
                                            }
@@ -129,8 +124,8 @@ func_stmt_list : func_stmt ';'           { System.out.println($1.obj.toString())
 ;
 
 block_stmt: while_stmt
-| if_stmt                           { $$.obj = $1.obj; }
-| func_dec                          { $$.obj = $1.obj; functions.add(((FunctionNode)$1.obj).realToString()); }
+| if_stmt
+| func_dec                          { $$.obj = $1.obj; }
 ;
 
 func_block_stmt: while_stmt
@@ -198,7 +193,7 @@ func_dec : param '(' param_list ')'
             }
             }
             
-            '{'  func_stmt_list '}'  { $$.obj = new FunctionNode((Param) $1.obj, (ParamList) $3.obj, (FuncSequenceNode) $7.obj);
+            '{'  func_stmt_list '}'  { $$.obj = new FunctionNode((Param) $1.obj, (ParamList) $3.obj, (FuncSequenceNode) $7.obj); System.out.println($7.obj);
                                        if (!((Param) $1.obj).id.type.type.equals(((FuncSequenceNode) $7.obj).type.type)) {
                                          yyerror("Function " + ((Param) $1.obj).id.toString() + " returns the wrong type.");
                                        }
@@ -407,7 +402,6 @@ print_stmt : PRINT expr                { $$.obj = new Print((Expression) $2.obj)
 
   private SolverLexer lexer;
   private Hashtable symbols;
-  private ArrayList<String> functions;
   //We need another Hashtable for temporary storage
   private Hashtable old;
   private ArrayList<String> labels;
@@ -484,6 +478,5 @@ print_stmt : PRINT expr                { $$.obj = new Print((Expression) $2.obj)
   {
     lexer = new SolverLexer(r, this);
     this.symbols = symbols;
-    functions = new ArrayList<String>();
     errors = 0; //no errors yet
   }
