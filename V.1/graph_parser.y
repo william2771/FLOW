@@ -53,7 +53,7 @@ valid_program : graph_decl
 
 /* Beginning of graph declaration section */
 
-graph_decl : type_link graph_stmt_list { $$.sval = "public class Graph extends flow.structure.SuperGraph\n{\npublic Graph() {\nsuper();\n" + $2.obj.toString() + "\n}\n";
+graph_decl : type_link graph_stmt_list { $$.sval = "import flow.structure.*;\nimport java.util.ArrayList;\npublic class Graph {\npublic Graph() {\nnodes = new FlowList<Node>();\narcs = new FlowList<Arc>();\n" + $2.obj.toString() + "\n}\nprivate FlowList<Arc> arcs; public FlowList<Arc> getarcs() { return arcs; }\n private FlowList<Node> nodes; public FlowList<Node> getnodes() { return nodes; } \n public int getnumNodes(){return nodes.size();} public int getnumArcs(){ return arcs.size();}\n";
 
                                          for (String label : labels)
                                          {
@@ -307,9 +307,9 @@ pvalue : INT                           { $$.obj = new pValue($1.ival);
   }  
   
   private Type check_type(Type t1, AttrList e2) {
-    ArrayList<Expression> attrs = e2.toArrayList();
+    ArrayList<Attr> attrs = e2.toArrayList();
     Type ret;
-    for(Expression attr : attrs) {
+    for(Attr attr : attrs) {
         //check_type(type t1, expression e2) will put an error into yyerror
         ret = check_type(t1, attr);
         if(ret.type == "error") {
@@ -323,6 +323,7 @@ pvalue : INT                           { $$.obj = new pValue($1.ival);
     System.err.println("Error: " + error + "\n\tat line " + (lexer.getLine() + 1));
     errors++;
   }
+
 
   public GraphParser(Reader r) {
     lexer = new GraphLexer(r, this);

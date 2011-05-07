@@ -10,6 +10,7 @@ while(k < arcList.length)
 {
 	Arc arc = arcList[k];
 	arcSum = arcSum + arc.transition;
+	k = k + 1;
 }
 
 print(arcSum);
@@ -22,8 +23,9 @@ int j = 0;
 int nodeSum = 0;
 while(j < nodeList.length)
 {
-	Arc arc = arcList[j];
-	nodeSum = nodeSum + arc.transition;
+	Node node = nodeList[j];
+	nodeSum = nodeSum + node.isAccepting;
+	j = j + 1;
 }
 
 print(nodeSum);

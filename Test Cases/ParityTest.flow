@@ -1,6 +1,6 @@
 use "SimpleGraph.flowt";
 
-List of int binary = [1,0,1,1,0,0,1,0];//The value to be checked
+List of int binary = [1,0,1,1,0,0,1,0]; //The value to be checked
 
 int count = binary.length;
 Node current = Graph.START;
@@ -19,6 +19,7 @@ while(count > 0)
 			print("Error!");
 		}
 	}
+	count = count - 1;
 }
 
 if(current.value == 1)//1 is accepting 0 is not
