@@ -133,7 +133,7 @@ func_stmt: list_dec
 
 func_call : id '(' attr_list ')'                              { //Make sure this function was previously declared
                                                                 try {
-                                                                    ID function_name = (ID)symbols.get($1.obj.toString());
+                                                                    ID function_name = (ID) symbols.get($1.obj.toString());
                                                                     fType functionType = (fType) function_name.type;
                                                                     //Check attr_list against the parameter types
                                                                     check_type((AttrList)$3.obj, functionType.paramTypes);
@@ -141,7 +141,7 @@ func_call : id '(' attr_list ')'                              { //Make sure this
                                                                     ((Expression) $$.obj).type = function_name.type; 
                                                                 }
                                                                 catch(Exception e) {
-                                                                    yyerror($1.toString() + " not found, or not callable.");                                                                    
+                                                                    yyerror($1.obj.toString() + " not found, or not callable.");                                                                    
                                                                 }
                                                                }
 ;
@@ -162,7 +162,7 @@ func_dec : param '(' param_list ')'
             //so we'll save the current symbol table and start a new on for the function
             old = symbols;
             //Create a new symbol table (clone because we want access to higher scoped ids too)
-            symbols = (Hashtable)old.clone();
+            symbols = (Hashtable) old.clone();
             //Add the symbols from the param_list into the symbol table
             for(Param p : params.toArrayList()) {
                 ID id = p.id;
