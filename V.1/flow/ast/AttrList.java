@@ -1,10 +1,10 @@
 package flow.ast;
 import java.util.ArrayList;
 public class AttrList {
-    Attr tail;
+    Expression tail;
     AttrList alist;
     
-    public AttrList(AttrList alist, Attr tail) {
+    public AttrList(AttrList alist, Expression tail) {
         this.alist = alist;
         this.tail = tail;
     }
@@ -18,10 +18,10 @@ public class AttrList {
         }
     }
 
-    public ArrayList<Attr> toArrayList() {
-        ArrayList<Attr> result;
+    public ArrayList<Expression> toArrayList() {
+        ArrayList<Expression> result;
         if(alist != null) {
-            result = new ArrayList<Attr>();
+            result = new ArrayList<Expression>();
             result.add(tail);
             return result;
         }
