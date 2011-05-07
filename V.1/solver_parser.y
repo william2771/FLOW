@@ -51,11 +51,13 @@
 valid_program : solver
 ;
 
+
 solver: type_link solver_stmt_list { $$.sval = "import flow.structure.*;\n\npublic class Solver {\npublic static void main(String[] args) {\ngraph = new Graph();\n" + $2.obj.toString() + "}";  
                                     for(String string : functions) {
                                         $$.sval += string;
                                         } 
                                     $$.sval += "\nprivate static Graph graph;\n}";
+
                                      //if (errors == 0) { //only create output java file if there are no syntax errors
                                        try {
                                          FileWriter graph_file = new FileWriter(new File("Solver.java"));
@@ -145,8 +147,8 @@ func_stmt: list_dec
 | assignment
 | print_stmt
 | func_call                         { $$.obj = $1.obj; }
-| RET expr                          { $$.obj = $2.obj; 
-                                      ((Expression) $$.obj).type = ((Expression) $2.obj).type; }
+| RET expr                          { $$.obj = new ReturnNode((Expression) $2.obj); 
+                                      ((ReturnNode) $$.obj).type = ((Expression) $2.obj).type; }
 ;
 
 func_call : id '(' attr_list ')'                              { //Make sure this function was previously declared
@@ -170,7 +172,7 @@ func_dec : param '(' param_list ')'
             ID function_id = param.id;
             //Check that this function name was not previously used by something else
             if(symbols.containsKey(function_id.toString())) {
-                yyerror(function_id.toString() + " was already declared, cannot use as function name");
+                yyerror(function_id.toString() + " already declared. Cannot reuse as function name");
             }
             Type ret_type = param.type;
             ParamList params = (ParamList) $3.obj;
@@ -203,10 +205,10 @@ func_dec : param '(' param_list ')'
 
 ;
 
-while_stmt : WHILE '(' expr ')' '{' solver_stmt_list '}'      { $$.obj = new WhileNode((Expression) $3.obj, (SequenceNode) $6.obj ); }
+while_stmt : WHILE '(' expr ')' '{' solver_stmt_list '}'      { $$.obj = new WhileNode((Expression) $3.obj, (SequenceNode) $6.obj); }
 ;
 
-if_stmt : IF '(' expr ')' '{' solver_stmt_list '}'            { $$.obj = new IfNode((Expression) $3.obj, (SequenceNode) $6.obj ); }
+if_stmt : IF '(' expr ')' '{' solver_stmt_list '}'            { $$.obj = new IfNode((Expression) $3.obj, (SequenceNode) $6.obj); }
 ;
 
 expr : '(' expr ')'            { $$.obj = $2.obj; }

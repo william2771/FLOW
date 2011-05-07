@@ -14,6 +14,16 @@ public class FlowList<E> extends ArrayList<E>
 			super();
 			
 	}
+
+	public FlowList(Collection<E> c)
+	    {
+		super();
+
+		this.addAll(c);
+
+	    }
+
+
 	
 	public void push(E item)
 	{
