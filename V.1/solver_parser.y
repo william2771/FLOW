@@ -88,9 +88,14 @@ solver_stmt_list : solver_stmt ';'  { $$.obj = new SequenceNode(null, (Statement
 | solver_stmt_list block_stmt       { $$.obj = new SequenceNode((SequenceNode) $1.obj, (StatementNode) $2.obj); }
 ;
 
-func_stmt_list : func_stmt ';'           { $$.obj = new FuncSequenceNode(null, (StatementNode) $1.obj); System.out.println($1.obj);
-                                           ((FuncSequenceNode) $$.obj).type = ((StatementNode) $1.obj).type; }
-| func_block_stmt                        { $$.obj = new FuncSequenceNode(null, (StatementNode) $1.obj); System.out.println($1.obj);
+
+
+func_stmt_list : func_stmt ';'           { System.out.println($1.obj.toString());
+                                            $$.obj = new FuncSequenceNode(null, (StatementNode) $1.obj);
+                                           ((FuncSequenceNode) $$.obj).type = ((StatementNode) $1.obj).type;}
+| func_block_stmt                        { $$.obj = new FuncSequenceNode(null, (StatementNode) $1.obj);
+
+
                                            ((FuncSequenceNode) $$.obj).type = ((StatementNode) $1.obj).type; }
 | func_stmt_list func_stmt ';'           { $$.obj = new FuncSequenceNode((FuncSequenceNode) $1.obj, (StatementNode) $2.obj); System.out.println($1.obj);
                                            if (((StatementNode) $2.obj).type == null) {
@@ -140,9 +145,9 @@ func_stmt: list_dec
 | prim_dec
 | assignment
 | print_stmt
-| func_call                         { $$.obj = $1.obj; }
+| func_call                         { $$.obj = $1.obj;}
 | RET expr                          { $$.obj = new ReturnNode((Expression) $2.obj); 
-                                      ((ReturnNode) $$.obj).type = ((Expression) $2.obj).type; }
+                                      ((ReturnNode) $$.obj).type = ((Expression) $2.obj).type; yyerror("Reducing return to func_stmt: " + $2.obj.toString());}
 ;
 
 func_call : id '(' attr_list ')'                              { //Make sure this function was previously declared
