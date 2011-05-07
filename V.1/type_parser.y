@@ -94,7 +94,8 @@ type : INT_T                           { $$.sval = "int"; }
 label_list : label_list ',' ID         { $$.obj = $1.obj;
                                          ((ArrayList<String>) $$.obj).add($3.sval); }
 | ID                                   { $$.obj = new ArrayList<String>();
-                                         ((ArrayList<String>) $$.obj).add($1.sval); }
+                                         ((ArrayList<String>) $$.obj).add($1.sval);
+                                         ((Hashtable) symbols.get("labels")).put($1.sval, "Node"); }
 | /* empty string */                   { /* nothing */ }
 ;
 
@@ -128,7 +129,34 @@ label_list : label_list ',' ID         { $$.obj = $1.obj;
   {
     lexer = new TypeLexer(r, this);
     this.symbols = symbols;
-    symbols.put("node_attributes", new Hashtable());
-    symbols.put("arc_attributes", new Hashtable());
+
+    //A new hashtable to hold node attributes
+    Hashtable node_attributes = new Hashtable();
+    //These attributes are automatic
+    node_attributes.put("degree", "int");
+    node_attributes.put("inDegree", "int");
+    node_attributes.put("outDegree", "int");
+    node_attributes.put("arcs", "list Arc");
+    node_attributes.put("arcsIn", "list Arc");
+    node_attributes.put("arcsOut", "list Arc");
+    symbols.put("node_attributes", node_attributes);
+
+    //A new hashtable to hold arc attributes
+    Hashtable arc_attributes = new Hashtable();
+    //These attributes are automatic
+    arc_attributes.put("nodes", "list Node");
+    arc_attributes.put("from", "Node");
+    arc_attributes.put("to", "Node");
+    symbols.put("arc_attributes", arc_attributes);
+
+    //A new hashtable to store all the graph attributes and labels
+    Hashtable labels = new Hashtable();
+    //These attributes are automatic
+    labels.put("arcs", "list Arc");
+    labels.put("nodes", "list Node");
+    labels.put("numArcs", "int");
+    labels.put("numNodes", "int");
+    symbols.put("labels", labels);
+
     inter = new Hashtable();
   }

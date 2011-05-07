@@ -5,6 +5,7 @@ public class FunctionCall extends Expression{
     AttrList params;
 
     public FunctionCall(ID myName, AttrList myParams){
+	super();
 	name = myName;
 	params = myParams;
     }

@@ -3,17 +3,17 @@ package flow.ast;
 /* The dot operator used to access the attributes of Nodes and Arcs */
 public class Dot extends Expression {
 
-	public Dot(ID id, ID field)
+	public Dot(ID id, String field)
 	{
 		this.id = id;
-		field = field;
+		this.field = field;
 	}
 
 	private ID id;
-	private ID field;
+	private String field;
 
 	public String toString()
 	{
-		return id.toString() + ".get" + field.toString() + "()";
+		return id.toString() + ".get" + field + "()";
 	}
 }

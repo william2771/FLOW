@@ -15,11 +15,12 @@ while(k < arcList.length)
 print(arcSum);
 
 //Sum of all Node values
-List of Node nodeList = Graph.nodes;
+List of Node nodeList;
+nodeList = Graph.nodes;
 
 int j = 0;
 int nodeSum = 0;
-while(j < nodeSum.length)
+while(j < nodeList.length)
 {
 	Arc arc = arcList[j];
 	nodeSum = nodeSum + arc.value;
