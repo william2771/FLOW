@@ -1,0 +1,6 @@
+/* The typedef section */ 
+/* Each DFA node has two attributes, and each path arc has one attribute. */
+
+NODE state(string value, int isAccepting) START; //START is a required node label
+
+ARC path(string symbol);

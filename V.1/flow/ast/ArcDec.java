@@ -15,6 +15,7 @@ public class ArcDec extends StatementNode {
 		
 	@Override
 	public String toString() {
+	    //TODO: Add the arc information to node1 and node2"
 		return "arcs.add(new Arc("+ node1 + ", " + node2 + ", " + alist +"))" ;
 	}
 

@@ -29,7 +29,7 @@ type_def : node_type_def arc_type_def  { try
 
 node_type_def : NODE_T ID '(' param_list ')' label_list ';'
                                        { symbols.put("node_type", $2.sval);
-                                         $$.sval = "public class Node extends flow.structure.SuperNode {\n  public Node(";
+                                         $$.sval = "import flow.structure.*; public class Node {\n  public Node(";
                                          boolean comma = false;
                                          for (String s : (ArrayList<String>) $4.obj)
                                          {
@@ -38,12 +38,12 @@ node_type_def : NODE_T ID '(' param_list ')' label_list ';'
                                            ((Hashtable) symbols.get("node_attributes")).put(s, inter.get(s));
                                            comma = true;
                                          }
-                                         $$.sval += ") {\n";
+                                         $$.sval += ") {\n arcsIn = new FlowList<Arc>(); arcsOut = new FlowList<Arc>(); arcs = new FlowList<Arc>(); degree = inDegree = outDegree = 0;";
                                          for (String s : (ArrayList<String>) $4.obj)
                                          {
                                            $$.sval += "    this." + s + " = " + s + ";\n";
                                          }
-                                         $$.sval += "  }\n";
+                                         $$.sval += "  }\n void addInArc(Arc in)\n   {\n      arcsIn.add(in);\n      arcs.add(in);\n      inDegree++;\n      degree++;\n   }\n\n   void addOutArc(Arc out)\n   {\n      arcsOut.add(out);\n      arcs.add(out);\n      outDegree++;\n      degree++;\n   }\n\n   int getdegree() { return degree; }\n   int getdnDegree() { return inDegree; }\n   int getoutDegree() { return outDegree; }\n\n   FlowList<Arc> getarcs() { return arcs; }\n   FlowList<Arc> getarcsIn() { return arcsOut; }\n   FlowList<Arc> getarcsOut() { return arcsIn; }\n\n   int inDegree;\n   int outDegree;\n   int degree;\n\n   FlowList<Arc> arcsIn;\n   FlowList<Arc> arcsOut;\n   FlowList<Arc> arcs;";
                                          for (String s : (ArrayList<String>) $4.obj)
                                          {
                                            $$.sval += "  private " + inter.get(s) + " " + s + ";\n  public " + inter.get(s) + " get" + s + "()\n  { return " + s + "; }\n";
@@ -53,7 +53,7 @@ node_type_def : NODE_T ID '(' param_list ')' label_list ';'
 
 arc_type_def : ARC_T ID '(' param_list ')' ';'
                                        { symbols.put("arc_type", $2.sval);
-                                         $$.sval = "public class Arc extends flow.structure.SuperArc {\n  public Arc(Node source, Node dest, ";
+                                         $$.sval = "import flow.structure.*; public class Arc {\n  private Node fromNode;\n\t\n\tprivate Node toNode; public Arc(Node source, Node dest, ";
                                          boolean comma = false;
                                          for (String s : (ArrayList<String>) $4.obj)
                                          {
@@ -62,7 +62,7 @@ arc_type_def : ARC_T ID '(' param_list ')' ';'
                                            ((Hashtable) symbols.get("arc_attributes")).put(s, inter.get(s));
                                            comma = true;
                                          }
-                                         $$.sval += ") {\n    super(source, dest);\n";
+                                         $$.sval += ") {\n    fromNode = source; toNode = dest;\n source.addOutArc(this);  dest.addInArc(this); ";
                                          for (String s : (ArrayList<String>) $4.obj)
                                          {
                                            $$.sval += "    this." + s + " = " + s + ";\n";
@@ -72,7 +72,7 @@ arc_type_def : ARC_T ID '(' param_list ')' ';'
                                          {
                                            $$.sval += "  private " + inter.get(s) + " " + s + ";\n  public " + inter.get(s) + " get" + s + "()\n  { return " + s + "; }\n";
                                          }
-                                         $$.sval += "}"; }
+                                         $$.sval += "public Node getto(){\n\t\treturn toNode;\n\t}\n\t\n\tpublic Node getfrom(){\n\t\treturn fromNode;\n\t}\n\n\tpublic boolean setto(Node to){\n\t\ttoNode = to;\n\t\treturn true;\n\t}\n\t\n\tpublic boolean setfrom(Node from){\n\t\tfromNode = from;\n\t\treturn true;\n\t}\n\t\n\tpublic boolean setNodes(Node from, Node to){\n\t\tfromNode = from;\n\t\ttoNode = to;\n\t\treturn true;\n\t}\n\t\n\n\tpublic FlowList<Node> getNodes(Node from, Node to){\n\t\tfromNode = from;\n\t\ttoNode = to;\n\t\tFlowList<Node> twoNodes = new FlowList<Node>();\n\t\ttwoNodes.add(from);\n\t\ttwoNodes.add(to);\n\t\treturn twoNodes;\n\t}} "; }
 ;
 
 param_list : param_list ',' param      { $$.obj = $1.obj;

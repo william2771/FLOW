@@ -1,0 +1,14 @@
+//Specify the typedef
+use 'dfa.flowt';
+
+//Create a depthN type node called 'a', label it with the special label root
+ROOT: @a;
+
+//Create two more depthN nodes
+@b;
+@c;
+ 
+//Connect node 'a' to 'b', then node 'a' to 'c' with anonymous arcs
+a -> b;
+a -> c;
+ 

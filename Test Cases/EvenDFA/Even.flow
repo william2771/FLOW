@@ -1,0 +1,57 @@
+//Specify the typedef
+use 'dfa.flowt';
+
+/* This function simulates the dfa specified above on its parameter input string */
+function simulate(string input) { 
+    Node current = Graph.START; 
+    print "The first current variable is set.";
+
+    print "Entering the loop to look through the arcs.";
+    int i = 0;
+    while(i < input.length) {
+	Arc next;
+	List of Arc pathLst = current.arcsOut();
+	
+	int j = 0;
+	while(j < pathLst.length) {
+	    Arc connected = pathLst[j];
+	    if(connected.symbol == input.substring(i, i+1) {
+		next = connected;
+		print "Went to the next edge.";
+	    }
+	    j++;
+	}
+
+	int isNext = 0;
+	if (next) {
+	    isNext = 1;
+	    print "Navigating to the node at the end of that edge.";
+	    current = next.to;
+	}
+	if (isNext == 0) {
+	    print "There was a problem.  Now exiting.";
+	    return 0;
+	}
+	i = i + 1;
+    }
+
+    if (current.isAccepting) {
+    	return 1;
+    }
+	
+    return 0;
+}
+
+/* All code not within a function definition will execute every time */
+
+string input = "aababbaab";
+print "Input is '" + input + "'\n"; 
+
+int truth = 0;
+if (simulate(input)) {
+	truth = 1;
+	print "Input is accepted.\n";
+}
+if (truth == 0) {
+	print "Input is not accepted.\n";
+}

@@ -6,24 +6,27 @@ int count = binary.length;
 Node current = Graph.START;
 while(count > 0)
 {
-	list of Arc fromArcs = current.arcsFrom();
+	List of Arc fromArcs;
+	fromArcs = current.arcsOut;
 	int k = fromArcs.length - 1;
 	while(k >= 0)
 	{
-		if(fromArcs[k] == binary[count])
+		Arc myArc = fromArcs[k];		
+		if(myArc.transition == binary[count])
 		{
-			current = fromArcs[k].destinationNode();
+			
+			current = myArc.to;
 		}
 		k = k - 1;
 	}
 	count = count - 1;
 }
 
-if(current.value == 1)//1 is accepting 0 is not
+if(current.isAccepting == 1)//1 is accepting 0 is not
 {
 	print("Even parity");
 }
-else
+if(current.isAccepting != 1)
 {
 	print("Odd parity");
 }
