@@ -6,11 +6,11 @@ arcList = Graph.arcs;
 
 int k = 0;
 int arcSum = 0;
-/*while(k < arcList.length)
+while(k < arcList.length)
 {
 	Arc arc = arcList[k];
 	arcSum = arcSum + arc.value;
-}*/
+}
 
 print(arcSum);
 

@@ -248,7 +248,7 @@ expr : '(' expr ')'            { $$.obj = $2.obj; }
                                  }
                                  ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
 | id '.' id                    { $$.obj = new Dot((ID) $1.obj, $3.obj.toString());
-                                 if (((Expression) $1.obj).type.type.equals("List")) {
+                                 if (((Expression) $1.obj).type.type.substring(0,4).equals("list")) {
                                    /* Some kind of magic needed here */
                                    ((Expression) $$.obj).type = ((Expression) $3.obj).type;
                                  }
