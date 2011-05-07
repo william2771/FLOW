@@ -307,9 +307,9 @@ pvalue : INT                           { $$.obj = new pValue($1.ival);
   }  
   
   private Type check_type(Type t1, AttrList e2) {
-    ArrayList<Attr> attrs = e2.toArrayList();
+    ArrayList<Expression> attrs = e2.toArrayList();
     Type ret;
-    for(Attr attr : attrs) {
+    for(Expression attr : attrs) {
         //check_type(type t1, expression e2) will put an error into yyerror
         ret = check_type(t1, attr);
         if(ret.type == "error") {
