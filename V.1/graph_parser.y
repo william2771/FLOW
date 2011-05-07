@@ -205,24 +205,32 @@ expr : '(' expr ')'            { $$.obj = $2.obj; }
                                    yyerror("Modulus is not a string operation.");
                                  }
                                  ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
-| id '.' id                    { $$.obj = new Dot((ID) $1.obj, $3.obj.toString());
-                                 if (((Expression) $1.obj).type.type.equals("Node")) {
-                                   if (((Hashtable) symbols.get("node_attributes")).containsKey(((ID) $3.obj).toString()))
+| id '.' id                    { System.out.println("1");$$.obj = new Dot((ID) $1.obj, $3.obj.toString());System.out.println("2");
+                                 if (((Expression) $1.obj).type.type.equals("Node")) {System.out.println("3");
+                                   if (((Hashtable) symbols.get("node_attributes")).containsKey(((ID) $3.obj).toString())){
+				     System.out.println("4");
                                      ((Expression) $$.obj).type = new Type(((Hashtable) symbols.get("node_attributes")).get($3.obj.toString()).toString());
+				   }
                                    else {
+				     System.out.println("5");
                                      yyerror("Node attribute '" + $3.obj.toString() + "' is not defined");
                                      ((Expression) $$.obj).type = new pType("error");
                                    }
                                  }
                                  else if (((Expression) $1.obj).type.type.equals("Arc")) {
-                                   if (((Hashtable) symbols.get("arc_attributes")).containsKey(((ID) $3.obj).toString()))
+				   System.out.println("6");
+                                   if (((Hashtable) symbols.get("arc_attributes")).containsKey(((ID) $3.obj).toString())){
+				     System.out.println("7");
                                      ((Expression) $$.obj).type = new Type(((Hashtable) symbols.get("arc_attributes")).get($3.obj.toString()).toString());
+				   }
                                    else {
+				     System.out.println("8");
                                      yyerror("Arc attribute '" + $3.obj.toString() + "' is not defined");
                                      ((Expression) $$.obj).type = new pType("error");
                                    }
                                  }
                                  else if (((Expression) $1.obj).type.type.length() > 4 && ((Expression) $1.obj).type.type.substring(0,4).equals("list")) {
+				   System.out.println("9");
                                    if ($3.obj.toString().equals("length")) {
                                      ((Expression) $$.obj).type = new pType("int");
                                    }
@@ -232,6 +240,7 @@ expr : '(' expr ')'            { $$.obj = $2.obj; }
                                    }
                                  }
                                  else {
+				   {System.out.println("10!");
                                    yyerror("Dot operator applied to invalid type: " + ((ID) $1.obj).toString() + " is of type " + ((Expression) $1.obj).type.type);
                                    ((Expression) $$.obj).type = new pType("error");
                                  } }
