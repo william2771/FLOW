@@ -51,7 +51,11 @@
 valid_program : solver
 ;
 
-solver: type_link solver_stmt_list { $$.sval = "import flow.structure.*;\n\npublic class Solver {\npublic static void main(String[] args) {\ngraph = new Graph();\n" + $2.obj.toString() + "}\nprivate static Graph graph;\n}";
+solver: type_link solver_stmt_list { $$.sval = "import flow.structure.*;\n\npublic class Solver {\npublic static void main(String[] args) {\ngraph = new Graph();\n" + $2.obj.toString() + "}";  
+                                    for(String string : functions) {
+                                        $$.sval += string;
+                                        } 
+                                    $$.sval += "\nprivate static Graph graph;\n}";
                                      //if (errors == 0) { //only create output java file if there are no syntax errors
                                        try {
                                          FileWriter graph_file = new FileWriter(new File("Solver.java"));
@@ -121,8 +125,8 @@ func_stmt_list : func_stmt ';'           { $$.obj = new FuncSequenceNode(null, (
 ;
 
 block_stmt: while_stmt
-| if_stmt
-| func_dec                          { $$.obj = $1.obj; }
+| if_stmt                           { $$.obj = $1.obj; }
+| func_dec                          { $$.obj = $1.obj; functions.add(((FunctionNode)$1.obj).realToString()); }
 ;
 
 func_block_stmt: while_stmt
@@ -399,6 +403,7 @@ print_stmt : PRINT expr                { $$.obj = new Print((Expression) $2.obj)
 
   private SolverLexer lexer;
   private Hashtable symbols;
+  private ArrayList<String> functions;
   //We need another Hashtable for temporary storage
   private Hashtable old;
   private ArrayList<String> labels;
@@ -475,5 +480,6 @@ print_stmt : PRINT expr                { $$.obj = new Print((Expression) $2.obj)
   {
     lexer = new SolverLexer(r, this);
     this.symbols = symbols;
+    functions = new ArrayList<String>();
     errors = 0; //no errors yet
   }
