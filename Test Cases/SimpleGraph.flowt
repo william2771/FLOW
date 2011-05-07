@@ -1,2 +1,0 @@
-Node DFA(int isAccepting) START;
-Arc path(int transition);

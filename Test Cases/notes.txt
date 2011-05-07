@@ -1,4 +1,0 @@
-1) Even parity checker DFA
-2) sum of arc weights
-3) sum of node values
-4) Dijkstra's

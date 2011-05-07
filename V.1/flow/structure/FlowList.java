@@ -10,8 +10,12 @@ public class FlowList<E> extends ArrayList<E>
 
 	public FlowList()
 	{
-			super();
-			
+		super();	
+	}
+
+	public FlowList(int size)
+	{
+		super(size);
 	}
 
 	public FlowList(Collection<E> c)

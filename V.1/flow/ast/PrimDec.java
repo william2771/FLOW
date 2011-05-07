@@ -15,7 +15,10 @@ public class PrimDec extends StatementNode {
 	
 	@Override
 	public String toString() {
-		return type + " " + id + " = " + val;
+		if (val != null)
+			return type + " " + id + " = " + val;
+		else
+			return type + " " + id;
 	}
 
 }
