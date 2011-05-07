@@ -1,5 +1,5 @@
 //Specify the typedef
-use 'dfa.flowt';
+use 'Even.flowt';
 
 /* This function simulates the dfa specified above on its parameter input string */
 function simulate(string input) { 

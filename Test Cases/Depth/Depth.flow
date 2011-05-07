@@ -1,5 +1,5 @@
 //Specify the typedef
-use 'dfa.flowt';
+use "Depth.flowt";
 
 function depth(Node myNode)
 {

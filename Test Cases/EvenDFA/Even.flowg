@@ -1,5 +1,5 @@
 //Specify the typedef
-use 'dfa.flowt';
+use 'Even.flowt';
 
 //Building the graph
 START: @s0 "s0", 1;  //state s0 is labeled as the START state

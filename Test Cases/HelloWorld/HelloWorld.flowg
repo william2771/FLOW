@@ -1,4 +1,4 @@
-use 'DFA.flowt';
+use 'HelloWorld.flowt';
 
 /* Building the graph */ 
 
