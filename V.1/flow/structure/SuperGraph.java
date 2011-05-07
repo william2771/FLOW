@@ -11,11 +11,11 @@ public class SuperGraph {
 		arcs = new FlowList<SuperArc>();
 	}
 	
-	public FlowList<SuperNode> getNodes(){
+	public FlowList<SuperNode> getnodes(){
 		return nodes;
 	}
 	
-	public FlowList<SuperArc> getArcs(){
+	public FlowList<SuperArc> getarcs(){
 		return arcs;
 	}
 	

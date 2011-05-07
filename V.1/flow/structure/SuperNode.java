@@ -26,7 +26,7 @@ public class SuperNode{
    }
 
    int getdegree() { return degree; }
-   int getdnDegree() { return inDegree; }
+   int getinDegree() { return inDegree; }
    int getoutDegree() { return outDegree; }
 
 
