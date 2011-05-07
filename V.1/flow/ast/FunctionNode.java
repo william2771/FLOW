@@ -16,7 +16,7 @@ public class FunctionNode extends StatementNode {
 	}
 	
 	public String realToString() {
-		return "public " + ftype + " (" + signature + ")" + " {\n" + statements + "\n}\n";
+		return "public static " + ftype + " (" + signature + ")" + " {\n" + statements + "\n}\n";
 	}
 	
 }

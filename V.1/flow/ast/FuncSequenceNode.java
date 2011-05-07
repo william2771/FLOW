@@ -9,8 +9,10 @@ public class FuncSequenceNode extends SequenceNode {
 	public FuncSequenceNode(FuncSequenceNode prev, StatementNode exec)
 	{
 	    super(prev, exec);
+
 	    type = null;
 	    this.exec = exec;
+	    this.prev = prev;
 	    
 	}
 	
