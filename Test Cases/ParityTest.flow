@@ -6,13 +6,13 @@ int count = binary.length;
 Node current = Graph.START;
 while(count > 0)
 {
-	list of Arc fromArcs = current.arcsFrom();
+	list of Arc fromArcs = current.arcsOut;
 	int k = fromArcs.length - 1;
 	while(k >= 0)
 	{
 		if(fromArcs[k] == binary[count])
 		{
-			current = fromArcs[k].destinationNode();
+			current = fromArcs[k].to;
 		}
 		k = k - 1;
 	}
