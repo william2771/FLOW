@@ -88,9 +88,32 @@ solver_stmt_list : solver_stmt ';'  { $$.obj = new SequenceNode(null, (Statement
 | solver_stmt_list block_stmt       { $$.obj = new SequenceNode((SequenceNode) $1.obj, (StatementNode) $2.obj); }
 ;
 
+func_stmt_list : func_stmt ';'  { $$.obj = new FuncSequenceNode(null, (StatementNode) $1.obj); }
+| func_block_stmt                        { $$.obj = new FuncSequenceNode(null, (StatementNode) $1.obj); }
+| func_stmt_list func_stmt ';'  { $$.obj = new FuncSequenceNode((FuncSequenceNode) $1.obj, (StatementNode) $2.obj); }
+| func_stmt_list func_block_stmt       { $$.obj = new FuncSequenceNode((FuncSequenceNode) $1.obj, (StatementNode) $2.obj); 
+   if (((StatementNode) $2.obj).type == null){
+     ((FuncSequenceNode) $$.obj).type = ((FuncSequenceNode) $1.obj).type;
+   }
+   else if(((FuncSequenceNode) $1.obj).type == null){
+     ((FuncSequenceNode) $$.obj).type = ((FuncSequenceNode) $1.obj).type;   
+   }
+   else if (((FuncSequenceNode) $1.obj).type != ((StatementNode) $2.obj).type){
+     yyerror("You are returning the wrong type.");
+   }
+   else{
+     ((FuncSequenceNode) $$.obj).type = ((StatementNode) $2.obj).type;   
+   }
+ }
+;
+
 block_stmt: while_stmt
 | if_stmt
 | func_dec                          { $$.obj = $1.obj; }
+;
+
+func_block_stmt: while_stmt
+| if_stmt
 ;
 
 solver_stmt: list_dec
@@ -98,14 +121,70 @@ solver_stmt: list_dec
 | assignment
 | print_stmt
 | func_call                         { $$.obj = $1.obj; }
-| RET expr                          { /*This is different - make it somehow*/ }
 ;
 
-func_call : id '(' attr_list ')'                              { $$.obj = new FunctionCall((ID) $1.obj, (AttrList) $3.obj);
-                                                                ((Expression) $$.obj).type = ((Expression) $1.obj).type; }
+func_stmt: list_dec
+| prim_dec
+| assignment
+| print_stmt
+| func_call                         { $$.obj = $1.obj; }
+| RET expr                          { $$.obj = $2.obj; ((Expression) $$.obj).type = ((Expression) $2.obj).type;}
 ;
 
-func_dec : param '(' param_list ')' '{' solver_stmt_list '}'  { $$.obj = new FunctionNode((Param) $1.obj, (ParamList) $3.obj, (SequenceNode) $6.obj); }
+func_call : id '(' attr_list ')'                              { //Make sure this function was previously declared
+                                                                try {
+                                                                    ID function_name = (ID)symbols.get($1.toString());
+                                                                    fType functionType = (fType) function_name.type;
+                                                                    //Check attr_list against the parameter types
+                                                                    check_type((AttrList)$3.obj, functionType.paramTypes);
+                                                                    $$.obj = new FunctionCall(function_name, (AttrList) $3.obj);
+                                                                    ((Expression) $$.obj).type = function_name.type; 
+                                                                }
+                                                                catch(Exception e) {
+                                                                    yyerror($1.toString() + " not found, or not callable.");                                                                    
+                                                                }
+                                                               }
+;
+
+func_dec : param '(' param_list ')' 
+            {//At this point, we know that we are going to end up inside a function body, 
+            Param param = (Param) $1.obj;
+            ID function_id = param.id;
+            //Check that this function name was not previously used by something else
+            if(symbols.containsKey(function_id.toString())) {
+                yyerror(function_id.toString() + " was already declared, cannot use as function name");
+            }
+            Type ret_type = param.type;
+            ParamList params = (ParamList) $3.obj;
+            //Add the id to the symbol table
+            function_id.type = new fType(ret_type.type, params);
+            symbols.put(function_id.toString(), function_id);
+            //so we'll save the current symbol table and start a new on for the function
+            old = symbols;
+            //Create a new symbol table (clone because we want access to higher scoped ids too)
+            symbols = (Hashtable)old.clone();
+            //Add the symbols from the param_list into the symbol table
+            for(Param p : params.toArrayList()) {
+                ID id = p.id;
+                id.type = p.type;
+                //Check that the parameter name is not the same as the function name
+                if(id.toString().equals(function_id.toString())) {
+                    yyerror("Your parameter cannot be the same as your function name " + function_id.toString());
+                }
+                //Add the id/overwrite the id into the symbol table
+                symbols.put(id.toString(), id);
+            }
+            } 
+            
+            '{'  func_stmt_list '}'  { $$.obj = new FunctionNode((Param) $1.obj, (ParamList) $3.obj, (SequenceNode) $6.obj);
+                                                                if (!((Param) $1.obj).type.type.equals(((FuncSequenceNode) $6.obj).type.type))
+                                                                {
+                                                                    yyerror("You are returning the wrong type.");
+                                                                }
+                                                                //Restore the old symbol table
+                                                                symbols = old;
+                                                                }
+
 ;
 
 while_stmt : WHILE '(' expr ')' '{' solver_stmt_list '}'      { $$.obj = new WhileNode((Expression) $3.obj, (SequenceNode) $6.obj ); }
@@ -251,9 +330,13 @@ access : id '[' expr ']'               { $$.obj = new ListAccess((ID) $1.obj, (E
 list_dec : LIST_T OF type id                { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, null);
                                               //added space, was new Type("list" ...) -> new Type("list " ...)
                                               ((ID) $4.obj).type = new Type("list " + $3.obj);
+						//This line below is unneccessary as id was already put into the symbol table when it was parsed
                                               symbols.put(((ID) $4.obj).toString(), $4.obj); }
-| LIST_T OF type id '=' '[' attr_list ']'   { //Make a for loop across attr_list and check for type
-                                              $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, (AttrList) $7.obj);
+
+| LIST_T OF type id '=' '[' attr_list ']'   { //Do typechecking
+						check_type((Type) $3.obj, (AttrList) $7.obj);
+                                                $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, (AttrList) $7.obj);
+
                                               ((ID) $4.obj).type = new Type("list " + $3.obj);
                                               symbols.put(((ID) $4.obj).toString(), $4.obj); 
                                               }
@@ -306,6 +389,8 @@ print_stmt : PRINT expr                { $$.obj = new Print((Expression) $2.obj)
 
   private SolverLexer lexer;
   private Hashtable symbols;
+  //We need another Hashtable for temporary storage
+  private Hashtable old;
   private ArrayList<String> labels;
   private int errors; //Keeps track of syntax errors
 
@@ -352,6 +437,23 @@ print_stmt : PRINT expr                { $$.obj = new Print((Expression) $2.obj)
         }
     }
     return t1;
+  }  
+  
+  private Type check_type(AttrList attrs, ArrayList<Param> params) {
+    ArrayList<Attr> attrslist = attrs.toArrayList();
+    if(attrslist.size() == params.size()) {
+        yyerror("Expected " + params.size() + " args, got " + attrslist.size());
+        return new pType("error");
+    }
+    for(int i=0; i<params.size(); i++) {
+        String paramType = params.get(i).type.type;
+        String attrType = attrslist.get(i).type.type;
+        if(paramType != attrType) {
+            yyerror("Expected type " + paramType + " got " + "attrType");
+            return new pType("error");
+        }
+    }
+    return new pType("success");
   }  
   
   public void yyerror (String error) {

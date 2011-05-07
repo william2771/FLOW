@@ -1,9 +1,10 @@
 package flow.ast;
-
-public class fType {
-    ArrayList<String> paramTypes;
-
+import java.util.*;
+public class fType extends Type {
+    public ArrayList<Param> paramTypes;
+    
     public fType(String type,ParamList params){
-	super(type);
+        super(type);
+        this.paramTypes = params.toArrayList();
     }
 }
