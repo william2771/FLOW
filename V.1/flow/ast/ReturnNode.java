@@ -10,11 +10,11 @@ public class ReturnNode extends StatementNode {
 	public String toString() {
 		if (expr == null)
 		{
-		    return "return";
+			return "return";
 		}
 		else
 		{
-			return "return" + expr;
+			return "return " + expr;
 		}
 	}
 
