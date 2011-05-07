@@ -1,2 +1,0 @@
-Node node() START;
-Arc arc (int weight);
