@@ -31,23 +31,41 @@ TypeLexer.java :	flowt.flex
 TypeParser.java :	type_parser.y
 	$(YACC) -Jclass='TypeParser' type_parser.y
 
-Test1 :	Flow.class $(TESTDIR)SimpleTest.flow $(TESTDIR)SimpleGraph.flowg $(TESTDIR)SimpleGraph.flowt
+SumTest : Flow.class $(TESTDIR)SimpleTest.flow $(TESTDIR)SimpleGraph.flowg $(TESTDIR)SimpleGraph.flowt
 	java Flow $(TESTDIR)SimpleGraph.flowg
 	java Flow $(TESTDIR)SimpleTest.flow
 	javac Solver.java
 	java Solver
 
-Test2 : Flow.class $(TESTDIR)ParityTest.flow $(TESTDIR)SimpleGraph.flowg $(TESTDIR)SimpleGraph.flowt
+ParityTest : Flow.class $(TESTDIR)ParityTest.flow $(TESTDIR)SimpleGraph.flowg $(TESTDIR)SimpleGraph.flowt
 	java Flow $(TESTDIR)SimpleGraph.flowg
 	java Flow $(TESTDIR)ParityTest.flow
 	javac Solver.java
 	java Solver
 
-Function : Flow.class $(TESTDIR)SimpleGraph.flowg $(TESTDIR)SimpleGraph.flowt $(TESTDIR)FunctionTest.flow
+FunctionTest : Flow.class $(TESTDIR)SimpleGraph.flowg $(TESTDIR)SimpleGraph.flowt $(TESTDIR)FunctionTest.flow
 	java Flow $(TESTDIR)SimpleGraph.flowg
 	java Flow $(TESTDIR)FunctionTest.flow
 	javac Solver.java
 	java Solver
+
+DepthTest : Flow.class $(TESTDIR)/Depth/Depth.flowt $(TESTDIR)/Depth/Depth.flowg $(TESTDIR)/Depth/Depth.flow
+	java Flow $(TESTDIR)/Depth/Depth.flowg
+	java Flow  $(TESTDIR)SimpleGraph.flow
+	javac Solver.java
+	java Solver
+
+EvenDFATest : Flow.class $(TESTDIR)/EvenDFA/Even.flowt $(TESTDIR)/EvenDFA/Even.flowg $(TESTDIR)/EvenDFA/Even.flow
+	java Flow $(TESTDIR)/EvenDFA/Even.flowg
+	java Flow $(TESTDIR)/EvenDFA/Even.flow
+	javac Solver.java
+	java Solve
+
+HelloWorldTest : Flow.class $(TESTDIR)/HelloWorld/HelloWorld.flowt $(TESTDIR)/HelloWorld/HelloWorld.flowg $(TESTDIR)/HelloWorld/HelloWorld.flow 
+	java Flow $(TESTDIR)/HelloWorld/HelloWorld.flowg
+	java Flow $(TESTDIR)/HelloWorld/HelloWorld.flow
+	javac Solver.java
+	java Solve
 
 clean :
 	rm *~ *.class SolverLexer.java SolverParser.java SolverParserVal.java GraphLexer.java GraphParser.java GraphParserVal.java TypeParser.java TypeParserVal.java TypeLexer.java Node.java Arc.java Graph.java Solver.java flow/ast/*.class flow/structure/*.class
