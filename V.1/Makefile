@@ -33,14 +33,20 @@ TypeParser.java :	type_parser.y
 Test1 :	Flow.class $(TESTDIR)SimpleTest.flow $(TESTDIR)SimpleGraph.flowg $(TESTDIR)SimpleGraph.flowt
 	java Flow $(TESTDIR)SimpleGraph.flowg
 	java Flow $(TESTDIR)SimpleTest.flow
+	javac Solver.java
+	java Solver
 
 Test2 : Flow.class $(TESTDIR)ParityTest.flow $(TESTDIR)SimpleGraph.flowg $(TESTDIR)SimpleGraph.flowt
 	java Flow $(TESTDIR)SimpleGraph.flowg
 	java Flow $(TESTDIR)ParityTest.flow
+	javac Solver.java
+	java Solver
 
 Function : Flow.class $(TESTDIR)SimpleGraph.flowg $(TESTDIR)SimpleGraph.flowt $(TESTDIR)FunctionTest.flow
 	java Flow $(TESTDIR)SimpleGraph.flowg
 	java Flow $(TESTDIR)FunctionTest.flow
+	javac Solver.java
+	java Solver
 
 clean :
 	rm *~ *.class SolverLexer.java SolverParser.java SolverParserVal.java GraphLexer.java GraphParser.java GraphParserVal.java TypeParser.java TypeParserVal.java TypeLexer.java Node.java Arc.java Graph.java Solver.java flow/ast/*.class flow/structure/*.class
