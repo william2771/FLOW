@@ -12,6 +12,14 @@ public class Dot extends Expression {
 	private ID id;
 	private String field;
 
+    public String getField(){
+	return field;
+    }
+
+    public ID getId(){
+	return id;
+    }
+
 	public String toString()
 	{
 		return id.toString() + ".get" + field + "()";

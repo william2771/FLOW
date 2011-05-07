@@ -299,6 +299,13 @@ expr : '(' expr ')'            { $$.obj = $2.obj; }
                                      ((Expression) $$.obj).type = new pType("error");
                                    }
                                  }
+				 else if (((Expression) $1.obj).type.type.equals("String")){
+				   if ($3.obj.toString().equals("length")){
+				     $$.obj = new StrDot((ID) $1.obj, $3.obj.toString());
+				     ((Expression) $$.obj).type = new pType("int");
+				   }
+
+				 }
                                  else {
                                    yyerror("Dot operator applied to invalid type: " + ((ID) $1.obj).toString() + " is of type " + ((Expression) $1.obj).type.type);
                                    ((Expression) $$.obj).type = new pType("error");
