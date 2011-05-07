@@ -1,7 +1,6 @@
 import flow.structure.*; public class Node {
-  public Node(int isAccepting) {
- arcsIn = new FlowList<Arc>(); arcsOut = new FlowList<Arc>(); arcs = new FlowList<Arc>(); degree = inDegree = outDegree = 0;    this.isAccepting = isAccepting;
-  }
+  public Node() {
+ arcsIn = new FlowList<Arc>(); arcsOut = new FlowList<Arc>(); arcs = new FlowList<Arc>(); degree = inDegree = outDegree = 0;  }
  void addInArc(Arc in)
    {
       arcsIn.add(in);
@@ -32,7 +31,4 @@ import flow.structure.*; public class Node {
 
    FlowList<Arc> arcsIn;
    FlowList<Arc> arcsOut;
-   FlowList<Arc> arcs;  private int isAccepting;
-  public int getisAccepting()
-  { return isAccepting; }
-}
+   FlowList<Arc> arcs;}

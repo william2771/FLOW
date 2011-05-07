@@ -51,11 +51,7 @@ node_type_def : NODE_T ID '(' param_list ')' label_list ';'
                                          $$.sval += "}"; }
 
 
-|NODE_T ID '(' ')' label_list ';'
-                                       { symbols.put("node_type", $2.sval);
-                                         $$.sval = "import flow.structure.*; public class Node {\n  public Node(";
-                                         boolean comma = false;
-                                         $$.sval += ") {\n arcsIn = new FlowList<Arc>(); arcsOut = new FlowList<Arc>(); arcs = new FlowList<Arc>(); degree = inDegree = outDegree = 0;}\n void addInArc(Arc in)\n   {\n      arcsIn.add(in);\n      arcs.add(in);\n      inDegree++;\n      degree++;\n   }\n\n   void addOutArc(Arc out)\n   {\n      arcsOut.add(out);\n      arcs.add(out);\n      outDegree++;\n      degree++;\n   }\n\n   int getdegree() { return degree; }\n   int getdnDegree() { return inDegree; }\n   int getoutDegree() { return outDegree; }\n\n   FlowList<Arc> getarcs() { return arcs; }\n   FlowList<Arc> getarcsIn() { return arcsOut; }\n   FlowList<Arc> getarcsOut() { return arcsIn; }\n\n   int inDegree;\n   int outDegree;\n   int degree;\n\n   FlowList<Arc> arcsIn;\n   FlowList<Arc> arcsOut;\n   FlowList<Arc> arcs;}"; }
+
 ;
 
 arc_type_def : ARC_T ID '(' param_list ')' ';'
@@ -86,7 +82,7 @@ param_list : param_list ',' param      { $$.obj = $1.obj;
                                          ((ArrayList<String>) $$.obj).add($3.sval); }
 | param                                { $$.obj = new ArrayList<String>();
                                          ((ArrayList<String>) $$.obj).add($1.sval); }
-| /* empty string */                   { /* nothing */ }
+| /* empty string */                   { $$.obj = new ArrayList<String>();}
 ;
 
 param : type ID                        { inter.put($2.sval, $1.sval);

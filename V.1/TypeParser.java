@@ -250,7 +250,7 @@ final static String yyrule[] = {
 "label_list :",
 };
 
-//#line 103 "type_parser.y"
+//#line 106 "type_parser.y"
 
   private TypeLexer lexer;
   private Hashtable symbols;
@@ -487,17 +487,17 @@ case 2:
                                          yyval.sval = "import flow.structure.*; public class Node {\n  public Node(";
                                          boolean comma = false;
                                          for (String s : (ArrayList<String>) val_peek(3).obj)
-                                         {
-                                           if (comma) yyval.sval += ", ";
+					   {
+					     if (comma) yyval.sval += ", ";
                                            yyval.sval += inter.get(s) + " " + s;
                                            ((Hashtable) symbols.get("node_attributes")).put(s, inter.get(s));
                                            comma = true;
-                                         }
+					   }
                                          yyval.sval += ") {\n arcsIn = new FlowList<Arc>(); arcsOut = new FlowList<Arc>(); arcs = new FlowList<Arc>(); degree = inDegree = outDegree = 0;";
                                          for (String s : (ArrayList<String>) val_peek(3).obj)
-                                         {
-                                           yyval.sval += "    this." + s + " = " + s + ";\n";
-                                         }
+					   {
+					     yyval.sval += "    this." + s + " = " + s + ";\n";
+					   }
                                          yyval.sval += "  }\n void addInArc(Arc in)\n   {\n      arcsIn.add(in);\n      arcs.add(in);\n      inDegree++;\n      degree++;\n   }\n\n   void addOutArc(Arc out)\n   {\n      arcsOut.add(out);\n      arcs.add(out);\n      outDegree++;\n      degree++;\n   }\n\n   int getdegree() { return degree; }\n   int getdnDegree() { return inDegree; }\n   int getoutDegree() { return outDegree; }\n\n   FlowList<Arc> getarcs() { return arcs; }\n   FlowList<Arc> getarcsIn() { return arcsOut; }\n   FlowList<Arc> getarcsOut() { return arcsIn; }\n\n   int inDegree;\n   int outDegree;\n   int degree;\n\n   FlowList<Arc> arcsIn;\n   FlowList<Arc> arcsOut;\n   FlowList<Arc> arcs;";
                                          for (String s : (ArrayList<String>) val_peek(3).obj)
                                          {
@@ -506,7 +506,7 @@ case 2:
                                          yyval.sval += "}"; }
 break;
 case 3:
-//#line 55 "type_parser.y"
+//#line 58 "type_parser.y"
 { symbols.put("arc_type", val_peek(4).sval);
                                          yyval.sval = "import flow.structure.*; public class Arc {\n  private Node fromNode;\n\t\n\tprivate Node toNode; public Arc(Node source, Node dest, ";
                                          boolean comma = false;
@@ -530,49 +530,49 @@ case 3:
                                          yyval.sval += "public Node getto(){\n\t\treturn toNode;\n\t}\n\t\n\tpublic Node getfrom(){\n\t\treturn fromNode;\n\t}\n\n\tpublic boolean setto(Node to){\n\t\ttoNode = to;\n\t\treturn true;\n\t}\n\t\n\tpublic boolean setfrom(Node from){\n\t\tfromNode = from;\n\t\treturn true;\n\t}\n\t\n\tpublic boolean setNodes(Node from, Node to){\n\t\tfromNode = from;\n\t\ttoNode = to;\n\t\treturn true;\n\t}\n\t\n\n\tpublic FlowList<Node> getNodes(Node from, Node to){\n\t\tfromNode = from;\n\t\ttoNode = to;\n\t\tFlowList<Node> twoNodes = new FlowList<Node>();\n\t\ttwoNodes.add(from);\n\t\ttwoNodes.add(to);\n\t\treturn twoNodes;\n\t}} "; }
 break;
 case 4:
-//#line 78 "type_parser.y"
+//#line 81 "type_parser.y"
 { yyval.obj = val_peek(2).obj;
                                          ((ArrayList<String>) yyval.obj).add(val_peek(0).sval); }
 break;
 case 5:
-//#line 80 "type_parser.y"
+//#line 83 "type_parser.y"
 { yyval.obj = new ArrayList<String>();
                                          ((ArrayList<String>) yyval.obj).add(val_peek(0).sval); }
 break;
 case 6:
-//#line 82 "type_parser.y"
-{ /* nothing */ }
+//#line 85 "type_parser.y"
+{ yyval.obj = new ArrayList<String>();}
 break;
 case 7:
-//#line 85 "type_parser.y"
+//#line 88 "type_parser.y"
 { inter.put(val_peek(0).sval, val_peek(1).sval);
                                          yyval.sval = val_peek(0).sval; }
 break;
 case 8:
-//#line 89 "type_parser.y"
+//#line 92 "type_parser.y"
 { yyval.sval = "int"; }
 break;
 case 9:
-//#line 90 "type_parser.y"
+//#line 93 "type_parser.y"
 { yyval.sval = "double"; }
 break;
 case 10:
-//#line 91 "type_parser.y"
+//#line 94 "type_parser.y"
 { yyval.sval = "String"; }
 break;
 case 11:
-//#line 94 "type_parser.y"
+//#line 97 "type_parser.y"
 { yyval.obj = val_peek(2).obj;
                                          ((ArrayList<String>) yyval.obj).add(val_peek(0).sval); }
 break;
 case 12:
-//#line 96 "type_parser.y"
+//#line 99 "type_parser.y"
 { yyval.obj = new ArrayList<String>();
                                          ((ArrayList<String>) yyval.obj).add(val_peek(0).sval);
                                          ((Hashtable) symbols.get("labels")).put(val_peek(0).sval, "Node"); }
 break;
 case 13:
-//#line 99 "type_parser.y"
+//#line 102 "type_parser.y"
 { /* nothing */ }
 break;
 //#line 502 "TypeParser.java"
