@@ -61,7 +61,7 @@ graph_decl : type_link graph_stmt_list { $$.sval = "import flow.structure.*;\nim
                                          }
 
                                          $$.sval += "\n}\n";
-                                         //if (errors == 0) { //only create output java file if there are no syntax errors
+                                         if (errors == 0) { //only create output java file if there are no syntax errors
                                          try {
                                            FileWriter graph_file = new FileWriter(new File("Graph.java"));
                                            graph_file.write($$.sval);
@@ -70,10 +70,10 @@ graph_decl : type_link graph_stmt_list { $$.sval = "import flow.structure.*;\nim
                                          catch(IOException e) {
                                            yyerror("Could not create Solver file.");
                                          }
-                                       //}
-                                       //else {
+                                       }
+                                       else {
                                          System.out.println("\n" + errors + " errors\n");
-                                       } //}
+                                       } }
 ;
 
 type_link : USE STR ';'                { /* process the typedef file */ 
@@ -108,16 +108,20 @@ label_app : id ':' node_dec            { $$.obj = new LabelNode((ID) $1.obj, (No
                                          labels.add($1.sval); }
 ;
 
-node_dec : '@' id attr_list            { $$.obj = new NodeDec((ID) $2.obj, (AttrList) $3.obj); symbols.put(((ID)$2.obj).toString(), (ID)$2.obj);}
-| '@' id                               { $$.obj = new NodeDec((ID) $2.obj, null); symbols.put(((ID)$2.obj).toString(), (ID)$2.obj);}
+node_dec : '@' id attr_list            { $$.obj = new NodeDec((ID) $2.obj, (AttrList) $3.obj);
+                                         symbols.put(((ID)$2.obj).toString(), (ID)$2.obj);}
+| '@' id                               { $$.obj = new NodeDec((ID) $2.obj, null);
+                                         symbols.put(((ID)$2.obj).toString(), (ID)$2.obj);}
 ;
 
 arc_dec : id ARC id attr_list          { $$.obj = new ArcDec((ID) $1.obj, (ID) $3.obj, (AttrList) $4.obj);}
 | id ARC id                            { $$.obj = new ArcDec((ID) $1.obj, (ID) $3.obj, null); }
 ;
 
-list_dec : LIST_T OF type id           { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, null); symbols.put(((ID)$4.obj).toString(), (ID)$4.obj); System.out.println("3");}
-| LIST_T OF type id '=' '[' attr_list ']' { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, (AttrList) $7.obj); symbols.put(((ID)$4.obj).toString(), (ID)$4.obj);}
+list_dec : LIST_T OF type id           { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, null);
+                                         symbols.put(((ID)$4.obj).toString(), (ID)$4.obj); }
+| LIST_T OF type id '=' '[' attr_list ']' { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, (AttrList) $7.obj);
+                                            symbols.put(((ID)$4.obj).toString(), (ID)$4.obj);}
 ;
 
 type : ptype                           { $$.obj = $1.obj; }
@@ -205,33 +209,26 @@ expr : '(' expr ')'            { $$.obj = $2.obj; }
                                    yyerror("Modulus is not a string operation.");
                                  }
                                  ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
-| id '.' id                    { System.out.println("1"); $$.obj = new Dot((ID) $1.obj, $3.obj.toString()); System.out.println("2");
-   if (((Expression) $1.obj).type.type.equals("Node")) 
-     {System.out.println("3");
-                                   if (((Hashtable) symbols.get("node_attributes")).containsKey(((ID) $3.obj).toString())){
-				     System.out.println("4");
+| id '.' id                    { $$.obj = new Dot((ID) $1.obj, $3.obj.toString());
+                                 if (((Expression) $1.obj).type.type.equals("Node"))  {
+                                   if (((Hashtable) symbols.get("node_attributes")).containsKey(((ID) $3.obj).toString())) {
                                      ((Expression) $$.obj).type = new Type(((Hashtable) symbols.get("node_attributes")).get($3.obj.toString()).toString());
 				   }
                                    else {
-				     System.out.println("5");
                                      yyerror("Node attribute '" + $3.obj.toString() + "' is not defined");
                                      ((Expression) $$.obj).type = new pType("error");
                                    }
                                  }
                                  else if (((Expression) $1.obj).type.type.equals("Arc")) {
-				   System.out.println("6");
                                    if (((Hashtable) symbols.get("arc_attributes")).containsKey(((ID) $3.obj).toString())){
-				     System.out.println("7");
                                      ((Expression) $$.obj).type = new Type(((Hashtable) symbols.get("arc_attributes")).get($3.obj.toString()).toString());
 				   }
                                    else {
-				     System.out.println("8");
                                      yyerror("Arc attribute '" + $3.obj.toString() + "' is not defined");
                                      ((Expression) $$.obj).type = new pType("error");
                                    }
                                  }
                                  else if (((Expression) $1.obj).type.type.length() > 4 && ((Expression) $1.obj).type.type.substring(0,4).equals("list")) {
-				   System.out.println("9");
                                    if ($3.obj.toString().equals("length")) {
                                      ((Expression) $$.obj).type = new pType("int");
                                    }
@@ -241,17 +238,7 @@ expr : '(' expr ')'            { $$.obj = $2.obj; }
                                    }
                                  }
                                  else {
-				   {System.out.println("10!");
                                    yyerror("Dot operator applied to invalid type: " + ((ID) $1.obj).toString() + " is of type " + ((Expression) $1.obj).type.type);
-                                   ((Expression) $$.obj).type = new pType("error");
-                                 } }
-  }
-| GRAPH '.' id                 { $$.obj = new Dot(new ID("graph"), $3.obj.toString());
-                                 if (((Hashtable) symbols.get("labels")).containsKey($3.obj.toString())) {
-                                   ((Expression) $$.obj).type = new Type(((Hashtable) symbols.get("labels")).get($3.obj.toString()).toString());
-                                 }
-                                 else {
-                                   yyerror("Graph attribute '" + $3.obj.toString() + "' is not defined");
                                    ((Expression) $$.obj).type = new pType("error");
                                  } }
 | assignment                   { $$.obj = $1.obj; }
