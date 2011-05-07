@@ -53,7 +53,7 @@ valid_program : graph_decl
 
 /* Beginning of graph declaration section */
 
-graph_decl : type_link graph_stmt_list { $$.sval = "public class Graph extends flow.structure.SuperGraph\n{\npublic Graph() {\nsuper();\n" + $2.obj.toString() + "\n}\n";
+graph_decl : type_link graph_stmt_list { $$.sval = "import flow.structure.*;\nimport java.util.ArrayList;\npublic class Graph {\npublic Graph() {\nnodes = new FlowList<Node>();\narcs = new FlowList<Arc>();\n" + $2.obj.toString() + "\n}\nprivate FlowList<Arc> arcs; public FlowList<Arc> getarcs() { return arcs; }\n private FlowList<Node> nodes; public FlowList<Node> getnodes() { return nodes; } \n public int getnumNodes(){return nodes.size();} public int getnumArcs(){ return arcs.size();}\n";
 
                                          for (String label : labels)
                                          {
