@@ -3,7 +3,7 @@
 
 //precondition: dfa, e.g. every character in the alphabet
 //is represented uniquely by an out-arc on each node
-use 'DFA.flowt';
+use 'HelloWorld.flowt';
 
 function simulate(string input) { 
     @current = Graph.START; 
