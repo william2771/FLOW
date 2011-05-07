@@ -247,24 +247,29 @@ expr : '(' expr ')'            { $$.obj = $2.obj; }
                                    yyerror("Modulus is not a string operation.");
                                  }
                                  ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
-| id '.' id                    { $$.obj = new Dot((ID) $1.obj, $3.obj.toString());
-                                 if (((Expression) $1.obj).type.type.substring(0,4).equals("list")) {
-                                   /* Some kind of magic needed here */
-                                   ((Expression) $$.obj).type = ((Expression) $3.obj).type;
-                                 }
-                                 else if (((Expression) $1.obj).type.type.equals("Node")) {
+| id '.' id                    { $$.obj = new Dot((ID) $1.obj, $3.obj.toString()); System.out.println($3.obj.toString());
+                                 if (((Expression) $1.obj).type.type.equals("Node")) {
                                    if (((Hashtable) symbols.get("node_attributes")).containsKey(((ID) $3.obj).toString()))
                                      ((Expression) $$.obj).type = new Type(((Hashtable) symbols.get("node_attributes")).get($3.obj.toString()).toString());
                                    else {
-                                     yyerror("Node attribute '" + ((Expression) $3.obj).toString() + "' is not defined");
+                                     yyerror("Node attribute '" + $3.obj.toString() + "' is not defined");
                                      ((Expression) $$.obj).type = new pType("error");
                                    }
                                  }
                                  else if (((Expression) $1.obj).type.type.equals("Arc")) {
                                    if (((Hashtable) symbols.get("arc_attributes")).containsKey(((ID) $3.obj).toString()))
-                                     ((Expression) $$.obj).type = ((Type) ((Hashtable) symbols.get("arc_attributes")).get(((ID) $3.obj).toString()));
+                                     ((Expression) $$.obj).type = new Type(((Hashtable) symbols.get("arc_attributes")).get($3.obj.toString()).toString());
                                    else {
-                                     yyerror("Arc attribute '" + ((Expression) $3.obj).toString() + "' is not defined");
+                                     yyerror("Arc attribute '" + $3.obj.toString() + "' is not defined");
+                                     ((Expression) $$.obj).type = new pType("error");
+                                   }
+                                 }
+                                 else if (((Expression) $1.obj).type.type.length() > 4 && ((Expression) $1.obj).type.type.substring(0,4).equals("list")) {
+                                   if ($3.obj.toString().equals("length")) {
+                                     ((Expression) $$.obj).type = new pType("int");
+                                   }
+                                   else {
+                                     yyerror("List attribute '" + $3.obj.toString() + "' is not defined");
                                      ((Expression) $$.obj).type = new pType("error");
                                    }
                                  }

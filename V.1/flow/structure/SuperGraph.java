@@ -15,7 +15,7 @@ public class SuperGraph {
 		return nodes;
 	}
 	
-	public ArrayList<SuperArc> getnrcs(){
+	public ArrayList<SuperArc> getarcs(){
 		return arcs;
 	}
 	
