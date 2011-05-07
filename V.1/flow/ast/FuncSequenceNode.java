@@ -11,6 +11,7 @@ public class FuncSequenceNode extends SequenceNode {
 	    super(prev, exec);
 	    type = null;
 	    this.exec = exec;
+	    this.prev = prev;
 	    
 	}
 	
