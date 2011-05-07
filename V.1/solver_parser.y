@@ -56,7 +56,7 @@ solver: type_link solver_stmt_list { $$.sval = "import java.util.*;\nimport flow
                                         $$.sval += string;
                                     } 
                                     $$.sval += "}";
-                                     //if (errors == 0) { //only create output java file if there are no syntax errors
+                                     if (errors == 0) { //only create output java file if there are no syntax errors
                                        try {
                                          FileWriter graph_file = new FileWriter(new File("Solver.java"));
                                          graph_file.write($$.sval);
@@ -65,10 +65,10 @@ solver: type_link solver_stmt_list { $$.sval = "import java.util.*;\nimport flow
                                        catch(IOException e) {
                                          yyerror("Could not create Solver file.");
                                        }
-                                     //}
-                                     //else {
+                                     }
+                                     else {
                                        System.out.println("\n" + errors + " errors\n");
-                                     } //}
+                                     } }
 | solver_stmt_list                 { yyerror("The first statement in the file must be a typelink.");
                                      System.out.println("\n" + errors + " errors\n"); }
 ;
@@ -77,7 +77,6 @@ type_link : USE STR ';'    { /* process the typedef file */
                              labels = new ArrayList<String>();
                              try {
                                String filepath = symbols.get("filepath") + $2.sval;
-                               //System.out.println("\nTrying to open " + filepath + "\n");
                                TypeParser tparser = new TypeParser(new FileReader(filepath), symbols);
                                tparser.yyparse();
                               }
@@ -111,7 +110,7 @@ func_stmt_list : func_stmt ';'           { $$.obj = new FuncSequenceNode(null, (
                                              ((FuncSequenceNode) $$.obj).retType = ((StatementNode) $2.obj).retType;   
                                            }
                                            else if (((FuncSequenceNode) $1.obj).retType != ((StatementNode) $2.obj).retType){
-                                             yyerror("You are returning the wrong type.1" + ((FuncSequenceNode) $1.obj).retType + ((StatementNode) $2.obj).retType );
+                                             yyerror("You are returning the wrong type" + ((FuncSequenceNode) $1.obj).retType + ((StatementNode) $2.obj).retType );
                                            }
                                            else{
                                              ((FuncSequenceNode) $$.obj).retType = ((StatementNode) $2.obj).retType;   
@@ -155,18 +154,13 @@ func_stmt: prim_dec
                                       ((ReturnNode) $$.obj).retType = ((Expression) $2.obj).type;}
 ;
 
-func_call : id '(' attr_list ')'                              { //Make sure this function was previously declared
-                                                                //try {
+func_call : id '(' attr_list ')'                              { 
                                                                     ID function_name = (ID) symbols.get($1.obj.toString());
                                                                     fType functionType = (fType) function_name.type;
                                                                     //Check attr_list against the parameter types
                                                                     check_type((AttrList)$3.obj, functionType.paramTypes);
                                                                     $$.obj = new FunctionCall(function_name, (AttrList) $3.obj);
                                                                     ((Expression) $$.obj).type = function_name.type; 
-                                                                //}
-                                                                //catch(Exception e) {
-                                                                  //  yyerror($1.obj.toString() + " not found, or not callable.");                                                                    
-                                                                //}
                                                                }
 ;
 
@@ -403,9 +397,6 @@ prim_dec : type id                     { $$.obj = new PrimDec((Type) $1.obj, (ID
                                            yyerror("Variable " + $2.obj.toString() + " already declared");
                                          }
                                          else {
-                                           System.out.println($1.obj.toString() + " type");
-                                           System.out.println($2.obj.toString() + " id");
-                                           System.out.println($4.obj.toString() + " expr");
                                            ((Expression) $2.obj).type = check_type((Type) $1.obj, (Expression) $4.obj);
                                            symbols.put(((ID) $2.obj).toString(), $2.obj);
                                          } }
