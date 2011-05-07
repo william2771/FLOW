@@ -4,3 +4,10 @@ For SimpleTest.flow:
 
 For ParityTest.flow:
 "Even parity"
+
+For FunctionTest.flow:
+1
+2
+4
+4
+2

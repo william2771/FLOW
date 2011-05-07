@@ -1,0 +1,4 @@
+//Define a depthN type node to have 0 attributes, and require 1 of them to be labeled root
+NODE depthN() ROOT;
+//Define depArc type arc to have 0 attributes
+ARC depArc();
