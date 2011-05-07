@@ -94,18 +94,14 @@ solver_stmt_list : solver_stmt ';'  { $$.obj = new SequenceNode(null, (Statement
 
 
 
-func_stmt_list : func_stmt ';'           { System.out.println("Reducing func_stmt to: func_stmt_list");
-                                            $$.obj = new FuncSequenceNode(null, (StatementNode) $1.obj);
-                                           ((FuncSequenceNode) $$.obj).retType = ((StatementNode) $1.obj).retType;
-                                           System.out.println("it is: " + $$.obj);}
+func_stmt_list : func_stmt ';'           { $$.obj = new FuncSequenceNode(null, (StatementNode) $1.obj);
+                                           ((FuncSequenceNode) $$.obj).retType = ((StatementNode) $1.obj).retType; }
                                            
 | func_block_stmt                        { $$.obj = new FuncSequenceNode(null, (StatementNode) $1.obj);
 
 
                                            ((FuncSequenceNode) $$.obj).retType = ((StatementNode) $1.obj).retType; }
-| func_stmt_list func_stmt ';'           { System.out.println("Reducing func_stmt_list func_stmt to: func_stmt_list");
-                                           System.out.println("" + $1.obj + $2.obj);
-                                            $$.obj = new FuncSequenceNode((FuncSequenceNode) $1.obj, (StatementNode) $2.obj);
+| func_stmt_list func_stmt ';'           { $$.obj = new FuncSequenceNode((FuncSequenceNode) $1.obj, (StatementNode) $2.obj);
                                            if (((StatementNode) $2.obj).retType == null) {
                                             //If func_stmt has type null, keep the statement list's current type
                                              ((FuncSequenceNode) $$.obj).retType = ((FuncSequenceNode) $1.obj).retType;
@@ -121,7 +117,7 @@ func_stmt_list : func_stmt ';'           { System.out.println("Reducing func_stm
                                              ((FuncSequenceNode) $$.obj).retType = ((StatementNode) $2.obj).retType;   
                                            } }
 
-| func_stmt_list func_block_stmt         { $$.obj = new FuncSequenceNode((FuncSequenceNode) $1.obj, (StatementNode) $2.obj);  System.out.println($1.obj);
+| func_stmt_list func_block_stmt         { $$.obj = new FuncSequenceNode((FuncSequenceNode) $1.obj, (StatementNode) $2.obj);
                                            if (((StatementNode) $2.obj).retType == null) {
                                              ((FuncSequenceNode) $$.obj).retType = ((FuncSequenceNode) $1.obj).retType;
                                            }
@@ -145,15 +141,13 @@ func_block_stmt: func_while_stmt
 | func_if_stmt {$$.obj = $1.obj;}
 ;
 
-solver_stmt: list_dec
-| prim_dec
+solver_stmt: prim_dec
 | assignment
 | print_stmt
 | func_call                         { $$.obj = $1.obj; }
 ;
 
-func_stmt: list_dec
-| prim_dec
+func_stmt: prim_dec
 | assignment
 | print_stmt
 | func_call                         { $$.obj = $1.obj;}
@@ -207,10 +201,7 @@ func_dec : param '(' param_list ')'
             }
             
             '{'  func_stmt_list '}'  { $$.obj = new FunctionNode((Param) $1.obj, (ParamList) $3.obj, (FuncSequenceNode) $7.obj); 
-                                       
-                                       System.out.println((((FuncSequenceNode) $7.obj).retType == null));
-                                        if (!((Param) $1.obj).id.type.type.equals(((FuncSequenceNode) $7.obj).retType.type)) { 
-
+                                       if (!((Param) $1.obj).id.type.type.equals(((FuncSequenceNode) $7.obj).retType.type)) {
                                          yyerror("Function " + ((Param) $1.obj).id.toString() + " returns the wrong type.");
                                        } 
                                        //Restore the old symbol table
@@ -341,7 +332,7 @@ expr : '(' expr ')'            { $$.obj = $2.obj; }
                                  } }
 | func_call                    { $$.obj = $1.obj; }
 | pvalue                       { $$.obj = $1.obj; }
-
+| list_lit                     { $$.obj = $1.obj; }
 ;
 
 param_list : param_list ',' param      { $$.obj = new ParamList((ParamList)$1.obj, (Param)$3.obj); }
@@ -364,7 +355,7 @@ access : id '[' expr ']'               { $$.obj = new ListAccess((ID) $1.obj, (E
                                            ((Expression) $$.obj).type = new pType("error");
                                          }
                                          else if (!((Expression) $1.obj).type.type.substring(0,4).equals("list")) {
-                                           yyerror("Only Lists can be indexed. " + ((Expression) $1.obj).type.type.substring(0,4));
+                                           yyerror("Only Lists can be indexed. " + ((Expression) $1.obj).type.type);
                                            ((Expression) $$.obj).type = new pType("error");
                                          }
                                          else if (((Expression) $3.obj).type.type != "int") {
@@ -376,23 +367,28 @@ access : id '[' expr ']'               { $$.obj = new ListAccess((ID) $1.obj, (E
                                          } }
 ;
 
-list_dec : LIST_T OF type id                { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, null);
-                                              //added space, was new Type("list" ...) -> new Type("list " ...)
-                                              ((ID) $4.obj).type = new Type("list " + $3.obj);
-                                              symbols.put(((ID) $4.obj).toString(), $4.obj); }
-
-| LIST_T OF type id '=' '[' attr_list ']'   { //Do typechecking
-					      check_type((Type) $3.obj, (AttrList) $7.obj);
-                                              $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, (AttrList) $7.obj);
-                                              ((ID) $4.obj).type = new Type("list " + $3.obj.toString());
-                                              symbols.put(((ID) $4.obj).toString(), $4.obj); }
+list_lit : '[' attr_list ']'                { $$.obj = new ListLit((AttrList) $2.obj);
+                                              ((Expression) $$.obj).type = new Type("list " + check_type((AttrList) $2.obj).toString()); }
 ;
+
+/*list_dec : list_type id                     { $$.obj = new ListDec((Type) $1.obj, (ID) $2.obj, null);
+                                              //added space, was new Type("list" ...) -> new Type("list " ...)
+                                              ((ID) $2.obj).type = new Type("list " + $1.obj);
+                                              symbols.put(((ID) $2.obj).toString(), $2.obj); }
+
+| list_type id '=' list_lit                 { $$.obj = new ListDec((Type) $1.obj, (ID) $2.obj, (AttrList) $4.obj);
+                                              ((ID) $2.obj).type = check_type((Type) $1.obj, (AttrList) $4.obj);
+                                              symbols.put(((ID) $2.obj).toString(), $2.obj); }
+;*/
 
 type : ptype                           { $$.obj = $1.obj; }
 | NODE_T                               { $$.obj = new Type("Node"); }
 | ARC_T                                { $$.obj = new Type("Arc"); }
+| list_type                            { $$.obj = $1.obj; }
 ;
 
+list_type : LIST_T OF type             { $$.obj = new Type("list " + $3.obj.toString()); }
+;
 
 prim_dec : type id                     { $$.obj = new PrimDec((Type) $1.obj, (ID) $2.obj, null);
                                          if (symbols.containsKey($2.obj.toString())) {
@@ -407,6 +403,9 @@ prim_dec : type id                     { $$.obj = new PrimDec((Type) $1.obj, (ID
                                            yyerror("Variable " + $2.obj.toString() + " already declared");
                                          }
                                          else {
+                                           System.out.println($1.obj.toString() + " type");
+                                           System.out.println($2.obj.toString() + " id");
+                                           System.out.println($4.obj.toString() + " expr");
                                            ((Expression) $2.obj).type = check_type((Type) $1.obj, (Expression) $4.obj);
                                            symbols.put(((ID) $2.obj).toString(), $2.obj);
                                          } }
@@ -488,7 +487,21 @@ print_stmt : PRINT expr                { $$.obj = new Print((Expression) $2.obj)
     for(Expression attr : attrs) {
         //check_type(type t1, expression e2) will put an error into yyerror
         ret = check_type(t1, attr);
-        if(ret.type == "error") {
+        if(ret.type.equals("error")) {
+            return ret;
+        }
+    }
+    return t1;
+  }  
+
+  private Type check_type(AttrList e2) {
+    ArrayList<Expression> attrs = e2.toArrayList();
+    Type t1 = attrs.get(0).type;
+    Type ret;
+    for(Expression attr : attrs) {
+        //check_type(type t1, expression e2) will put an error into yyerror
+        ret = check_type(t1, attr);
+        if(ret.type.equals("error")) {
             return ret;
         }
     }
@@ -504,14 +517,14 @@ print_stmt : PRINT expr                { $$.obj = new Print((Expression) $2.obj)
     for(int i=0; i<params.size(); i++) {
         String paramType = params.get(i).type.type;
         String attrType = attrslist.get(i).type.type;
-        if(paramType != attrType) {
-            yyerror("Expected type " + paramType + " got " + "attrType");
+        if(!paramType.equals(attrType)) {
+            yyerror("Expected type " + paramType + " got " + attrType);
             return new pType("error");
         }
     }
     return new pType("success");
   }  
-  
+
   public void yyerror (String error) {
     System.err.println("Error: " + error + "\n\tat line " + (lexer.getLine() + 1));
     errors++;

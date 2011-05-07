@@ -10,6 +10,15 @@ public class Param {
 	}
 
 	public String toString() {
-		return "" + type + " " + id;
+		return "" + format_list_type(type.toString()) + " " + id;
 	}
+
+	private String format_list_type(String type) {
+	if (type.length() > 4 && type.substring(0,4).equals("list")) {
+		return "FlowList<" + format_list_type(type.substring(5)) + ">";
+ 	}
+		else return type;
+	}
+
+
 }

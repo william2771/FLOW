@@ -99,6 +99,8 @@ graph_stmt : label_app
 | arc_dec
 | list_dec
 | prim_dec
+| if_stmt
+| while_stmt
 | expr                                 { $$.obj = $1.obj; }
 ;
 
@@ -137,6 +139,12 @@ prim_dec : type id                     { $$.obj = new PrimDec((Type) $1.obj, (ID
                                            ((Expression) $2.obj).type = check_type((Type) $1.obj, (Expression) $4.obj);
                                            symbols.put(((ID) $2.obj).toString(), $2.obj);
                                          } }
+;
+
+while_stmt : WHILE '(' expr ')' '{' graph_stmt_list '}'      { $$.obj = new WhileNode((Expression) $3.obj, (SequenceNode) $6.obj); }
+;
+
+if_stmt : IF '(' expr ')' '{' graph_stmt_list '}'            { $$.obj = new IfNode((Expression) $3.obj, (SequenceNode) $6.obj); }
 ;
 
 attr_list : expr                       { $$.obj = new AttrList(null, (Expression) $1.obj); }
@@ -245,7 +253,6 @@ expr : '(' expr ')'            { $$.obj = $2.obj; }
                                  else {
                                    ((Expression) $$.obj).type = ((ID) $1.obj).type;
                                  } }
-| func_call                    { $$.obj = $1.obj; }
 | pvalue                       { $$.obj = $1.obj; }
 ;
 

@@ -2,7 +2,7 @@
 use 'Even.flowt';
 
 /* This function simulates the dfa specified above on its parameter input string */
-int simulate(string input) { 
+int simulate(List of string input) { 
     Node current = Graph.START; 
     print "The first current variable is set.";
 
@@ -47,7 +47,15 @@ int simulate(string input) {
 /* All code not within a function definition will execute every time */
 
 List of string input = ["a","a","b","a","b","b","a","a","b"];
-print "Input is '" + input + "'\n"; 
+
+string input_string = "Input is '";
+int i = 0;
+while (i < input.length) {
+  input_string = input_string + input[i];
+}
+input_string = input_string + "'\n";
+
+print input_string;
 
 int truth = 0;
 if (simulate(input)) {
