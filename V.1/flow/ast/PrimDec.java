@@ -7,6 +7,7 @@ public class PrimDec extends StatementNode {
 		this.type = type;
 		this.id = id;
 		this.val = val;
+		retType = null;
 	}
 
 	private Type type;

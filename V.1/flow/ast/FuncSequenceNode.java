@@ -2,7 +2,7 @@ package flow.ast;
 
 public class FuncSequenceNode extends SequenceNode {
 
-    public Type type;
+    public Type retType;
     private FuncSequenceNode prev;
     private StatementNode exec;
     
@@ -10,7 +10,7 @@ public class FuncSequenceNode extends SequenceNode {
 	{
 	    super(prev, exec);
 
-	    type = null;
+	    retType = null;
 	    this.exec = exec;
 	    this.prev = prev;
 	    

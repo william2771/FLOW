@@ -6,6 +6,7 @@ public class FunctionNode extends StatementNode {
 	FuncSequenceNode statements;
 
 	public FunctionNode(Param ftype, ParamList signature, FuncSequenceNode statements) {
+	    retType = null;
 		this.ftype = ftype;
 		this.signature = signature;
 		this.statements = statements;

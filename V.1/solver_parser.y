@@ -96,42 +96,42 @@ solver_stmt_list : solver_stmt ';'  { $$.obj = new SequenceNode(null, (Statement
 
 func_stmt_list : func_stmt ';'           { System.out.println("Reducing func_stmt to: func_stmt_list");
                                             $$.obj = new FuncSequenceNode(null, (StatementNode) $1.obj);
-                                           ((FuncSequenceNode) $$.obj).type = ((StatementNode) $1.obj).type;
+                                           ((FuncSequenceNode) $$.obj).retType = ((StatementNode) $1.obj).retType;
                                            System.out.println("it is: " + $$.obj);}
                                            
 | func_block_stmt                        { $$.obj = new FuncSequenceNode(null, (StatementNode) $1.obj);
 
 
-                                           ((FuncSequenceNode) $$.obj).type = ((StatementNode) $1.obj).type; }
+                                           ((FuncSequenceNode) $$.obj).retType = ((StatementNode) $1.obj).retType; }
 | func_stmt_list func_stmt ';'           { System.out.println("Reducing func_stmt_list func_stmt to: func_stmt_list");
                                            System.out.println("" + $1.obj + $2.obj);
                                             $$.obj = new FuncSequenceNode((FuncSequenceNode) $1.obj, (StatementNode) $2.obj);
-                                           if (((StatementNode) $2.obj).type == null) {
+                                           if (((StatementNode) $2.obj).retType == null) {
                                             //If func_stmt has type null, keep the statement list's current type
-                                             ((FuncSequenceNode) $$.obj).type = ((FuncSequenceNode) $1.obj).type;
+                                             ((FuncSequenceNode) $$.obj).retType = ((FuncSequenceNode) $1.obj).retType;
                                            }
-                                           else if(((FuncSequenceNode) $1.obj).type == null) {
+                                           else if(((FuncSequenceNode) $1.obj).retType == null) {
                                             //If func_stmt_list has no type, take the func_stmt type
-                                             ((FuncSequenceNode) $$.obj).type = ((StatementNode) $2.obj).type;   
+                                             ((FuncSequenceNode) $$.obj).retType = ((StatementNode) $2.obj).retType;   
                                            }
-                                           else if (((FuncSequenceNode) $1.obj).type != ((StatementNode) $2.obj).type){
-                                             yyerror("You are returning the wrong type.");
+                                           else if (((FuncSequenceNode) $1.obj).retType != ((StatementNode) $2.obj).retType){
+                                             yyerror("You are returning the wrong type.1" + ((FuncSequenceNode) $1.obj).retType + ((StatementNode) $2.obj).retType );
                                            }
                                            else{
-                                             ((FuncSequenceNode) $$.obj).type = ((StatementNode) $2.obj).type;   
+                                             ((FuncSequenceNode) $$.obj).retType = ((StatementNode) $2.obj).retType;   
                                            } }
 | func_stmt_list func_block_stmt         { $$.obj = new FuncSequenceNode((FuncSequenceNode) $1.obj, (StatementNode) $2.obj);  System.out.println($1.obj);
-                                           if (((StatementNode) $2.obj).type == null) {
-                                             ((FuncSequenceNode) $$.obj).type = ((FuncSequenceNode) $1.obj).type;
+                                           if (((StatementNode) $2.obj).retType == null) {
+                                             ((FuncSequenceNode) $$.obj).retType = ((FuncSequenceNode) $1.obj).retType;
                                            }
-                                           else if(((FuncSequenceNode) $1.obj).type == null) {
-                                             ((FuncSequenceNode) $$.obj).type = ((FuncSequenceNode) $1.obj).type;   
+                                           else if(((FuncSequenceNode) $1.obj).retType == null) {
+                                             ((FuncSequenceNode) $$.obj).retType = ((FuncSequenceNode) $1.obj).retType;   
                                            }
-                                           else if (((FuncSequenceNode) $1.obj).type != ((StatementNode) $2.obj).type){
-                                             yyerror("You are returning the wrong type.");
+                                           else if (((FuncSequenceNode) $1.obj).retType != ((StatementNode) $2.obj).retType){
+                                             yyerror("You are returning the wrong type.2" + ((FuncSequenceNode) $1.obj).retType + ((StatementNode) $2.obj).retType );
                                            }
                                            else{
-                                             ((FuncSequenceNode) $$.obj).type = ((StatementNode) $2.obj).type;   
+                                             ((FuncSequenceNode) $$.obj).retType = ((StatementNode) $2.obj).retType;   
                                            } }
 ;
 
@@ -141,7 +141,7 @@ block_stmt: while_stmt
 ;
 
 func_block_stmt: func_while_stmt
-| func_if_stmt
+| func_if_stmt {$$.obj = $1.obj;}
 ;
 
 solver_stmt: list_dec
@@ -157,7 +157,7 @@ func_stmt: list_dec
 | print_stmt
 | func_call                         { $$.obj = $1.obj;}
 | RET expr                          { $$.obj = new ReturnNode((Expression) $2.obj); 
-                                      ((ReturnNode) $$.obj).type = ((Expression) $2.obj).type;}
+                                      ((ReturnNode) $$.obj).retType = ((Expression) $2.obj).type;}
 ;
 
 func_call : id '(' attr_list ')'                              { //Make sure this function was previously declared
@@ -207,8 +207,8 @@ func_dec : param '(' param_list ')'
             
             '{'  func_stmt_list '}'  { $$.obj = new FunctionNode((Param) $1.obj, (ParamList) $3.obj, (FuncSequenceNode) $7.obj); 
                                        
-                                       System.out.println((((FuncSequenceNode) $7.obj).type == null));
-                                        if (!((Param) $1.obj).id.type.type.equals(((FuncSequenceNode) $7.obj).type.type)) { 
+                                       System.out.println((((FuncSequenceNode) $7.obj).retType == null));
+                                        if (!((Param) $1.obj).id.type.type.equals(((FuncSequenceNode) $7.obj).retType.type)) { 
                                          yyerror("Function " + ((Param) $1.obj).id.toString() + " returns the wrong type.");
                                        } 
                                        //Restore the old symbol table
@@ -225,7 +225,7 @@ func_while_stmt : WHILE '(' expr ')' '{' func_stmt_list '}'      { $$.obj = new 
 if_stmt : IF '(' expr ')' '{' solver_stmt_list '}'            { $$.obj = new IfNode((Expression) $3.obj, (SequenceNode) $6.obj); }
 ;
 
-func_if_stmt : IF '(' expr ')' '{' func_stmt_list '}'            { $$.obj = new IfNode((Expression) $3.obj, (SequenceNode) $6.obj); }
+func_if_stmt : IF '(' expr ')' '{' func_stmt_list '}'            { $$.obj = new IfNode((Expression) $3.obj, (SequenceNode) $6.obj);}
 ;
 
 expr : '(' expr ')'            { $$.obj = $2.obj; }

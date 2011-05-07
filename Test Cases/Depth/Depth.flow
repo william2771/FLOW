@@ -11,12 +11,12 @@ int depth(Node myNode)
 	}
 	int k = 0;
 	while(k < arcs.length) {
-		Node n = arcs[k];
+		Arc n = arcs[k];
 		int temp = depth(n.to);
 		if(temp > deep) {
 			deep = temp;
 		}
 	}
-	return deep + 1;
+	return (deep + 1);
 }
-print depth(root);
+print depth(Graph.ROOT);

@@ -56,8 +56,8 @@ node_type_def : NODE_T ID '(' param_list ')' label_list ';'
 
 arc_type_def : ARC_T ID '(' param_list ')' ';'
                                        { symbols.put("arc_type", $2.sval);
-                                         $$.sval = "import flow.structure.*; public class Arc {\n  private Node fromNode;\n\t\n\tprivate Node toNode; public Arc(Node source, Node dest, ";
-                                         boolean comma = false;
+                                         $$.sval = "import flow.structure.*; public class Arc {\n  private Node fromNode;\n\t\n\tprivate Node toNode; public Arc(Node source, Node dest ";
+                                         boolean comma = true;
                                          for (String s : (ArrayList<String>) $4.obj)
                                          {
                                            if (comma) $$.sval += ", ";

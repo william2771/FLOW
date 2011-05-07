@@ -7,6 +7,7 @@ public class Print extends StatementNode {
 	public Print(Expression expr)
 	{
 		this.expr = expr;
+		retType = null;
 	}
 
 	public String toString()

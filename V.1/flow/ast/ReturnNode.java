@@ -6,6 +6,7 @@ public class ReturnNode extends StatementNode {
 	public ReturnNode(Expression expr) {
 	    System.out.println("IN RETURN NODE");
 		this.expr = expr;
+		retType = null;
 	}
 	
 	public String toString() {

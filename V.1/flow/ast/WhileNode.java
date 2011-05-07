@@ -5,6 +5,7 @@ public class WhileNode extends StatementNode {
 	public WhileNode(Expression exp, SequenceNode block) {
 		this.exp = exp;
 		this.block = block;
+		retType = null;
 	}
 
 	private Expression exp;

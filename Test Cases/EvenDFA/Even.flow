@@ -46,8 +46,7 @@ int simulate(string input) {
 
 /* All code not within a function definition will execute every time */
 
-List of string input;
-input = ["a","a","b","a","b","b","a","a","b"];
+List of string input = ["a","a","b","a","b","b","a","a","b"];
 print "Input is '" + input + "'\n"; 
 
 int truth = 0;

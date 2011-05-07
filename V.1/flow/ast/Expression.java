@@ -4,6 +4,7 @@ public class Expression extends StatementNode {
 
     public Expression(){
 	type = null;
+	retType = null;
     }
 
 	@Override

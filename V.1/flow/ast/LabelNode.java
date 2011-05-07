@@ -6,6 +6,7 @@ public class LabelNode extends StatementNode {
 	{
 		this.label = label;
 		this.dec = dec;
+		retType = null;
 	}
 
 	ID label;

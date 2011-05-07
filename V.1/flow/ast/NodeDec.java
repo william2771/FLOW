@@ -6,6 +6,7 @@ public class NodeDec extends StatementNode {
 	{
 		this.id = id;
 		this.alist = alist;
+		retType = null;
 	}
 
 	ID id;

@@ -104,22 +104,22 @@ label_app : id ':' node_dec            { $$.obj = new LabelNode((ID) $1.obj, (No
                                          labels.add($1.sval); }
 ;
 
-node_dec : '@' id attr_list            { $$.obj = new NodeDec((ID) $2.obj, (AttrList) $3.obj); }
-| '@' id                               { $$.obj = new NodeDec((ID) $2.obj, null); }
+node_dec : '@' id attr_list            { $$.obj = new NodeDec((ID) $2.obj, (AttrList) $3.obj); symbols.put(((ID)$2.obj).toString(), (ID)$2.obj);}
+| '@' id                               { $$.obj = new NodeDec((ID) $2.obj, null); symbols.put(((ID)$2.obj).toString(), (ID)$2.obj);}
 ;
 
-arc_dec : id ARC id attr_list          { $$.obj = new ArcDec((ID) $1.obj, (ID) $3.obj, (AttrList) $4.obj); }
+arc_dec : id ARC id attr_list          { $$.obj = new ArcDec((ID) $1.obj, (ID) $3.obj, (AttrList) $4.obj);}
 | id ARC id                            { $$.obj = new ArcDec((ID) $1.obj, (ID) $3.obj, null); }
 ;
 
-list_dec : LIST_T OF type ID           { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, null); }
-| LIST_T OF type id '=' '[' attr_list ']' { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, (AttrList) $7.obj); }
+list_dec : LIST_T OF type ID           { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, null); symbols.put(((ID)$4.obj).toString(), (ID)$4.obj);}
+| LIST_T OF type id '=' '[' attr_list ']' { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, (AttrList) $7.obj); symbols.put(((ID)$4.obj).toString(), (ID)$4.obj);}
 ;
 
 type : ptype                           { $$.obj = $1.obj; }
 ;
 
-prim_dec : ptype id '=' pvalue         { $$.obj = new PrimDec((pType) $1.obj, (ID) $2.obj, (pValue) $4.obj); }
+prim_dec : ptype id '=' pvalue         { $$.obj = new PrimDec((pType) $1.obj, (ID) $2.obj, (pValue) $4.obj); symbols.put(((ID)$2.obj).toString(), (ID)$2.obj);}
 ;
 
 attr_list : expr                       { $$.obj = new AttrList(null, (Expression) $1.obj); }
