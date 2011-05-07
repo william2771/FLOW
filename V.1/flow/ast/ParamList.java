@@ -1,7 +1,7 @@
 package flow.ast;
 
 import java.util.ArrayList;
-/////////////////////
+
 public class ParamList {
 	ParamList paramList;
 	Param param;
@@ -14,7 +14,7 @@ public class ParamList {
 
     public ArrayList<Param> toArrayList(){
 	ArrayList<Param> arr;
-	if (paramList!=null){
+	if (paramList == null){
 	    arr = new ArrayList<Param>();
 	}
 	else{

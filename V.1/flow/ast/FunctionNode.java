@@ -1,11 +1,11 @@
 package flow.ast;
 
-public class FunctionNode {
+public class FunctionNode extends StatementNode {
 	Param ftype;
 	ParamList signature;
-	SequenceNode statements;
+	FuncSequenceNode statements;
 
-	public FunctionNode(Param ftype, ParamList signature, SequenceNode statements) {
+	public FunctionNode(Param ftype, ParamList signature, FuncSequenceNode statements) {
 		this.ftype = ftype;
 		this.signature = signature;
 		this.statements = statements;

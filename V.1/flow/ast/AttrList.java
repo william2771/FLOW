@@ -20,7 +20,7 @@ public class AttrList {
 
     public ArrayList<Expression> toArrayList() {
         ArrayList<Expression> result;
-        if(alist != null) {
+        if(alist == null) {
             result = new ArrayList<Expression>();
             result.add(tail);
             return result;

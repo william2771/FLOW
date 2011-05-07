@@ -88,9 +88,23 @@ solver_stmt_list : solver_stmt ';'  { $$.obj = new SequenceNode(null, (Statement
 | solver_stmt_list block_stmt       { $$.obj = new SequenceNode((SequenceNode) $1.obj, (StatementNode) $2.obj); }
 ;
 
-func_stmt_list : func_stmt ';'           { $$.obj = new FuncSequenceNode(null, (StatementNode) $1.obj); }
-| func_block_stmt                        { $$.obj = new FuncSequenceNode(null, (StatementNode) $1.obj); }
-| func_stmt_list func_stmt ';'           { $$.obj = new FuncSequenceNode((FuncSequenceNode) $1.obj, (StatementNode) $2.obj); }
+func_stmt_list : func_stmt ';'           { $$.obj = new FuncSequenceNode(null, (StatementNode) $1.obj);
+                                           ((FuncSequenceNode) $$.obj).type = ((StatementNode) $1.obj).type; }
+| func_block_stmt                        { $$.obj = new FuncSequenceNode(null, (StatementNode) $1.obj);
+                                           ((FuncSequenceNode) $$.obj).type = ((StatementNode) $1.obj).type; }
+| func_stmt_list func_stmt ';'           { $$.obj = new FuncSequenceNode((FuncSequenceNode) $1.obj, (StatementNode) $2.obj);
+                                           if (((StatementNode) $2.obj).type == null) {
+                                             ((FuncSequenceNode) $$.obj).type = ((FuncSequenceNode) $1.obj).type;
+                                           }
+                                           else if(((FuncSequenceNode) $1.obj).type == null) {
+                                             ((FuncSequenceNode) $$.obj).type = ((FuncSequenceNode) $1.obj).type;   
+                                           }
+                                           else if (((FuncSequenceNode) $1.obj).type != ((StatementNode) $2.obj).type){
+                                             yyerror("You are returning the wrong type.");
+                                           }
+                                           else{
+                                             ((FuncSequenceNode) $$.obj).type = ((StatementNode) $2.obj).type;   
+                                           } }
 | func_stmt_list func_block_stmt         { $$.obj = new FuncSequenceNode((FuncSequenceNode) $1.obj, (StatementNode) $2.obj); 
                                            if (((StatementNode) $2.obj).type == null) {
                                              ((FuncSequenceNode) $$.obj).type = ((FuncSequenceNode) $1.obj).type;
@@ -132,17 +146,17 @@ func_stmt: list_dec
 ;
 
 func_call : id '(' attr_list ')'                              { //Make sure this function was previously declared
-                                                                try {
+                                                                //try {
                                                                     ID function_name = (ID) symbols.get($1.obj.toString());
                                                                     fType functionType = (fType) function_name.type;
                                                                     //Check attr_list against the parameter types
                                                                     check_type((AttrList)$3.obj, functionType.paramTypes);
                                                                     $$.obj = new FunctionCall(function_name, (AttrList) $3.obj);
                                                                     ((Expression) $$.obj).type = function_name.type; 
-                                                                }
-                                                                catch(Exception e) {
-                                                                    yyerror($1.obj.toString() + " not found, or not callable.");                                                                    
-                                                                }
+                                                                //}
+                                                                //catch(Exception e) {
+                                                                  //  yyerror($1.obj.toString() + " not found, or not callable.");                                                                    
+                                                                //}
                                                                }
 ;
 
@@ -174,16 +188,14 @@ func_dec : param '(' param_list ')'
                 //Add the id/overwrite the id into the symbol table
                 symbols.put(id.toString(), id);
             }
-            } 
+            }
             
-            '{'  func_stmt_list '}'  { $$.obj = new FunctionNode((Param) $1.obj, (ParamList) $3.obj, (SequenceNode) $6.obj);
-                                                                if (!((Param) $1.obj).type.type.equals(((FuncSequenceNode) $6.obj).type.type))
-                                                                {
-                                                                    yyerror("You are returning the wrong type.");
-                                                                }
-                                                                //Restore the old symbol table
-                                                                symbols = old;
-                                                                }
+            '{'  func_stmt_list '}'  { $$.obj = new FunctionNode((Param) $1.obj, (ParamList) $3.obj, (FuncSequenceNode) $7.obj);
+                                       if (!((Param) $1.obj).id.type.type.equals(((FuncSequenceNode) $7.obj).type.type)) {
+                                         yyerror("Function " + ((Param) $1.obj).id.toString() + " returns the wrong type.");
+                                       }
+                                       //Restore the old symbol table
+                                       symbols = old; }
 
 ;
 
@@ -305,7 +317,7 @@ param_list : param_list ',' param      { $$.obj = new ParamList((ParamList)$1.ob
 | /* empty string */                   { $$.obj = null; }
 ;
 
-param : type ID                        { $$.obj = new Param((Type) $1.obj, (ID) $2.obj); }
+param : type id                        { $$.obj = new Param((Type) $1.obj, (ID) $2.obj); }
 ;
 
 assignment : access '=' expr           { $$.obj = ((ListAccess) $1.obj).makeLVal((Expression) $3.obj);
@@ -439,7 +451,7 @@ print_stmt : PRINT expr                { $$.obj = new Print((Expression) $2.obj)
   
   private Type check_type(AttrList attrs, ArrayList<Param> params) {
     ArrayList<Expression> attrslist = attrs.toArrayList();
-    if(attrslist.size() == params.size()) {
+    if(attrslist.size() != params.size()) {
         yyerror("Expected " + params.size() + " args, got " + attrslist.size());
         return new pType("error");
     }
