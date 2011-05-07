@@ -130,8 +130,8 @@ block_stmt: while_stmt
 | func_dec                          { $$.obj = $1.obj; }
 ;
 
-func_block_stmt: while_stmt
-| if_stmt
+func_block_stmt: func_while_stmt
+| func_if_stmt
 ;
 
 solver_stmt: list_dec
@@ -207,7 +207,13 @@ func_dec : param '(' param_list ')'
 while_stmt : WHILE '(' expr ')' '{' solver_stmt_list '}'      { $$.obj = new WhileNode((Expression) $3.obj, (SequenceNode) $6.obj); }
 ;
 
+func_while_stmt : WHILE '(' expr ')' '{' func_stmt_list '}'      { $$.obj = new WhileNode((Expression) $3.obj, (SequenceNode) $6.obj); }
+;
+
 if_stmt : IF '(' expr ')' '{' solver_stmt_list '}'            { $$.obj = new IfNode((Expression) $3.obj, (SequenceNode) $6.obj); }
+;
+
+func_if_stmt : IF '(' expr ')' '{' func_stmt_list '}'            { $$.obj = new IfNode((Expression) $3.obj, (SequenceNode) $6.obj); }
 ;
 
 expr : '(' expr ')'            { $$.obj = $2.obj; }
