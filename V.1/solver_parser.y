@@ -89,10 +89,12 @@ solver_stmt_list : solver_stmt ';'  { $$.obj = new SequenceNode(null, (Statement
 ;
 
 
+
 func_stmt_list : func_stmt ';'           { System.out.println($1.obj.toString());
                                             $$.obj = new FuncSequenceNode(null, (StatementNode) $1.obj);
                                            ((FuncSequenceNode) $$.obj).type = ((StatementNode) $1.obj).type;}
 | func_block_stmt                        { $$.obj = new FuncSequenceNode(null, (StatementNode) $1.obj);
+
 
                                            ((FuncSequenceNode) $$.obj).type = ((StatementNode) $1.obj).type; }
 | func_stmt_list func_stmt ';'           { $$.obj = new FuncSequenceNode((FuncSequenceNode) $1.obj, (StatementNode) $2.obj); System.out.println($1.obj);
