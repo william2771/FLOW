@@ -14,7 +14,7 @@ public class ReturnNode extends StatementNode {
 		}
 		else
 		{
-			return "return" + expr;
+			return "return " + expr;
 		}
 	}
 
