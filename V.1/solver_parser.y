@@ -133,7 +133,7 @@ func_stmt: list_dec
 
 func_call : id '(' attr_list ')'                              { //Make sure this function was previously declared
                                                                 try {
-                                                                    ID function_name = (ID)symbols.get($1.toString());
+                                                                    ID function_name = (ID)symbols.get($1.obj.toString());
                                                                     fType functionType = (fType) function_name.type;
                                                                     //Check attr_list against the parameter types
                                                                     check_type((AttrList)$3.obj, functionType.paramTypes);
@@ -195,7 +195,7 @@ if_stmt : IF '(' expr ')' '{' solver_stmt_list '}'            { $$.obj = new IfN
 
 expr : '(' expr ')'            { $$.obj = $2.obj; }
 | '(' type ')' expr %prec CAST { $$.obj = new Cast($2.sval,(Expression) $4.obj);
-                                 ((Expression) $$.obj).type = (pType) $2.obj; }
+                                 ((Expression) $$.obj).type = (Type) $2.obj; }
 | '-' expr %prec NEG           { $$.obj = new Unary((Expression) $2.obj, $1.sval);
                                  if (((Expression) $1.obj).type.type.equals("String")){
                                    yyerror("NEG is not a string operation.");
@@ -425,9 +425,9 @@ print_stmt : PRINT expr                { $$.obj = new Print((Expression) $2.obj)
   }  
   
   private Type check_type(Type t1, AttrList e2) {
-    ArrayList<Attr> attrs = e2.toArrayList();
+    ArrayList<Expression> attrs = e2.toArrayList();
     Type ret;
-    for(Attr attr : attrs) {
+    for(Expression attr : attrs) {
         //check_type(type t1, expression e2) will put an error into yyerror
         ret = check_type(t1, attr);
         if(ret.type == "error") {
@@ -438,7 +438,7 @@ print_stmt : PRINT expr                { $$.obj = new Print((Expression) $2.obj)
   }  
   
   private Type check_type(AttrList attrs, ArrayList<Param> params) {
-    ArrayList<Attr> attrslist = attrs.toArrayList();
+    ArrayList<Expression> attrslist = attrs.toArrayList();
     if(attrslist.size() == params.size()) {
         yyerror("Expected " + params.size() + " args, got " + attrslist.size());
         return new pType("error");
