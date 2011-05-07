@@ -288,8 +288,6 @@ pvalue : INT                           { $$.obj = new pValue($1.ival);
     return yyl_return;
   }
 
-
-
   private Type check_type(Expression e1, Expression e2) {
     if (!e1.type.type.equals(e2.type.type)) {
       yyerror("Type mismatch error:  " + e1.type.type + " != " + e2.type.type);
@@ -323,7 +321,6 @@ pvalue : INT                           { $$.obj = new pValue($1.ival);
     System.err.println("Error: " + error + "\n\tat line " + (lexer.getLine() + 1));
     errors++;
   }
-
 
   public GraphParser(Reader r) {
     lexer = new GraphLexer(r, this);
