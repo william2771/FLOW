@@ -119,20 +119,31 @@ list_dec : LIST_T OF type ID           { $$.obj = new ListDec((Type) $3.obj, (ID
 type : ptype                           { $$.obj = $1.obj; }
 ;
 
-prim_dec : ptype id '=' pvalue         { $$.obj = new PrimDec((pType) $1.obj, (ID) $2.obj, (pValue) $4.obj); symbols.put(((ID)$2.obj).toString(), (ID)$2.obj);}
+prim_dec : type id                     { $$.obj = new PrimDec((Type) $1.obj, (ID) $2.obj, null);
+                                         if (symbols.containsKey($2.obj.toString())) {
+                                           yyerror("Variable " + $2.obj.toString() + " already declared");
+                                         }
+                                         else {
+                                           ((Expression) $2.obj).type = (Type) $1.obj;
+                                           symbols.put(((ID) $2.obj).toString(), $2.obj);
+                                         } }
+| type id '=' expr                     { $$.obj = new PrimDec((Type) $1.obj, (ID) $2.obj, (Expression) $4.obj);
+                                         if (symbols.containsKey($2.obj.toString())) {
+                                           yyerror("Variable " + $2.obj.toString() + " already declared");
+                                         }
+                                         else {
+                                           ((Expression) $2.obj).type = check_type((Type) $1.obj, (Expression) $4.obj);
+                                           symbols.put(((ID) $2.obj).toString(), $2.obj);
+                                         } }
 ;
 
 attr_list : expr                       { $$.obj = new AttrList(null, (Expression) $1.obj); }
 | attr_list ',' expr                   { $$.obj = new AttrList((AttrList) $1.obj, (pValue) $3.obj); }
 ;
 
-attr : pvalue                          { $$.obj = $$.obj; }
-;
-
-
 expr : '(' expr ')'            { $$.obj = $2.obj; }
 | '(' type ')' expr %prec CAST { $$.obj = new Cast($2.sval,(Expression) $4.obj);
-                                 ((Expression) $$.obj).type = (pType) $2.obj; }
+                                 ((Expression) $$.obj).type = (Type) $2.obj; }
 | '-' expr %prec NEG           { $$.obj = new Unary((Expression) $2.obj, $1.sval);
                                  if (((Expression) $1.obj).type.type.equals("String")){
                                    yyerror("NEG is not a string operation.");
@@ -185,28 +196,41 @@ expr : '(' expr ')'            { $$.obj = $2.obj; }
                                  }
                                  ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
 | id '.' id                    { $$.obj = new Dot((ID) $1.obj, $3.obj.toString());
-                                 if (((Expression) $1.obj).type.type.equals("List")) {
-                                   /* Some kind of magic needed here */
-                                   ((Expression) $$.obj).type = ((Expression) $3.obj).type;
-                                 }
-                                 else if (((Expression) $1.obj).type.type.equals("Node")) {
+                                 if (((Expression) $1.obj).type.type.equals("Node")) {
                                    if (((Hashtable) symbols.get("node_attributes")).containsKey(((ID) $3.obj).toString()))
                                      ((Expression) $$.obj).type = new Type(((Hashtable) symbols.get("node_attributes")).get($3.obj.toString()).toString());
                                    else {
-                                     yyerror("Node attribute '" + ((Expression) $3.obj).toString() + "' is not defined");
+                                     yyerror("Node attribute '" + $3.obj.toString() + "' is not defined");
                                      ((Expression) $$.obj).type = new pType("error");
                                    }
                                  }
                                  else if (((Expression) $1.obj).type.type.equals("Arc")) {
                                    if (((Hashtable) symbols.get("arc_attributes")).containsKey(((ID) $3.obj).toString()))
-                                     ((Expression) $$.obj).type = ((Type) ((Hashtable) symbols.get("arc_attributes")).get(((ID) $3.obj).toString()));
+                                     ((Expression) $$.obj).type = new Type(((Hashtable) symbols.get("arc_attributes")).get($3.obj.toString()).toString());
                                    else {
-                                     yyerror("Arc attribute '" + ((Expression) $3.obj).toString() + "' is not defined");
+                                     yyerror("Arc attribute '" + $3.obj.toString() + "' is not defined");
+                                     ((Expression) $$.obj).type = new pType("error");
+                                   }
+                                 }
+                                 else if (((Expression) $1.obj).type.type.length() > 4 && ((Expression) $1.obj).type.type.substring(0,4).equals("list")) {
+                                   if ($3.obj.toString().equals("length")) {
+                                     ((Expression) $$.obj).type = new pType("int");
+                                   }
+                                   else {
+                                     yyerror("List attribute '" + $3.obj.toString() + "' is not defined");
                                      ((Expression) $$.obj).type = new pType("error");
                                    }
                                  }
                                  else {
                                    yyerror("Dot operator applied to invalid type: " + ((ID) $1.obj).toString() + " is of type " + ((Expression) $1.obj).type.type);
+                                   ((Expression) $$.obj).type = new pType("error");
+                                 } }
+| GRAPH '.' id                 { $$.obj = new Dot(new ID("graph"), $3.obj.toString());
+                                 if (((Hashtable) symbols.get("labels")).containsKey($3.obj.toString())) {
+                                   ((Expression) $$.obj).type = new Type(((Hashtable) symbols.get("labels")).get($3.obj.toString()).toString());
+                                 }
+                                 else {
+                                   yyerror("Graph attribute '" + $3.obj.toString() + "' is not defined");
                                    ((Expression) $$.obj).type = new pType("error");
                                  } }
 | assignment                   { $$.obj = $1.obj; }
@@ -219,9 +243,10 @@ expr : '(' expr ')'            { $$.obj = $2.obj; }
                                  else {
                                    ((Expression) $$.obj).type = ((ID) $1.obj).type;
                                  } }
+| func_call                    { $$.obj = $1.obj; }
 | pvalue                       { $$.obj = $1.obj; }
-
 ;
+
 
 access : id '[' expr ']'               { $$.obj = new ListAccess((ID) $1.obj, (Expression) $3.obj);
                                          if (!symbols.containsKey(((ID) $1.obj).toString())) {
@@ -247,12 +272,12 @@ assignment : access '=' expr           { $$.obj = ((ListAccess) $1.obj).makeLVal
                                          ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
 ;
 
-
-
-
-id : ID                                { $$.obj = new ID($1.sval); }
-| UNK                                  { yyerror("Invalid identifier on line " + lexer.getLine());
-                                         $$.obj = new ID($1.sval); }
+id : ID                                { if (symbols.containsKey($1.sval)) {
+                                           $$.obj = symbols.get($1.sval);
+                                         }
+                                         else {
+                                           $$.obj = new ID($1.sval);
+                                         } }
 ;
 
 ptype : INT_T                          { $$.obj = new pType("int"); }

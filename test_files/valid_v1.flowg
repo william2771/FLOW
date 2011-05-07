@@ -4,13 +4,17 @@ use "valid_v1.flowt";
 
 /* Building the Graph */
 
+int x;
+
 START: @node1 3, 4;
 @node2 1, 5;
 @node_spec 17, 17;
 
+x = 4;
+
 //A different kind of comment
 
 node1 -> node2 6;
-node2 -> node1 4;
+node2 -> node1 x;
 node_spec -> node2 2;
 node1 -> node_spec 7;

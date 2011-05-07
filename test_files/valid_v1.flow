@@ -1,11 +1,12 @@
 use "valid_v1.flowt";
 
-int x = 0;
-float ram = 4.9;
+int x;
+float ram;
 
 /* just testing for syntax */
 
 x = 2;
+ram = (float) x;
 int w = 2;
 x = w;
 int y = w;

@@ -1,5 +1,5 @@
 //Function Test
-use "SimpleGraph.flowt";
+use "FunctionTest.flowt";
 
 int foo(int x)
 {

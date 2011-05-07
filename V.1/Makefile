@@ -1,4 +1,3 @@
-
 #YACC = yacc.macosx
 YACC = yacc.linux
 #YACC = yacc
@@ -32,21 +31,21 @@ TypeLexer.java :	flowt.flex
 TypeParser.java :	type_parser.y
 	$(YACC) -Jclass='TypeParser' type_parser.y
 
-SumTest : Flow.class $(TESTDIR)SimpleTest.flow $(TESTDIR)SimpleGraph.flowg $(TESTDIR)SimpleGraph.flowt
-	java Flow $(TESTDIR)SimpleGraph.flowg
-	java Flow $(TESTDIR)SimpleTest.flow
+SumTest : Flow.class $(TESTDIR)SimpleTest/SimpleTest.flow $(TESTDIR)SimpleTest/SimpleTest.flowg $(TESTDIR)SimpleTest/SimpleTest.flowt
+	java Flow $(TESTDIR)SimpleTest/SimpleTest.flowg
+	java Flow $(TESTDIR)SimpleTest/SimpleTest.flow
 	javac Solver.java
 	java Solver
 
-ParityTest : Flow.class $(TESTDIR)ParityTest.flow $(TESTDIR)SimpleGraph.flowg $(TESTDIR)SimpleGraph.flowt
-	java Flow $(TESTDIR)SimpleGraph.flowg
-	java Flow $(TESTDIR)ParityTest.flow
+ParityTest : Flow.class $(TESTDIR)ParityTest/ParityTest.flow $(TESTDIR)ParityTest/ParityTest.flowg $(TESTDIR)ParityTest/ParityTest.flowt
+	java Flow $(TESTDIR)ParityTest/ParityTest.flowg
+	java Flow $(TESTDIR)ParityTest/ParityTest.flow
 	javac Solver.java
 	java Solver
 
-FunctionTest : Flow.class $(TESTDIR)SimpleGraph.flowg $(TESTDIR)SimpleGraph.flowt $(TESTDIR)FunctionTest.flow
-	java Flow $(TESTDIR)SimpleGraph.flowg
-	java Flow $(TESTDIR)FunctionTest.flow
+FunctionTest : Flow.class $(TESTDIR)FunctionTest/FunctionTest.flowg $(TESTDIR)FunctionTest/FunctionTest.flowt $(TESTDIR)FunctionTest/FunctionTest.flow
+	java Flow $(TESTDIR)FunctionTest/FunctionTest.flowg
+	java Flow $(TESTDIR)FunctionTest/FunctionTest.flow
 	javac Solver.java
 	java Solver
 
@@ -61,13 +60,13 @@ EvenDFATest : Flow.class $(TESTDIR)EvenDFA/Even.flowt $(TESTDIR)EvenDFA/Even.flo
 	java Flow $(TESTDIR)EvenDFA/Even.flowg
 	java Flow $(TESTDIR)EvenDFA/Even.flow
 	javac Solver.java
-	java Solve
+	java Solver
 
 HelloWorldTest : Flow.class $(TESTDIR)HelloWorld/HelloWorld.flowt $(TESTDIR)HelloWorld/HelloWorld.flowg $(TESTDIR)HelloWorld/HelloWorld.flow 
 	java Flow $(TESTDIR)HelloWorld/HelloWorld.flowg
 	java Flow $(TESTDIR)HelloWorld/HelloWorld.flow
 	javac Solver.java
-	java Solve
+	java Solver
 
 clean :
 	rm *~ *.class SolverLexer.java SolverParser.java SolverParserVal.java GraphLexer.java GraphParser.java GraphParserVal.java TypeParser.java TypeParserVal.java TypeLexer.java Node.java Arc.java Graph.java Solver.java flow/ast/*.class flow/structure/*.class
