@@ -535,7 +535,7 @@ final static String yyrule[] = {
 "print_stmt : PRINT expr",
 };
 
-//#line 405 "solver_parser.y"
+//#line 417 "solver_parser.y"
 
   private SolverLexer lexer;
   private Hashtable symbols;
@@ -824,17 +824,20 @@ case 8:
 { yyval.obj = new SequenceNode((SequenceNode) val_peek(1).obj, (StatementNode) val_peek(0).obj); }
 break;
 case 9:
-//#line 91 "solver_parser.y"
-{ yyval.obj = new FuncSequenceNode(null, (StatementNode) val_peek(1).obj); System.out.println(val_peek(1).obj);
-                                           ((FuncSequenceNode) yyval.obj).type = ((StatementNode) val_peek(1).obj).type; }
+//#line 93 "solver_parser.y"
+{ System.out.println(val_peek(1).obj.toString());
+                                            yyval.obj = new FuncSequenceNode(null, (StatementNode) val_peek(1).obj);
+                                           ((FuncSequenceNode) yyval.obj).type = ((StatementNode) val_peek(1).obj).type;}
 break;
 case 10:
-//#line 93 "solver_parser.y"
-{ yyval.obj = new FuncSequenceNode(null, (StatementNode) val_peek(0).obj); System.out.println(val_peek(0).obj);
+//#line 96 "solver_parser.y"
+{ yyval.obj = new FuncSequenceNode(null, (StatementNode) val_peek(0).obj);
+
+
                                            ((FuncSequenceNode) yyval.obj).type = ((StatementNode) val_peek(0).obj).type; }
 break;
 case 11:
-//#line 95 "solver_parser.y"
+//#line 100 "solver_parser.y"
 { yyval.obj = new FuncSequenceNode((FuncSequenceNode) val_peek(2).obj, (StatementNode) val_peek(1).obj); System.out.println(val_peek(2).obj);
                                            if (((StatementNode) val_peek(1).obj).type == null) {
                                              ((FuncSequenceNode) yyval.obj).type = ((FuncSequenceNode) val_peek(2).obj).type;
@@ -850,7 +853,7 @@ case 11:
                                            } }
 break;
 case 12:
-//#line 108 "solver_parser.y"
+//#line 113 "solver_parser.y"
 { yyval.obj = new FuncSequenceNode((FuncSequenceNode) val_peek(1).obj, (StatementNode) val_peek(0).obj);  System.out.println(val_peek(1).obj);
                                            if (((StatementNode) val_peek(0).obj).type == null) {
                                              ((FuncSequenceNode) yyval.obj).type = ((FuncSequenceNode) val_peek(1).obj).type;
@@ -866,24 +869,24 @@ case 12:
                                            } }
 break;
 case 15:
-//#line 125 "solver_parser.y"
+//#line 130 "solver_parser.y"
 { yyval.obj = val_peek(0).obj; }
 break;
 case 22:
-//#line 136 "solver_parser.y"
+//#line 141 "solver_parser.y"
 { yyval.obj = val_peek(0).obj; }
 break;
 case 27:
-//#line 143 "solver_parser.y"
-{ yyval.obj = val_peek(0).obj; }
+//#line 148 "solver_parser.y"
+{ yyval.obj = val_peek(0).obj;}
 break;
 case 28:
-//#line 144 "solver_parser.y"
+//#line 149 "solver_parser.y"
 { yyval.obj = new ReturnNode((Expression) val_peek(0).obj); 
-                                      ((ReturnNode) yyval.obj).type = ((Expression) val_peek(0).obj).type; }
+                                      ((ReturnNode) yyval.obj).type = ((Expression) val_peek(0).obj).type; yyerror("Reducing return to func_stmt: " + val_peek(0).obj.toString());}
 break;
 case 29:
-//#line 148 "solver_parser.y"
+//#line 153 "solver_parser.y"
 { /*Make sure this function was previously declared*/
                                                                 /*try {*/
                                                                     ID function_name = (ID) symbols.get(val_peek(3).obj.toString());
@@ -899,7 +902,7 @@ case 29:
                                                                }
 break;
 case 30:
-//#line 164 "solver_parser.y"
+//#line 169 "solver_parser.y"
 {/*At this point, we know that we are going to end up inside a function body, */
             Param param = (Param) val_peek(3).obj;
             ID function_id = param.id;
@@ -930,7 +933,7 @@ case 30:
             }
 break;
 case 31:
-//#line 193 "solver_parser.y"
+//#line 198 "solver_parser.y"
 { yyval.obj = new FunctionNode((Param) val_peek(7).obj, (ParamList) val_peek(5).obj, (FuncSequenceNode) val_peek(1).obj); System.out.println(val_peek(1).obj);
                                        if (!((Param) val_peek(7).obj).id.type.type.equals(((FuncSequenceNode) val_peek(1).obj).type.type)) {
                                          yyerror("Function " + ((Param) val_peek(7).obj).id.toString() + " returns the wrong type.");
@@ -939,32 +942,32 @@ case 31:
                                        symbols = old; }
 break;
 case 32:
-//#line 202 "solver_parser.y"
+//#line 207 "solver_parser.y"
 { yyval.obj = new WhileNode((Expression) val_peek(4).obj, (SequenceNode) val_peek(1).obj); }
 break;
 case 33:
-//#line 205 "solver_parser.y"
+//#line 210 "solver_parser.y"
 { yyval.obj = new WhileNode((Expression) val_peek(4).obj, (SequenceNode) val_peek(1).obj); }
 break;
 case 34:
-//#line 208 "solver_parser.y"
+//#line 213 "solver_parser.y"
 { yyval.obj = new IfNode((Expression) val_peek(4).obj, (SequenceNode) val_peek(1).obj); }
 break;
 case 35:
-//#line 211 "solver_parser.y"
+//#line 216 "solver_parser.y"
 { yyval.obj = new IfNode((Expression) val_peek(4).obj, (SequenceNode) val_peek(1).obj); }
 break;
 case 36:
-//#line 214 "solver_parser.y"
+//#line 219 "solver_parser.y"
 { yyval.obj = val_peek(1).obj; }
 break;
 case 37:
-//#line 215 "solver_parser.y"
+//#line 220 "solver_parser.y"
 { yyval.obj = new Cast(val_peek(2).sval,(Expression) val_peek(0).obj);
                                  ((Expression) yyval.obj).type = (Type) val_peek(2).obj; }
 break;
 case 38:
-//#line 217 "solver_parser.y"
+//#line 222 "solver_parser.y"
 { yyval.obj = new Unary((Expression) val_peek(0).obj, val_peek(1).sval);
                                  if (((Expression) val_peek(1).obj).type.type.equals("String")){
                                    yyerror("NEG is not a string operation.");
@@ -972,7 +975,7 @@ case 38:
                                  ((Expression) yyval.obj).type = ((Expression) val_peek(0).obj).type; }
 break;
 case 39:
-//#line 222 "solver_parser.y"
+//#line 227 "solver_parser.y"
 { yyval.obj = new Comparison((Expression) val_peek(2).obj, (Expression) val_peek(0).obj, ">");
                                  if (((Expression) val_peek(2).obj).type.type.equals("String") || ((Expression) val_peek(0).obj).type.type.equals("String")){
                                    yyerror("> is not a string operation.");
@@ -980,7 +983,7 @@ case 39:
                                  ((Expression) yyval.obj).type = check_type((Expression) val_peek(2).obj, (Expression) val_peek(0).obj); }
 break;
 case 40:
-//#line 227 "solver_parser.y"
+//#line 232 "solver_parser.y"
 { yyval.obj = new Comparison((Expression) val_peek(2).obj, (Expression) val_peek(0).obj, ">=");
                                  if (((Expression) val_peek(2).obj).type.type.equals("String") || ((Expression) val_peek(0).obj).type.type.equals("String")){
                                    yyerror(">= is not a string operation.");
@@ -988,7 +991,7 @@ case 40:
                                  ((Expression) yyval.obj).type = check_type((Expression) val_peek(2).obj, (Expression) val_peek(0).obj); }
 break;
 case 41:
-//#line 232 "solver_parser.y"
+//#line 237 "solver_parser.y"
 { yyval.obj = new Comparison((Expression) val_peek(2).obj, (Expression) val_peek(0).obj, "<");
                                  if (((Expression) val_peek(2).obj).type.type.equals("String") || ((Expression) val_peek(0).obj).type.type.equals("String")){
                                    yyerror("< is not a string operation.");
@@ -996,7 +999,7 @@ case 41:
                                  ((Expression) yyval.obj).type = check_type((Expression) val_peek(2).obj, (Expression) val_peek(0).obj); }
 break;
 case 42:
-//#line 237 "solver_parser.y"
+//#line 242 "solver_parser.y"
 { yyval.obj = new Comparison((Expression) val_peek(2).obj, (Expression) val_peek(0).obj, "<=");
                                  if (((Expression) val_peek(2).obj).type.type.equals("String") || ((Expression) val_peek(0).obj).type.type.equals("String")){
                                    yyerror("LTE is not a string operation.");
@@ -1004,22 +1007,22 @@ case 42:
                                  ((Expression) yyval.obj).type = check_type((Expression) val_peek(2).obj, (Expression) val_peek(0).obj); }
 break;
 case 43:
-//#line 242 "solver_parser.y"
+//#line 247 "solver_parser.y"
 { yyval.obj = new Comparison((Expression) val_peek(2).obj, (Expression) val_peek(0).obj, "!=");
                                  ((Expression) yyval.obj).type = check_type((Expression) val_peek(2).obj, (Expression) val_peek(0).obj); }
 break;
 case 44:
-//#line 244 "solver_parser.y"
+//#line 249 "solver_parser.y"
 { yyval.obj = new Comparison((Expression) val_peek(2).obj, (Expression) val_peek(0).obj, "==");
                                  ((Expression) yyval.obj).type = check_type((Expression) val_peek(2).obj, (Expression) val_peek(0).obj); }
 break;
 case 45:
-//#line 246 "solver_parser.y"
+//#line 251 "solver_parser.y"
 { yyval.obj = new Arithmetic((Expression) val_peek(2).obj, (Expression) val_peek(0).obj, "+");
                                  ((Expression) yyval.obj).type = check_type((Expression) val_peek(2).obj, (Expression) val_peek(0).obj); }
 break;
 case 46:
-//#line 248 "solver_parser.y"
+//#line 253 "solver_parser.y"
 { yyval.obj = new Arithmetic((Expression) val_peek(2).obj, (Expression) val_peek(0).obj, "-");
                                  if (((Expression) val_peek(2).obj).type.type.equals("String") || ((Expression) val_peek(0).obj).type.type.equals("String")){
                                    yyerror("Subtraction is not a string operation.");
@@ -1027,7 +1030,7 @@ case 46:
                                  ((Expression) yyval.obj).type = check_type((Expression) val_peek(2).obj, (Expression) val_peek(0).obj); }
 break;
 case 47:
-//#line 253 "solver_parser.y"
+//#line 258 "solver_parser.y"
 { yyval.obj = new Arithmetic((Expression) val_peek(2).obj, (Expression) val_peek(0).obj, "*");
                                  if (((Expression) val_peek(2).obj).type.type.equals("String") || ((Expression) val_peek(0).obj).type.type.equals("String")){
                                    yyerror("Multiplication is not a string operation.");
@@ -1035,7 +1038,7 @@ case 47:
                                  ((Expression) yyval.obj).type = check_type((Expression) val_peek(2).obj, (Expression) val_peek(0).obj); }
 break;
 case 48:
-//#line 258 "solver_parser.y"
+//#line 263 "solver_parser.y"
 { yyval.obj = new Arithmetic((Expression) val_peek(2).obj, (Expression) val_peek(0).obj, "/");
                                  if (((Expression) val_peek(2).obj).type.type.equals("String") || ((Expression) val_peek(0).obj).type.type.equals("String")){
                                    yyerror("Division is not a string operation.");
@@ -1043,7 +1046,7 @@ case 48:
                                  ((Expression) yyval.obj).type = check_type((Expression) val_peek(2).obj, (Expression) val_peek(0).obj); }
 break;
 case 49:
-//#line 263 "solver_parser.y"
+//#line 268 "solver_parser.y"
 { yyval.obj = new Arithmetic((Expression) val_peek(2).obj, (Expression) val_peek(0).obj, "%");
                                  if (((Expression) val_peek(2).obj).type.type.equals("String") || ((Expression) val_peek(0).obj).type.type.equals("String")){
                                    yyerror("Modulus is not a string operation.");
@@ -1051,7 +1054,7 @@ case 49:
                                  ((Expression) yyval.obj).type = check_type((Expression) val_peek(2).obj, (Expression) val_peek(0).obj); }
 break;
 case 50:
-//#line 268 "solver_parser.y"
+//#line 273 "solver_parser.y"
 { yyval.obj = new Dot((ID) val_peek(2).obj, val_peek(0).obj.toString());
                                  if (((Expression) val_peek(2).obj).type.type.equals("Node")) {
                                    if (((Hashtable) symbols.get("node_attributes")).containsKey(((ID) val_peek(0).obj).toString()))
@@ -1078,13 +1081,20 @@ case 50:
                                      ((Expression) yyval.obj).type = new pType("error");
                                    }
                                  }
+				 else if (((Expression) val_peek(2).obj).type.type.equals("String")){
+				   if (val_peek(0).obj.toString().equals("length")){
+				     yyval.obj = new StrDot((ID) val_peek(2).obj, val_peek(0).obj.toString());
+				     ((Expression) yyval.obj).type = new pType("int");
+				   }
+
+				 }
                                  else {
                                    yyerror("Dot operator applied to invalid type: " + ((ID) val_peek(2).obj).toString() + " is of type " + ((Expression) val_peek(2).obj).type.type);
                                    ((Expression) yyval.obj).type = new pType("error");
                                  } }
 break;
 case 51:
-//#line 298 "solver_parser.y"
+//#line 310 "solver_parser.y"
 { yyval.obj = new Dot(new ID("graph"), val_peek(0).obj.toString());
                                  if (((Hashtable) symbols.get("labels")).containsKey(val_peek(0).obj.toString())) {
                                    ((Expression) yyval.obj).type = new Type(((Hashtable) symbols.get("labels")).get(val_peek(0).obj.toString()).toString());
@@ -1095,15 +1105,15 @@ case 51:
                                  } }
 break;
 case 52:
-//#line 306 "solver_parser.y"
+//#line 318 "solver_parser.y"
 { yyval.obj = val_peek(0).obj; }
 break;
 case 53:
-//#line 307 "solver_parser.y"
+//#line 319 "solver_parser.y"
 { yyval.obj = val_peek(0).obj; }
 break;
 case 54:
-//#line 308 "solver_parser.y"
+//#line 320 "solver_parser.y"
 { yyval.obj = val_peek(0).obj;
                                  if (!symbols.containsKey(((ID) val_peek(0).obj).toString())) {
                                    yyerror("Undeclared variable '" + ((ID) val_peek(0).obj).toString() + "'");
@@ -1114,41 +1124,41 @@ case 54:
                                  } }
 break;
 case 55:
-//#line 316 "solver_parser.y"
+//#line 328 "solver_parser.y"
 { yyval.obj = val_peek(0).obj; }
 break;
 case 56:
-//#line 317 "solver_parser.y"
+//#line 329 "solver_parser.y"
 { yyval.obj = val_peek(0).obj; }
 break;
 case 57:
-//#line 321 "solver_parser.y"
+//#line 333 "solver_parser.y"
 { yyval.obj = new ParamList((ParamList)val_peek(2).obj, (Param)val_peek(0).obj); }
 break;
 case 58:
-//#line 322 "solver_parser.y"
+//#line 334 "solver_parser.y"
 { yyval.obj = new ParamList(null, (Param)val_peek(0).obj); }
 break;
 case 59:
-//#line 323 "solver_parser.y"
+//#line 335 "solver_parser.y"
 { yyval.obj = null; }
 break;
 case 60:
-//#line 326 "solver_parser.y"
+//#line 338 "solver_parser.y"
 { yyval.obj = new Param((Type) val_peek(1).obj, (ID) val_peek(0).obj); }
 break;
 case 61:
-//#line 329 "solver_parser.y"
+//#line 341 "solver_parser.y"
 { yyval.obj = ((ListAccess) val_peek(2).obj).makeLVal((Expression) val_peek(0).obj);
                                          ((Expression) yyval.obj).type = check_type((Expression) val_peek(2).obj, (Expression) val_peek(0).obj); }
 break;
 case 62:
-//#line 331 "solver_parser.y"
+//#line 343 "solver_parser.y"
 { yyval.obj = new Arithmetic((Expression) val_peek(2).obj, (Expression) val_peek(0).obj, "=");
                                          ((Expression) yyval.obj).type = check_type((Expression) val_peek(2).obj, (Expression) val_peek(0).obj); }
 break;
 case 63:
-//#line 335 "solver_parser.y"
+//#line 347 "solver_parser.y"
 { yyval.obj = new ListAccess((ID) val_peek(3).obj, (Expression) val_peek(1).obj);
                                          if (!symbols.containsKey(((ID) val_peek(3).obj).toString())) {
                                            yyerror("Undeclared list '" + ((ID) val_peek(3).obj).toString() + "'");
@@ -1167,14 +1177,14 @@ case 63:
                                          } }
 break;
 case 64:
-//#line 353 "solver_parser.y"
+//#line 365 "solver_parser.y"
 { yyval.obj = new ListDec((Type) val_peek(1).obj, (ID) val_peek(0).obj, null);
                                               /*added space, was new Type("list" ...) -> new Type("list " ...)*/
                                               ((ID) val_peek(0).obj).type = new Type("list " + val_peek(1).obj);
                                               symbols.put(((ID) val_peek(0).obj).toString(), val_peek(0).obj); }
 break;
 case 65:
-//#line 358 "solver_parser.y"
+//#line 370 "solver_parser.y"
 { /*Do typechecking*/
 					      check_type((Type) val_peek(5).obj, (AttrList) val_peek(1).obj);
                                               yyval.obj = new ListDec((Type) val_peek(5).obj, (ID) val_peek(4).obj, (AttrList) val_peek(1).obj);
@@ -1182,33 +1192,33 @@ case 65:
                                               symbols.put(((ID) val_peek(4).obj).toString(), val_peek(4).obj); }
 break;
 case 66:
-//#line 365 "solver_parser.y"
+//#line 377 "solver_parser.y"
 { yyval.obj = val_peek(0).obj; }
 break;
 case 67:
-//#line 366 "solver_parser.y"
+//#line 378 "solver_parser.y"
 { yyval.obj = new Type("Node"); }
 break;
 case 68:
-//#line 367 "solver_parser.y"
+//#line 379 "solver_parser.y"
 { yyval.obj = new Type("Arc"); }
 break;
 case 69:
-//#line 371 "solver_parser.y"
+//#line 383 "solver_parser.y"
 { yyval.obj = new PrimDec((Type) val_peek(3).obj, (ID) val_peek(2).obj, (Expression) val_peek(0).obj);
                                          ((Expression) val_peek(2).obj).type = check_type((Type) val_peek(3).obj, (Expression) val_peek(0).obj);
                                          symbols.put(((ID) val_peek(2).obj).toString(), val_peek(2).obj); }
 break;
 case 70:
-//#line 376 "solver_parser.y"
+//#line 388 "solver_parser.y"
 { yyval.obj = new AttrList(null, (Expression) val_peek(0).obj); }
 break;
 case 71:
-//#line 377 "solver_parser.y"
+//#line 389 "solver_parser.y"
 { yyval.obj = new AttrList((AttrList) val_peek(2).obj, (Expression) val_peek(0).obj); }
 break;
 case 72:
-//#line 380 "solver_parser.y"
+//#line 392 "solver_parser.y"
 { if (symbols.containsKey(val_peek(0).sval)) {
                                            yyval.obj = symbols.get(val_peek(0).sval);
                                          }
@@ -1217,37 +1227,37 @@ case 72:
                                          } }
 break;
 case 73:
-//#line 388 "solver_parser.y"
+//#line 400 "solver_parser.y"
 { yyval.obj = new pType("int"); }
 break;
 case 74:
-//#line 389 "solver_parser.y"
+//#line 401 "solver_parser.y"
 { yyval.obj = new pType("double"); }
 break;
 case 75:
-//#line 390 "solver_parser.y"
+//#line 402 "solver_parser.y"
 { yyval.obj = new pType("String"); }
 break;
 case 76:
-//#line 393 "solver_parser.y"
+//#line 405 "solver_parser.y"
 { yyval.obj = new pValue(val_peek(0).ival);
                                          ((Expression) yyval.obj).type = new pType("int"); }
 break;
 case 77:
-//#line 395 "solver_parser.y"
+//#line 407 "solver_parser.y"
 { yyval.obj = new pValue(val_peek(0).dval);
                                          ((Expression) yyval.obj).type = new pType("double"); }
 break;
 case 78:
-//#line 397 "solver_parser.y"
+//#line 409 "solver_parser.y"
 { yyval.obj = new pValue("\"" + val_peek(0).sval + "\"");
                                          ((Expression) yyval.obj).type = new pType("String"); }
 break;
 case 79:
-//#line 401 "solver_parser.y"
+//#line 413 "solver_parser.y"
 { yyval.obj = new Print((Expression) val_peek(0).obj); }
 break;
-//#line 1174 "SolverParser.java"
+//#line 1184 "SolverParser.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####

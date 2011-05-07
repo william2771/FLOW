@@ -1,9 +1,13 @@
 import flow.structure.*; public class Arc {
   private Node fromNode;
 	
-	private Node toNode; public Arc(Node source, Node dest, ) {
+	private Node toNode; public Arc(Node source, Node dest, String symbol) {
     fromNode = source; toNode = dest;
- source.addOutArc(this);  dest.addInArc(this);   }
+ source.addOutArc(this);  dest.addInArc(this);     this.symbol = symbol;
+  }
+  private String symbol;
+  public String getsymbol()
+  { return symbol; }
 public Node getto(){
 		return toNode;
 	}
