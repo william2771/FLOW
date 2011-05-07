@@ -52,7 +52,7 @@ valid_program : solver
 ;
 
 solver: type_link solver_stmt_list { $$.sval = "import java.util.*;\n\npublic class Solver {\npublic static void main(String[] args) {\ngraph = new Graph();\n" + $2.obj.toString() + "}\nprivate static Graph graph;\n}";
-                                     if (errors == 0) { //only create output java file if there are no syntax errors
+                                     //if (errors == 0) { //only create output java file if there are no syntax errors
                                        try {
                                          FileWriter graph_file = new FileWriter(new File("Solver.java"));
                                          graph_file.write($$.sval);
@@ -61,10 +61,10 @@ solver: type_link solver_stmt_list { $$.sval = "import java.util.*;\n\npublic cl
                                        catch(IOException e) {
                                          yyerror("Could not create Solver file.");
                                        }
-                                     }
-                                     else {
+                                     //}
+                                     //else {
                                        System.out.println("\n" + errors + " errors\n");
-                                     } }
+                                     } //}
 | solver_stmt_list                 { yyerror("The first statement in the file must be a typelink.");
                                      System.out.println("\n" + errors + " errors\n"); }
 ;
@@ -247,7 +247,7 @@ expr : '(' expr ')'            { $$.obj = $2.obj; }
                                    yyerror("Modulus is not a string operation.");
                                  }
                                  ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
-| id '.' id                    { $$.obj = new Dot((ID) $1.obj, $3.obj.toString()); System.out.println($3.obj.toString());
+| id '.' id                    { $$.obj = new Dot((ID) $1.obj, $3.obj.toString());
                                  if (((Expression) $1.obj).type.type.equals("Node")) {
                                    if (((Hashtable) symbols.get("node_attributes")).containsKey(((ID) $3.obj).toString()))
                                      ((Expression) $$.obj).type = new Type(((Hashtable) symbols.get("node_attributes")).get($3.obj.toString()).toString());
