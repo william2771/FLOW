@@ -1,0 +1,6 @@
+For SimpleTest.flow:
+2
+1
+
+For ParityTest.flow:
+"Even parity"
