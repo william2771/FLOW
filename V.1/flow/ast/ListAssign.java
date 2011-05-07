@@ -17,7 +17,7 @@ public class ListAssign extends Expression {
 	public String toString()
 	{
 	    String str = "if (" + id + ".size()" + "< " + index + "){\n;";
-	    int val = index + 1;
+	    int val = Integer.parseInt(index.toString()) + 1;
 	    str += "\tFlowList tmp = new FlowList(" + val + ");\n";
 	    str+= "\ttmp.addAll(" + id + ");\n";
 	    str+= "\t" + id + "= tmp;\n}";
