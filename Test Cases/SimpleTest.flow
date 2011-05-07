@@ -6,19 +6,20 @@ arcList = Graph.arcs;
 
 int k = 0;
 int arcSum = 0;
-while(k < arcList.length)
+/*while(k < arcList.length)
 {
 	arcSum = arcSum + arcList[k].value;
-}
+}*/
 
 print(arcSum);
 
 //Sum of all Node values
-List of Node nodeList = Graph.nodes;
+List of Node nodeList;
+nodeList = Graph.nodes;
 
 int j = 0;
 int nodeSum = 0;
-while(j < nodeSum.length)
+while(j < nodeList.length)
 {
 	nodeSum = nodeSum + arcList[j].value;
 }

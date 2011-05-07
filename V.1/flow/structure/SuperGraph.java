@@ -11,19 +11,19 @@ public class SuperGraph {
 		arcs = new ArrayList<SuperArc>();
 	}
 	
-	public ArrayList<SuperNode> getNodes(){
+	public ArrayList<SuperNode> getnodes(){
 		return nodes;
 	}
 	
-	public ArrayList<SuperArc> getArcs(){
+	public ArrayList<SuperArc> getnrcs(){
 		return arcs;
 	}
 	
-	public int getNumNodes(){
+	public int getnumNodes(){
 		return nodes.size();
 	}
 	
-	public int getNumArcs(){
+	public int getnumArcs(){
 		return arcs.size();
 	}
 }

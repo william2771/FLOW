@@ -46,12 +46,12 @@ string a = "this is a string";
 string b = " and so is this";
 
 
-if (x) {
+//if (x) {
 print a == b;
-}
+//}
 
-//Node node1 = Graph.START;
+Node node1 = Graph.START;
 
-//print node1.value;
+print node1.x;
 
 /* COMMENTS SHOULD BE IGNORED */

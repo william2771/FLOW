@@ -25,13 +25,13 @@ public class SuperNode{
       degree++;
    }
 
-   int getDegree() { return degree; }
-   int getInDegree() { return inDegree; }
-   int getOutDegree() { return outDegree; }
+   int getdegree() { return degree; }
+   int getdnDegree() { return inDegree; }
+   int getoutDegree() { return outDegree; }
 
-   ArrayList<SuperArc> getArcs() { return arcs; }
-   ArrayList<SuperArc> getArcsIn() { return arcsOut; }
-   ArrayList<SuperArc> getArcsOut() { return arcsIn; }
+   ArrayList<SuperArc> getarcs() { return arcs; }
+   ArrayList<SuperArc> getarcsIn() { return arcsOut; }
+   ArrayList<SuperArc> getarcsOut() { return arcsIn; }
 
    int inDegree;
    int outDegree;

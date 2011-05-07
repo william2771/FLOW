@@ -12,20 +12,20 @@ public class SuperArc {
 		toNode = to;
 	}
 	
-	public SuperNode getToNode(){
+	public SuperNode getto(){
 		return toNode;
 	}
 	
-	public SuperNode getFromNode(){
+	public SuperNode getfrom(){
 		return fromNode;
 	}
 
-	public boolean setToNode(SuperNode to){
+	public boolean setto(SuperNode to){
 		toNode = to;
 		return true;
 	}
 	
-	public boolean setFromNode(SuperNode from){
+	public boolean setfrom(SuperNode from){
 		fromNode = from;
 		return true;
 	}
@@ -36,7 +36,7 @@ public class SuperArc {
 		return true;
 	}
 	
-	public ArrayList<SuperNode> getNodes(SuperNode from, SuperNode to){
+	public ArrayList<SuperNode> getnodes(SuperNode from, SuperNode to){
 		fromNode = from;
 		toNode = to;
 		ArrayList<SuperNode> twoNodes = new ArrayList<SuperNode>();
