@@ -2,24 +2,26 @@
 use 'Even.flowt';
 
 /* This function simulates the dfa specified above on its parameter input string */
-function simulate(string input) { 
+int simulate(string input) { 
     Node current = Graph.START; 
     print "The first current variable is set.";
 
     print "Entering the loop to look through the arcs.";
     int i = 0;
     while(i < input.length) {
-	Arc next;
-	List of Arc pathLst = current.arcsOut();
+	List of Arc pathLst;
+	pathLst = current.arcsOut;
+	Arc next = pathLst[0];
+
 	
 	int j = 0;
 	while(j < pathLst.length) {
 	    Arc connected = pathLst[j];
-	    if(connected.symbol == input.substring(i, i+1) {
+	    if(connected.symbol == input[i]) {
 		next = connected;
 		print "Went to the next edge.";
 	    }
-	    j++;
+	    j = j+1;
 	}
 
 	int isNext = 0;
@@ -44,7 +46,8 @@ function simulate(string input) {
 
 /* All code not within a function definition will execute every time */
 
-string input = "aababbaab";
+List of string input;
+input = ["a","a","b","a","b","b","a","a","b"];
 print "Input is '" + input + "'\n"; 
 
 int truth = 0;
