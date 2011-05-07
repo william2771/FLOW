@@ -7,6 +7,7 @@ public class Comparison extends Expression {
 	private String operator;
         
     public Comparison(Expression expr1, Expression expr2, String oper){
+	super();
 	e1 = expr1;
 	e2 = expr2;
 	operator = oper;

@@ -4,6 +4,7 @@ public class Assignment extends Expression
 {
 	public Assignment(Expression lval, Expression expr)
 	{
+	    super();
 		this.lval = lval;
 		this.expr = expr;
 	}

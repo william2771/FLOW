@@ -4,6 +4,7 @@ public class ListAssign extends Expression {
 
 	public ListAssign(ID id, Expression index, Expression value)
 	{
+	    super();
 		this.id = id;
 		this.index = index;
 		this.value = value;
