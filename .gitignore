@@ -2,3 +2,5 @@
 #*#
 *.class
 yacc.linux
+y.output
+clean.bat
