@@ -11,6 +11,8 @@ public class FuncSequenceNode extends SequenceNode {
 	    super(prev, exec);
             this.exec = exec;
 	    type = null;
+	    this.exec = exec;
+	    
 	}
 	
 	public String toString() {

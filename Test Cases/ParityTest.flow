@@ -2,7 +2,7 @@ use "SimpleGraph.flowt";
 
 List of int binary = [1,0,1,1,0,0,1,0]; //The value to be checked
 
-int count = binary.length;
+int count = binary.length - 1;
 Node current = Graph.START;
 while(count > 0)
 {
