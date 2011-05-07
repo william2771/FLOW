@@ -358,8 +358,8 @@ prim_dec : type id '=' expr            { $$.obj = new PrimDec((Type) $1.obj, (ID
                                          symbols.put(((ID) $2.obj).toString(), $2.obj); }
 ;
 
-attr_list : attr                       { $$.obj = new AttrList(null, (Attr) $1.obj); }
-| attr_list ',' attr                   { $$.obj = new AttrList((AttrList) $1.obj, (Attr) $3.obj); }
+attr_list : attr                       { $$.obj = new AttrList(null, (Expression) $1.obj); }
+| attr_list ',' attr                   { $$.obj = new AttrList((AttrList) $1.obj, (Expression) $3.obj); }
 ;
 
 //attr no longer goes to pvalue
@@ -432,9 +432,9 @@ print_stmt : PRINT expr                { $$.obj = new Print((Expression) $2.obj)
   }  
   
   private Type check_type(Type t1, AttrList e2) {
-    ArrayList<Attr> attrs = e2.toArrayList();
+    ArrayList<Expression> attrs = e2.toArrayList();
     Type ret;
-    for(Attr attr : attrs) {
+    for(Expression attr : attrs) {
         //check_type(type t1, expression e2) will put an error into yyerror
         ret = check_type(t1, attr);
         if(ret.type == "error") {
@@ -445,7 +445,7 @@ print_stmt : PRINT expr                { $$.obj = new Print((Expression) $2.obj)
   }  
   
   private Type check_type(AttrList attrs, ArrayList<Param> params) {
-    ArrayList<Attr> attrslist = attrs.toArrayList();
+    ArrayList<Expression> attrslist = attrs.toArrayList();
     if(attrslist.size() == params.size()) {
         yyerror("Expected " + params.size() + " args, got " + attrslist.size());
         return new pType("error");
