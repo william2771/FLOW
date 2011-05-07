@@ -7,8 +7,9 @@ ROOT: @a;
 //Create two more depthN nodes
 @b;
 @c;
+@d;
  
 //Connect node 'a' to 'b', then node 'a' to 'c' with anonymous arcs
 a -> b;
 a -> c;
- 
+c -> d; 
