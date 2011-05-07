@@ -52,7 +52,7 @@ valid_program : solver
 ;
 
 solver: type_link solver_stmt_list { $$.sval = "import java.util.*;\n\npublic class Solver {\npublic static void main(String[] args) {\ngraph = new Graph();\n" + $2.obj.toString() + "}\nprivate static Graph graph;\n}";
-                                     if (errors == 0) { //only create output java file if there are no syntax errors
+                                     //if (errors == 0) { //only create output java file if there are no syntax errors
                                        try {
                                          FileWriter graph_file = new FileWriter(new File("Solver.java"));
                                          graph_file.write($$.sval);
@@ -61,10 +61,10 @@ solver: type_link solver_stmt_list { $$.sval = "import java.util.*;\n\npublic cl
                                        catch(IOException e) {
                                          yyerror("Could not create Solver file.");
                                        }
-                                     }
-                                     else {
+                                     //}
+                                     //else {
                                        System.out.println("\n" + errors + " errors\n");
-                                     } }
+                                     } //}
 | solver_stmt_list                 { yyerror("The first statement in the file must be a typelink.");
                                      System.out.println("\n" + errors + " errors\n"); }
 ;
@@ -248,23 +248,28 @@ expr : '(' expr ')'            { $$.obj = $2.obj; }
                                  }
                                  ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
 | id '.' id                    { $$.obj = new Dot((ID) $1.obj, $3.obj.toString());
-                                 if (((Expression) $1.obj).type.type.substring(0,4).equals("list")) {
-                                   /* Some kind of magic needed here */
-                                   ((Expression) $$.obj).type = ((Expression) $3.obj).type;
-                                 }
-                                 else if (((Expression) $1.obj).type.type.equals("Node")) {
+                                 if (((Expression) $1.obj).type.type.equals("Node")) {
                                    if (((Hashtable) symbols.get("node_attributes")).containsKey(((ID) $3.obj).toString()))
                                      ((Expression) $$.obj).type = new Type(((Hashtable) symbols.get("node_attributes")).get($3.obj.toString()).toString());
                                    else {
-                                     yyerror("Node attribute '" + ((Expression) $3.obj).toString() + "' is not defined");
+                                     yyerror("Node attribute '" + $3.obj.toString() + "' is not defined");
                                      ((Expression) $$.obj).type = new pType("error");
                                    }
                                  }
                                  else if (((Expression) $1.obj).type.type.equals("Arc")) {
                                    if (((Hashtable) symbols.get("arc_attributes")).containsKey(((ID) $3.obj).toString()))
-                                     ((Expression) $$.obj).type = ((Type) ((Hashtable) symbols.get("arc_attributes")).get(((ID) $3.obj).toString()));
+                                     ((Expression) $$.obj).type = new Type(((Hashtable) symbols.get("arc_attributes")).get($3.obj.toString()).toString());
                                    else {
-                                     yyerror("Arc attribute '" + ((Expression) $3.obj).toString() + "' is not defined");
+                                     yyerror("Arc attribute '" + $3.obj.toString() + "' is not defined");
+                                     ((Expression) $$.obj).type = new pType("error");
+                                   }
+                                 }
+                                 else if (((Expression) $1.obj).type.type.length() > 4 && ((Expression) $1.obj).type.type.substring(0,4).equals("list")) {
+                                   if ($3.obj.toString().equals("length")) {
+                                     ((Expression) $$.obj).type = new pType("int");
+                                   }
+                                   else {
+                                     yyerror("List attribute '" + $3.obj.toString() + "' is not defined");
                                      ((Expression) $$.obj).type = new pType("error");
                                    }
                                  }

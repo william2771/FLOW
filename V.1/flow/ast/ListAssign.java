@@ -16,7 +16,13 @@ public class ListAssign extends Expression {
 
 	public String toString()
 	{
-		return id + ".set(" + index + ", " + value + ")";
+	    String str = "if (" + id + ".size()" + "< " + index + "){\n;";
+	    int val = Integer.parseInt(index.toString()) + 1;
+	    str += "\tFlowList tmp = new FlowList(" + val + ");\n";
+	    str+= "\ttmp.addAll(" + id + ");\n";
+	    str+= "\t" + id + "= tmp;\n}";
+		str += id + ".set(" + index + ", " + value + ")";
+		return str;
 	}
 
 }
