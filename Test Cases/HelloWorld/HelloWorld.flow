@@ -6,7 +6,7 @@
 use 'HelloWorld.flowt';
 
 function simulate(string input) { 
-    @current = Graph.START; 
+    Node current = Graph.START; 
     print "The first current variable is set.";
 
     print "Entering the for loop to look through the arcs.";

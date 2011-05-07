@@ -122,8 +122,8 @@ type : ptype                           { $$.obj = $1.obj; }
 prim_dec : ptype id '=' pvalue         { $$.obj = new PrimDec((pType) $1.obj, (ID) $2.obj, (pValue) $4.obj); }
 ;
 
-attr_list : attr                       { $$.obj = new AttrList(null, (Expression) $1.obj); }
-| attr_list ',' attr                   { $$.obj = new AttrList((AttrList) $1.obj, (pValue) $3.obj); }
+attr_list : expr                       { $$.obj = new AttrList(null, (Expression) $1.obj); }
+| attr_list ',' expr                   { $$.obj = new AttrList((AttrList) $1.obj, (pValue) $3.obj); }
 ;
 
 attr : pvalue                          { $$.obj = $$.obj; }
@@ -258,6 +258,8 @@ id : ID                                { $$.obj = new ID($1.sval); }
 ptype : INT_T                          { $$.obj = new pType("int"); }
 | FLT_T                                { $$.obj = new pType("double"); }
 | STR_T                                { $$.obj = new pType("String"); }
+| NODE_T                                { $$.obj = new pType("Node"); }
+| ARC_T                                { $$.obj = new pType("Arc"); }
 ;
 
 pvalue : INT                           { $$.obj = new pValue($1.ival);
