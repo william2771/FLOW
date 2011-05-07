@@ -43,6 +43,9 @@ public class PrimDec extends StatementNode {
 	if (type.length() > 4 && type.substring(0,4).equals("list")) {
 		return "FlowList<" + format_list_type(type.substring(5)) + ">";
  	}
-		else return type;
+	else if (type.equals("int")) {
+		return "Integer";
+	}
+	else return type;
 	}
 }
