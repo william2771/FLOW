@@ -1,0 +1,17 @@
+rm *~ 
+rm *.class 
+rm SolverLexer.java 
+rm SolverParser.java 
+rm SolverParserVal.java 
+rm GraphLexer.java 
+rm GraphParser.java 
+rm GraphParserVal.java 
+rm TypeParser.java 
+rm TypeParserVal.java 
+rm TypeLexer.java 
+rm Node.java 
+rm Arc.java 
+rm Graph.java 
+rm Solver.java 
+rm flow/ast/*.class 
+rm flow/structure/*.class

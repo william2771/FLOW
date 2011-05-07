@@ -1,0 +1,17 @@
+function depth(Node myNode)
+{
+	int depth = 0;
+	List of Arc arcs = myNode.arcsfrom();
+	if(arcs.length == 0)
+		return 0;
+	int k = 0;
+	while(k < arcs.length)
+	{
+		int temp = depth(arcs[k].to);
+		if(temp > depth)
+		{
+			depth = temp;
+		}
+	}
+	return depth + 1;
+}

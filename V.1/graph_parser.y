@@ -38,10 +38,12 @@
 /* operator precedence */
 %nonassoc EQ NEQ
 %nonassoc '<' '>' LTE GTE
+%right '='
 %left '-' '+'
 %left '%'
 %left '*' '/'
 %right OF           /* used for defining List types */
+%right CAST
 %right NEG          /* negation--unary minus */
       
 %%
@@ -128,12 +130,126 @@ attr_list : attr                       { $$.obj = new AttrList(null, (Attr) $1.o
 attr : pvalue                          { $$.obj = $$.obj; }
 ;
 
-expr : id assignop expr                { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, (String) $2.sval); }
-| id '[' expr ']'                      { $$.obj = new ListAccess((ID) $1.obj, (Expression) $3.obj); }
+
+expr : '(' expr ')'            { $$.obj = $2.obj; }
+| '(' type ')' expr %prec CAST { $$.obj = new Cast($2.sval,(Expression) $4.obj);
+                                 ((Expression) $$.obj).type = (pType) $2.obj; }
+| '-' expr %prec NEG           { $$.obj = new Unary((Expression) $2.obj, $1.sval);
+                                 if (((Expression) $1.obj).type.type.equals("String")){
+                                   yyerror("NEG is not a string operation.");
+                                 }
+                                 ((Expression) $$.obj).type = ((Expression) $2.obj).type; }
+| expr '>' expr                { $$.obj = new Comparison((Expression) $1.obj, (Expression) $3.obj, ">");
+                                 if (((Expression) $1.obj).type.type.equals("String") || ((Expression) $3.obj).type.type.equals("String")){
+                                   yyerror("> is not a string operation.");
+                                 }
+                                 ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
+| expr GTE expr                { $$.obj = new Comparison((Expression) $1.obj, (Expression) $3.obj, ">=");
+                                 if (((Expression) $1.obj).type.type.equals("String") || ((Expression) $3.obj).type.type.equals("String")){
+                                   yyerror(">= is not a string operation.");
+                                 }
+                                 ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
+| expr '<' expr                { $$.obj = new Comparison((Expression) $1.obj, (Expression) $3.obj, "<");
+                                 if (((Expression) $1.obj).type.type.equals("String") || ((Expression) $3.obj).type.type.equals("String")){
+                                   yyerror("< is not a string operation.");
+                                 }
+                                 ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
+| expr LTE expr                { $$.obj = new Comparison((Expression) $1.obj, (Expression) $3.obj, "<=");
+                                 if (((Expression) $1.obj).type.type.equals("String") || ((Expression) $3.obj).type.type.equals("String")){
+                                   yyerror("LTE is not a string operation.");
+                                 }
+                                 ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
+| expr NEQ expr                { $$.obj = new Comparison((Expression) $1.obj, (Expression) $3.obj, "!=");
+                                 ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
+| expr EQ expr                 { $$.obj = new Comparison((Expression) $1.obj, (Expression) $3.obj, "==");
+                                 ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
+| expr '+' expr                { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, "+");
+                                 ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
+| expr '-' expr                { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, "-");
+                                 if (((Expression) $1.obj).type.type.equals("String") || ((Expression) $3.obj).type.type.equals("String")){
+                                   yyerror("Subtraction is not a string operation.");
+                                 }
+                                 ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
+| expr '*' expr                { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, "*");
+                                 if (((Expression) $1.obj).type.type.equals("String") || ((Expression) $3.obj).type.type.equals("String")){
+                                   yyerror("Multiplication is not a string operation.");
+                                 }
+                                 ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
+| expr '/' expr                { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, "/");
+                                 if (((Expression) $1.obj).type.type.equals("String") || ((Expression) $3.obj).type.type.equals("String")){
+                                   yyerror("Division is not a string operation.");
+                                 }
+                                 ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
+| expr '%' expr                { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, "%");
+                                 if (((Expression) $1.obj).type.type.equals("String") || ((Expression) $3.obj).type.type.equals("String")){
+                                   yyerror("Modulus is not a string operation.");
+                                 }
+                                 ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
+| id '.' id                    { $$.obj = new Dot((ID) $1.obj, (ID) $3.obj);
+                                 if (((Expression) $1.obj).type.type.equals("List")) {
+                                   /* Some kind of magic needed here */
+                                   ((Expression) $$.obj).type = ((Expression) $3.obj).type;
+                                 }
+                                 else if (((Expression) $1.obj).type.type.equals("Node")) {
+                                   if (((Hashtable) symbols.get("node_attributes")).containsKey(((ID) $3.obj).toString()))
+                                     ((Expression) $$.obj).type = ((Type) ((Hashtable) symbols.get("node_attributes")).get(((ID) $3.obj).toString()));
+                                   else {
+                                     yyerror("Node attribute '" + ((Expression) $3.obj).toString() + "' is not defined");
+                                     ((Expression) $$.obj).type = new pType("error");
+                                   }
+                                 }
+                                 else if (((Expression) $1.obj).type.type.equals("Arc")) {
+                                   if (((Hashtable) symbols.get("arc_attributes")).containsKey(((ID) $3.obj).toString()))
+                                     ((Expression) $$.obj).type = ((Type) ((Hashtable) symbols.get("arc_attributes")).get(((ID) $3.obj).toString()));
+                                   else {
+                                     yyerror("Arc attribute '" + ((Expression) $3.obj).toString() + "' is not defined");
+                                     ((Expression) $$.obj).type = new pType("error");
+                                   }
+                                 }
+                                 else {
+                                   yyerror("Dot operator applied to invalid type: " + ((Expression) $1.obj).type.type);
+                                   ((Expression) $$.obj).type = new pType("error");
+                                 } }
+| assignment                   { $$.obj = $1.obj; }
+| access                       { $$.obj = $1.obj; }
+| id                           { $$.obj = $1.obj;
+                                 if (!symbols.containsKey(((ID) $1.obj).toString())) {
+                                   yyerror("Undeclared variable '" + ((ID) $1.obj).toString() + "'");
+                                   ((Expression) $$.obj).type = new pType("error");
+                                 }
+                                 else {
+                                   ((Expression) $$.obj).type = ((ID) $1.obj).type;
+                                 } }
+| pvalue                       { $$.obj = $1.obj; }
+
 ;
 
-assignop : '='                         { $$.sval = "="; }
+access : id '[' expr ']'               { $$.obj = new ListAccess((ID) $1.obj, (Expression) $3.obj);
+                                         if (!symbols.containsKey(((ID) $1.obj).toString())) {
+                                           yyerror("Undeclared list '" + ((ID) $1.obj).toString() + "'");
+                                           ((Expression) $$.obj).type = new pType("error");
+                                         }
+                                         else if (!((Expression) $1.obj).type.type.substring(0,4).equals("list")) {
+                                           yyerror("Only Lists can be indexed. " + ((Expression) $1.obj).type.type.substring(0,4));
+                                           ((Expression) $$.obj).type = new pType("error");
+                                         }
+                                         else if (((Expression) $3.obj).type.type != "int") {
+                                           yyerror("Lists can only be indexed by ints.");
+                                           ((Expression) $$.obj).type = new pType("error");
+                                         }
+                                         else {
+                                           ((Expression) $$.obj).type = new Type(((ID) $1.obj).type.type.substring(5));
+                                         } }
 ;
+
+assignment : access '=' expr           { $$.obj = ((ListAccess) $1.obj).makeLVal((Expression) $3.obj);
+                                         ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
+| id '=' expr                          { $$.obj = new Arithmetic((Expression) $1.obj, (Expression) $3.obj, "=");
+                                         ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
+;
+
+
+
 
 id : ID                                { $$.obj = new ID($1.sval); }
 | UNK                                  { yyerror("Invalid identifier on line " + lexer.getLine());
@@ -145,7 +261,13 @@ ptype : INT_T                          { $$.obj = new pType("int"); }
 | STR_T                                { $$.obj = new pType("String"); }
 ;
 
-pvalue : INT                           { $$.obj = new pValue($1.ival); }
+pvalue : INT                           { $$.obj = new pValue($1.ival);
+                                         ((Expression) $$.obj).type = new pType("int"); }
+| FLT                                  { $$.obj = new pValue($1.dval);
+                                         ((Expression) $$.obj).type = new pType("double"); }
+| STR                                  { $$.obj = new pValue("\"" + $1.sval + "\"");
+                                         ((Expression) $$.obj).type = new pType("String"); }
+
 ;
 
 %%
@@ -153,6 +275,7 @@ pvalue : INT                           { $$.obj = new pValue($1.ival); }
   private GraphLexer lexer;
   private Hashtable symbols;
   private ArrayList<String> labels;
+  private int errors; //Keeps track of syntax errors
 
   private int yylex () {
     int yyl_return = -1;
@@ -166,8 +289,40 @@ pvalue : INT                           { $$.obj = new pValue($1.ival); }
     return yyl_return;
   }
 
+
+
+  private Type check_type(Expression e1, Expression e2) {
+    if (!e1.type.type.equals(e2.type.type)) {
+      yyerror("Type mismatch error:  " + e1.type.type + " != " + e2.type.type);
+      return new pType("error");
+    }
+    else return e1.type;
+  }
+  
+  private Type check_type(Type t1, Expression e2) {
+    if (!t1.type.equals(e2.type.type)) {
+      yyerror("Type mismatch error:  " + t1.type + " != " + e2.type.type);
+      return new pType("error");
+    }
+    else return t1;
+  }  
+  
+  private Type check_type(Type t1, AttrList e2) {
+    ArrayList<Attr> attrs = e2.toArrayList();
+    Type ret;
+    for(Attr attr : attrs) {
+        //check_type(type t1, expression e2) will put an error into yyerror
+        ret = check_type(t1, attr);
+        if(ret.type == "error") {
+            return ret;
+        }
+    }
+    return t1;
+  }  
+  
   public void yyerror (String error) {
-    System.err.println ("Error: " + error);
+    System.err.println("Error: " + error + "\n\tat line " + (lexer.getLine() + 1));
+    errors++;
   }
 
   public GraphParser(Reader r) {
@@ -176,6 +331,7 @@ pvalue : INT                           { $$.obj = new pValue($1.ival); }
 
   public GraphParser(Reader r, Hashtable symbols)
   {
+    errors = 0;
     lexer = new GraphLexer(r, this);
     this.symbols = symbols;
   }

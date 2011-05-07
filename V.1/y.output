@@ -1,0 +1,1434 @@
+   0  $accept : valid_program $end
+
+   1  valid_program : graph_decl
+
+   2  graph_decl : type_link graph_stmt_list
+
+   3  type_link : USE STR ';'
+
+   4  graph_stmt_list : graph_stmt ';'
+   5                  | graph_stmt_list graph_stmt ';'
+
+   6  graph_stmt : label_app
+   7             | node_dec
+   8             | arc_dec
+   9             | list_dec
+  10             | prim_dec
+  11             | expr
+
+  12  label_app : id ':' node_dec
+
+  13  node_dec : '@' id attr_list
+  14           | '@' id
+
+  15  arc_dec : id ARC id attr_list
+  16          | id ARC id
+
+  17  list_dec : LIST_T OF type ID
+  18           | LIST_T OF type id '=' '[' attr_list ']'
+
+  19  type : ptype
+
+  20  prim_dec : ptype id '=' pvalue
+
+  21  attr_list : attr
+  22            | attr_list ',' attr
+
+  23  attr : pvalue
+
+  24  expr : '(' expr ')'
+  25       | '(' type ')' expr
+  26       | '-' expr
+  27       | expr '>' expr
+  28       | expr GTE expr
+  29       | expr '<' expr
+  30       | expr LTE expr
+  31       | expr NEQ expr
+  32       | expr EQ expr
+  33       | expr '+' expr
+  34       | expr '-' expr
+  35       | expr '*' expr
+  36       | expr '/' expr
+  37       | expr '%' expr
+  38       | id '.' id
+  39       | assignment
+  40       | access
+  41       | id
+  42       | pvalue
+
+  43  access : id '[' expr ']'
+
+  44  assignment : access '=' expr
+  45             | id '=' expr
+
+  46  id : ID
+  47     | UNK
+
+  48  ptype : INT_T
+  49        | FLT_T
+  50        | STR_T
+
+  51  pvalue : INT
+  52         | FLT
+  53         | STR
+
+state 0
+	$accept : . valid_program $end  (0)
+
+	USE  shift 1
+	.  error
+
+	valid_program  goto 2
+	graph_decl  goto 3
+	type_link  goto 4
+
+
+state 1
+	type_link : USE . STR ';'  (3)
+
+	STR  shift 5
+	.  error
+
+
+state 2
+	$accept : valid_program . $end  (0)
+
+	$end  accept
+
+
+state 3
+	valid_program : graph_decl .  (1)
+
+	.  reduce 1
+
+
+state 4
+	graph_decl : type_link . graph_stmt_list  (2)
+
+	INT_T  shift 6
+	FLT_T  shift 7
+	STR_T  shift 8
+	LIST_T  shift 9
+	STR  shift 10
+	FLT  shift 11
+	INT  shift 12
+	ID  shift 13
+	UNK  shift 14
+	'-'  shift 15
+	'@'  shift 16
+	'('  shift 17
+	.  error
+
+	graph_stmt_list  goto 18
+	graph_stmt  goto 19
+	label_app  goto 20
+	node_dec  goto 21
+	arc_dec  goto 22
+	list_dec  goto 23
+	prim_dec  goto 24
+	expr  goto 25
+	id  goto 26
+	ptype  goto 27
+	pvalue  goto 28
+	assignment  goto 29
+	access  goto 30
+
+
+state 5
+	type_link : USE STR . ';'  (3)
+
+	';'  shift 31
+	.  error
+
+
+state 6
+	ptype : INT_T .  (48)
+
+	.  reduce 48
+
+
+state 7
+	ptype : FLT_T .  (49)
+
+	.  reduce 49
+
+
+state 8
+	ptype : STR_T .  (50)
+
+	.  reduce 50
+
+
+state 9
+	list_dec : LIST_T . OF type ID  (17)
+	list_dec : LIST_T . OF type id '=' '[' attr_list ']'  (18)
+
+	OF  shift 32
+	.  error
+
+
+state 10
+	pvalue : STR .  (53)
+
+	.  reduce 53
+
+
+state 11
+	pvalue : FLT .  (52)
+
+	.  reduce 52
+
+
+state 12
+	pvalue : INT .  (51)
+
+	.  reduce 51
+
+
+state 13
+	id : ID .  (46)
+
+	.  reduce 46
+
+
+state 14
+	id : UNK .  (47)
+
+	.  reduce 47
+
+
+state 15
+	expr : '-' . expr  (26)
+
+	STR  shift 10
+	FLT  shift 11
+	INT  shift 12
+	ID  shift 13
+	UNK  shift 14
+	'-'  shift 15
+	'('  shift 17
+	.  error
+
+	expr  goto 33
+	id  goto 34
+	pvalue  goto 28
+	assignment  goto 29
+	access  goto 30
+
+
+state 16
+	node_dec : '@' . id attr_list  (13)
+	node_dec : '@' . id  (14)
+
+	ID  shift 13
+	UNK  shift 14
+	.  error
+
+	id  goto 35
+
+
+state 17
+	expr : '(' . expr ')'  (24)
+	expr : '(' . type ')' expr  (25)
+
+	INT_T  shift 6
+	FLT_T  shift 7
+	STR_T  shift 8
+	STR  shift 10
+	FLT  shift 11
+	INT  shift 12
+	ID  shift 13
+	UNK  shift 14
+	'-'  shift 15
+	'('  shift 17
+	.  error
+
+	expr  goto 36
+	id  goto 34
+	type  goto 37
+	ptype  goto 38
+	pvalue  goto 28
+	assignment  goto 29
+	access  goto 30
+
+
+state 18
+	graph_decl : type_link graph_stmt_list .  (2)
+	graph_stmt_list : graph_stmt_list . graph_stmt ';'  (5)
+
+	INT_T  shift 6
+	FLT_T  shift 7
+	STR_T  shift 8
+	LIST_T  shift 9
+	STR  shift 10
+	FLT  shift 11
+	INT  shift 12
+	ID  shift 13
+	UNK  shift 14
+	'-'  shift 15
+	'@'  shift 16
+	'('  shift 17
+	$end  reduce 2
+
+	graph_stmt  goto 39
+	label_app  goto 20
+	node_dec  goto 21
+	arc_dec  goto 22
+	list_dec  goto 23
+	prim_dec  goto 24
+	expr  goto 25
+	id  goto 26
+	ptype  goto 27
+	pvalue  goto 28
+	assignment  goto 29
+	access  goto 30
+
+
+state 19
+	graph_stmt_list : graph_stmt . ';'  (4)
+
+	';'  shift 40
+	.  error
+
+
+state 20
+	graph_stmt : label_app .  (6)
+
+	.  reduce 6
+
+
+state 21
+	graph_stmt : node_dec .  (7)
+
+	.  reduce 7
+
+
+state 22
+	graph_stmt : arc_dec .  (8)
+
+	.  reduce 8
+
+
+state 23
+	graph_stmt : list_dec .  (9)
+
+	.  reduce 9
+
+
+state 24
+	graph_stmt : prim_dec .  (10)
+
+	.  reduce 10
+
+
+state 25
+	graph_stmt : expr .  (11)
+	expr : expr . '>' expr  (27)
+	expr : expr . GTE expr  (28)
+	expr : expr . '<' expr  (29)
+	expr : expr . LTE expr  (30)
+	expr : expr . NEQ expr  (31)
+	expr : expr . EQ expr  (32)
+	expr : expr . '+' expr  (33)
+	expr : expr . '-' expr  (34)
+	expr : expr . '*' expr  (35)
+	expr : expr . '/' expr  (36)
+	expr : expr . '%' expr  (37)
+
+	EQ  shift 41
+	NEQ  shift 42
+	LTE  shift 43
+	GTE  shift 44
+	'<'  shift 45
+	'>'  shift 46
+	'-'  shift 47
+	'+'  shift 48
+	'%'  shift 49
+	'*'  shift 50
+	'/'  shift 51
+	';'  reduce 11
+
+
+state 26
+	label_app : id . ':' node_dec  (12)
+	arc_dec : id . ARC id attr_list  (15)
+	arc_dec : id . ARC id  (16)
+	expr : id . '.' id  (38)
+	expr : id .  (41)
+	access : id . '[' expr ']'  (43)
+	assignment : id . '=' expr  (45)
+
+	ARC  shift 52
+	'='  shift 53
+	':'  shift 54
+	'['  shift 55
+	'.'  shift 56
+	EQ  reduce 41
+	NEQ  reduce 41
+	LTE  reduce 41
+	GTE  reduce 41
+	'<'  reduce 41
+	'>'  reduce 41
+	'-'  reduce 41
+	'+'  reduce 41
+	'%'  reduce 41
+	'*'  reduce 41
+	'/'  reduce 41
+	';'  reduce 41
+
+
+state 27
+	prim_dec : ptype . id '=' pvalue  (20)
+
+	ID  shift 13
+	UNK  shift 14
+	.  error
+
+	id  goto 57
+
+
+state 28
+	expr : pvalue .  (42)
+
+	.  reduce 42
+
+
+state 29
+	expr : assignment .  (39)
+
+	.  reduce 39
+
+
+state 30
+	expr : access .  (40)
+	assignment : access . '=' expr  (44)
+
+	'='  shift 58
+	EQ  reduce 40
+	NEQ  reduce 40
+	LTE  reduce 40
+	GTE  reduce 40
+	'<'  reduce 40
+	'>'  reduce 40
+	'-'  reduce 40
+	'+'  reduce 40
+	'%'  reduce 40
+	'*'  reduce 40
+	'/'  reduce 40
+	';'  reduce 40
+	']'  reduce 40
+	')'  reduce 40
+
+
+state 31
+	type_link : USE STR ';' .  (3)
+
+	.  reduce 3
+
+
+state 32
+	list_dec : LIST_T OF . type ID  (17)
+	list_dec : LIST_T OF . type id '=' '[' attr_list ']'  (18)
+
+	INT_T  shift 6
+	FLT_T  shift 7
+	STR_T  shift 8
+	.  error
+
+	type  goto 59
+	ptype  goto 38
+
+
+state 33
+	expr : '-' expr .  (26)
+	expr : expr . '>' expr  (27)
+	expr : expr . GTE expr  (28)
+	expr : expr . '<' expr  (29)
+	expr : expr . LTE expr  (30)
+	expr : expr . NEQ expr  (31)
+	expr : expr . EQ expr  (32)
+	expr : expr . '+' expr  (33)
+	expr : expr . '-' expr  (34)
+	expr : expr . '*' expr  (35)
+	expr : expr . '/' expr  (36)
+	expr : expr . '%' expr  (37)
+
+	.  reduce 26
+
+
+state 34
+	expr : id . '.' id  (38)
+	expr : id .  (41)
+	access : id . '[' expr ']'  (43)
+	assignment : id . '=' expr  (45)
+
+	'='  shift 53
+	'['  shift 55
+	'.'  shift 56
+	EQ  reduce 41
+	NEQ  reduce 41
+	LTE  reduce 41
+	GTE  reduce 41
+	'<'  reduce 41
+	'>'  reduce 41
+	'-'  reduce 41
+	'+'  reduce 41
+	'%'  reduce 41
+	'*'  reduce 41
+	'/'  reduce 41
+	';'  reduce 41
+	']'  reduce 41
+	')'  reduce 41
+
+
+state 35
+	node_dec : '@' id . attr_list  (13)
+	node_dec : '@' id .  (14)
+
+	STR  shift 10
+	FLT  shift 11
+	INT  shift 12
+	';'  reduce 14
+
+	attr_list  goto 60
+	pvalue  goto 61
+	attr  goto 62
+
+
+state 36
+	expr : '(' expr . ')'  (24)
+	expr : expr . '>' expr  (27)
+	expr : expr . GTE expr  (28)
+	expr : expr . '<' expr  (29)
+	expr : expr . LTE expr  (30)
+	expr : expr . NEQ expr  (31)
+	expr : expr . EQ expr  (32)
+	expr : expr . '+' expr  (33)
+	expr : expr . '-' expr  (34)
+	expr : expr . '*' expr  (35)
+	expr : expr . '/' expr  (36)
+	expr : expr . '%' expr  (37)
+
+	EQ  shift 41
+	NEQ  shift 42
+	LTE  shift 43
+	GTE  shift 44
+	'<'  shift 45
+	'>'  shift 46
+	'-'  shift 47
+	'+'  shift 48
+	'%'  shift 49
+	'*'  shift 50
+	'/'  shift 51
+	')'  shift 63
+	.  error
+
+
+state 37
+	expr : '(' type . ')' expr  (25)
+
+	')'  shift 64
+	.  error
+
+
+state 38
+	type : ptype .  (19)
+
+	.  reduce 19
+
+
+state 39
+	graph_stmt_list : graph_stmt_list graph_stmt . ';'  (5)
+
+	';'  shift 65
+	.  error
+
+
+state 40
+	graph_stmt_list : graph_stmt ';' .  (4)
+
+	.  reduce 4
+
+
+state 41
+	expr : expr EQ . expr  (32)
+
+	STR  shift 10
+	FLT  shift 11
+	INT  shift 12
+	ID  shift 13
+	UNK  shift 14
+	'-'  shift 15
+	'('  shift 17
+	.  error
+
+	expr  goto 66
+	id  goto 34
+	pvalue  goto 28
+	assignment  goto 29
+	access  goto 30
+
+
+state 42
+	expr : expr NEQ . expr  (31)
+
+	STR  shift 10
+	FLT  shift 11
+	INT  shift 12
+	ID  shift 13
+	UNK  shift 14
+	'-'  shift 15
+	'('  shift 17
+	.  error
+
+	expr  goto 67
+	id  goto 34
+	pvalue  goto 28
+	assignment  goto 29
+	access  goto 30
+
+
+state 43
+	expr : expr LTE . expr  (30)
+
+	STR  shift 10
+	FLT  shift 11
+	INT  shift 12
+	ID  shift 13
+	UNK  shift 14
+	'-'  shift 15
+	'('  shift 17
+	.  error
+
+	expr  goto 68
+	id  goto 34
+	pvalue  goto 28
+	assignment  goto 29
+	access  goto 30
+
+
+state 44
+	expr : expr GTE . expr  (28)
+
+	STR  shift 10
+	FLT  shift 11
+	INT  shift 12
+	ID  shift 13
+	UNK  shift 14
+	'-'  shift 15
+	'('  shift 17
+	.  error
+
+	expr  goto 69
+	id  goto 34
+	pvalue  goto 28
+	assignment  goto 29
+	access  goto 30
+
+
+state 45
+	expr : expr '<' . expr  (29)
+
+	STR  shift 10
+	FLT  shift 11
+	INT  shift 12
+	ID  shift 13
+	UNK  shift 14
+	'-'  shift 15
+	'('  shift 17
+	.  error
+
+	expr  goto 70
+	id  goto 34
+	pvalue  goto 28
+	assignment  goto 29
+	access  goto 30
+
+
+state 46
+	expr : expr '>' . expr  (27)
+
+	STR  shift 10
+	FLT  shift 11
+	INT  shift 12
+	ID  shift 13
+	UNK  shift 14
+	'-'  shift 15
+	'('  shift 17
+	.  error
+
+	expr  goto 71
+	id  goto 34
+	pvalue  goto 28
+	assignment  goto 29
+	access  goto 30
+
+
+state 47
+	expr : expr '-' . expr  (34)
+
+	STR  shift 10
+	FLT  shift 11
+	INT  shift 12
+	ID  shift 13
+	UNK  shift 14
+	'-'  shift 15
+	'('  shift 17
+	.  error
+
+	expr  goto 72
+	id  goto 34
+	pvalue  goto 28
+	assignment  goto 29
+	access  goto 30
+
+
+state 48
+	expr : expr '+' . expr  (33)
+
+	STR  shift 10
+	FLT  shift 11
+	INT  shift 12
+	ID  shift 13
+	UNK  shift 14
+	'-'  shift 15
+	'('  shift 17
+	.  error
+
+	expr  goto 73
+	id  goto 34
+	pvalue  goto 28
+	assignment  goto 29
+	access  goto 30
+
+
+state 49
+	expr : expr '%' . expr  (37)
+
+	STR  shift 10
+	FLT  shift 11
+	INT  shift 12
+	ID  shift 13
+	UNK  shift 14
+	'-'  shift 15
+	'('  shift 17
+	.  error
+
+	expr  goto 74
+	id  goto 34
+	pvalue  goto 28
+	assignment  goto 29
+	access  goto 30
+
+
+state 50
+	expr : expr '*' . expr  (35)
+
+	STR  shift 10
+	FLT  shift 11
+	INT  shift 12
+	ID  shift 13
+	UNK  shift 14
+	'-'  shift 15
+	'('  shift 17
+	.  error
+
+	expr  goto 75
+	id  goto 34
+	pvalue  goto 28
+	assignment  goto 29
+	access  goto 30
+
+
+state 51
+	expr : expr '/' . expr  (36)
+
+	STR  shift 10
+	FLT  shift 11
+	INT  shift 12
+	ID  shift 13
+	UNK  shift 14
+	'-'  shift 15
+	'('  shift 17
+	.  error
+
+	expr  goto 76
+	id  goto 34
+	pvalue  goto 28
+	assignment  goto 29
+	access  goto 30
+
+
+state 52
+	arc_dec : id ARC . id attr_list  (15)
+	arc_dec : id ARC . id  (16)
+
+	ID  shift 13
+	UNK  shift 14
+	.  error
+
+	id  goto 77
+
+
+state 53
+	assignment : id '=' . expr  (45)
+
+	STR  shift 10
+	FLT  shift 11
+	INT  shift 12
+	ID  shift 13
+	UNK  shift 14
+	'-'  shift 15
+	'('  shift 17
+	.  error
+
+	expr  goto 78
+	id  goto 34
+	pvalue  goto 28
+	assignment  goto 29
+	access  goto 30
+
+
+state 54
+	label_app : id ':' . node_dec  (12)
+
+	'@'  shift 16
+	.  error
+
+	node_dec  goto 79
+
+
+state 55
+	access : id '[' . expr ']'  (43)
+
+	STR  shift 10
+	FLT  shift 11
+	INT  shift 12
+	ID  shift 13
+	UNK  shift 14
+	'-'  shift 15
+	'('  shift 17
+	.  error
+
+	expr  goto 80
+	id  goto 34
+	pvalue  goto 28
+	assignment  goto 29
+	access  goto 30
+
+
+state 56
+	expr : id '.' . id  (38)
+
+	ID  shift 13
+	UNK  shift 14
+	.  error
+
+	id  goto 81
+
+
+state 57
+	prim_dec : ptype id . '=' pvalue  (20)
+
+	'='  shift 82
+	.  error
+
+
+state 58
+	assignment : access '=' . expr  (44)
+
+	STR  shift 10
+	FLT  shift 11
+	INT  shift 12
+	ID  shift 13
+	UNK  shift 14
+	'-'  shift 15
+	'('  shift 17
+	.  error
+
+	expr  goto 83
+	id  goto 34
+	pvalue  goto 28
+	assignment  goto 29
+	access  goto 30
+
+
+state 59
+	list_dec : LIST_T OF type . ID  (17)
+	list_dec : LIST_T OF type . id '=' '[' attr_list ']'  (18)
+
+	ID  shift 84
+	UNK  shift 14
+	.  error
+
+	id  goto 85
+
+
+state 60
+	node_dec : '@' id attr_list .  (13)
+	attr_list : attr_list . ',' attr  (22)
+
+	','  shift 86
+	';'  reduce 13
+
+
+state 61
+	attr : pvalue .  (23)
+
+	.  reduce 23
+
+
+state 62
+	attr_list : attr .  (21)
+
+	.  reduce 21
+
+
+state 63
+	expr : '(' expr ')' .  (24)
+
+	.  reduce 24
+
+
+state 64
+	expr : '(' type ')' . expr  (25)
+
+	STR  shift 10
+	FLT  shift 11
+	INT  shift 12
+	ID  shift 13
+	UNK  shift 14
+	'-'  shift 15
+	'('  shift 17
+	.  error
+
+	expr  goto 87
+	id  goto 34
+	pvalue  goto 28
+	assignment  goto 29
+	access  goto 30
+
+
+state 65
+	graph_stmt_list : graph_stmt_list graph_stmt ';' .  (5)
+
+	.  reduce 5
+
+
+state 66
+	expr : expr . '>' expr  (27)
+	expr : expr . GTE expr  (28)
+	expr : expr . '<' expr  (29)
+	expr : expr . LTE expr  (30)
+	expr : expr . NEQ expr  (31)
+	expr : expr . EQ expr  (32)
+	expr : expr EQ expr .  (32)
+	expr : expr . '+' expr  (33)
+	expr : expr . '-' expr  (34)
+	expr : expr . '*' expr  (35)
+	expr : expr . '/' expr  (36)
+	expr : expr . '%' expr  (37)
+
+	LTE  shift 43
+	GTE  shift 44
+	'<'  shift 45
+	'>'  shift 46
+	'-'  shift 47
+	'+'  shift 48
+	'%'  shift 49
+	'*'  shift 50
+	'/'  shift 51
+	';'  reduce 32
+	']'  reduce 32
+	')'  reduce 32
+
+
+state 67
+	expr : expr . '>' expr  (27)
+	expr : expr . GTE expr  (28)
+	expr : expr . '<' expr  (29)
+	expr : expr . LTE expr  (30)
+	expr : expr . NEQ expr  (31)
+	expr : expr NEQ expr .  (31)
+	expr : expr . EQ expr  (32)
+	expr : expr . '+' expr  (33)
+	expr : expr . '-' expr  (34)
+	expr : expr . '*' expr  (35)
+	expr : expr . '/' expr  (36)
+	expr : expr . '%' expr  (37)
+
+	LTE  shift 43
+	GTE  shift 44
+	'<'  shift 45
+	'>'  shift 46
+	'-'  shift 47
+	'+'  shift 48
+	'%'  shift 49
+	'*'  shift 50
+	'/'  shift 51
+	';'  reduce 31
+	']'  reduce 31
+	')'  reduce 31
+
+
+state 68
+	expr : expr . '>' expr  (27)
+	expr : expr . GTE expr  (28)
+	expr : expr . '<' expr  (29)
+	expr : expr . LTE expr  (30)
+	expr : expr LTE expr .  (30)
+	expr : expr . NEQ expr  (31)
+	expr : expr . EQ expr  (32)
+	expr : expr . '+' expr  (33)
+	expr : expr . '-' expr  (34)
+	expr : expr . '*' expr  (35)
+	expr : expr . '/' expr  (36)
+	expr : expr . '%' expr  (37)
+
+	'-'  shift 47
+	'+'  shift 48
+	'%'  shift 49
+	'*'  shift 50
+	'/'  shift 51
+	EQ  reduce 30
+	NEQ  reduce 30
+	';'  reduce 30
+	']'  reduce 30
+	')'  reduce 30
+
+
+state 69
+	expr : expr . '>' expr  (27)
+	expr : expr . GTE expr  (28)
+	expr : expr GTE expr .  (28)
+	expr : expr . '<' expr  (29)
+	expr : expr . LTE expr  (30)
+	expr : expr . NEQ expr  (31)
+	expr : expr . EQ expr  (32)
+	expr : expr . '+' expr  (33)
+	expr : expr . '-' expr  (34)
+	expr : expr . '*' expr  (35)
+	expr : expr . '/' expr  (36)
+	expr : expr . '%' expr  (37)
+
+	'-'  shift 47
+	'+'  shift 48
+	'%'  shift 49
+	'*'  shift 50
+	'/'  shift 51
+	EQ  reduce 28
+	NEQ  reduce 28
+	';'  reduce 28
+	']'  reduce 28
+	')'  reduce 28
+
+
+state 70
+	expr : expr . '>' expr  (27)
+	expr : expr . GTE expr  (28)
+	expr : expr . '<' expr  (29)
+	expr : expr '<' expr .  (29)
+	expr : expr . LTE expr  (30)
+	expr : expr . NEQ expr  (31)
+	expr : expr . EQ expr  (32)
+	expr : expr . '+' expr  (33)
+	expr : expr . '-' expr  (34)
+	expr : expr . '*' expr  (35)
+	expr : expr . '/' expr  (36)
+	expr : expr . '%' expr  (37)
+
+	'-'  shift 47
+	'+'  shift 48
+	'%'  shift 49
+	'*'  shift 50
+	'/'  shift 51
+	EQ  reduce 29
+	NEQ  reduce 29
+	';'  reduce 29
+	']'  reduce 29
+	')'  reduce 29
+
+
+state 71
+	expr : expr . '>' expr  (27)
+	expr : expr '>' expr .  (27)
+	expr : expr . GTE expr  (28)
+	expr : expr . '<' expr  (29)
+	expr : expr . LTE expr  (30)
+	expr : expr . NEQ expr  (31)
+	expr : expr . EQ expr  (32)
+	expr : expr . '+' expr  (33)
+	expr : expr . '-' expr  (34)
+	expr : expr . '*' expr  (35)
+	expr : expr . '/' expr  (36)
+	expr : expr . '%' expr  (37)
+
+	'-'  shift 47
+	'+'  shift 48
+	'%'  shift 49
+	'*'  shift 50
+	'/'  shift 51
+	EQ  reduce 27
+	NEQ  reduce 27
+	';'  reduce 27
+	']'  reduce 27
+	')'  reduce 27
+
+
+state 72
+	expr : expr . '>' expr  (27)
+	expr : expr . GTE expr  (28)
+	expr : expr . '<' expr  (29)
+	expr : expr . LTE expr  (30)
+	expr : expr . NEQ expr  (31)
+	expr : expr . EQ expr  (32)
+	expr : expr . '+' expr  (33)
+	expr : expr . '-' expr  (34)
+	expr : expr '-' expr .  (34)
+	expr : expr . '*' expr  (35)
+	expr : expr . '/' expr  (36)
+	expr : expr . '%' expr  (37)
+
+	'%'  shift 49
+	'*'  shift 50
+	'/'  shift 51
+	EQ  reduce 34
+	NEQ  reduce 34
+	LTE  reduce 34
+	GTE  reduce 34
+	'<'  reduce 34
+	'>'  reduce 34
+	'-'  reduce 34
+	'+'  reduce 34
+	';'  reduce 34
+	']'  reduce 34
+	')'  reduce 34
+
+
+state 73
+	expr : expr . '>' expr  (27)
+	expr : expr . GTE expr  (28)
+	expr : expr . '<' expr  (29)
+	expr : expr . LTE expr  (30)
+	expr : expr . NEQ expr  (31)
+	expr : expr . EQ expr  (32)
+	expr : expr . '+' expr  (33)
+	expr : expr '+' expr .  (33)
+	expr : expr . '-' expr  (34)
+	expr : expr . '*' expr  (35)
+	expr : expr . '/' expr  (36)
+	expr : expr . '%' expr  (37)
+
+	'%'  shift 49
+	'*'  shift 50
+	'/'  shift 51
+	EQ  reduce 33
+	NEQ  reduce 33
+	LTE  reduce 33
+	GTE  reduce 33
+	'<'  reduce 33
+	'>'  reduce 33
+	'-'  reduce 33
+	'+'  reduce 33
+	';'  reduce 33
+	']'  reduce 33
+	')'  reduce 33
+
+
+state 74
+	expr : expr . '>' expr  (27)
+	expr : expr . GTE expr  (28)
+	expr : expr . '<' expr  (29)
+	expr : expr . LTE expr  (30)
+	expr : expr . NEQ expr  (31)
+	expr : expr . EQ expr  (32)
+	expr : expr . '+' expr  (33)
+	expr : expr . '-' expr  (34)
+	expr : expr . '*' expr  (35)
+	expr : expr . '/' expr  (36)
+	expr : expr . '%' expr  (37)
+	expr : expr '%' expr .  (37)
+
+	'*'  shift 50
+	'/'  shift 51
+	EQ  reduce 37
+	NEQ  reduce 37
+	LTE  reduce 37
+	GTE  reduce 37
+	'<'  reduce 37
+	'>'  reduce 37
+	'-'  reduce 37
+	'+'  reduce 37
+	'%'  reduce 37
+	';'  reduce 37
+	']'  reduce 37
+	')'  reduce 37
+
+
+state 75
+	expr : expr . '>' expr  (27)
+	expr : expr . GTE expr  (28)
+	expr : expr . '<' expr  (29)
+	expr : expr . LTE expr  (30)
+	expr : expr . NEQ expr  (31)
+	expr : expr . EQ expr  (32)
+	expr : expr . '+' expr  (33)
+	expr : expr . '-' expr  (34)
+	expr : expr . '*' expr  (35)
+	expr : expr '*' expr .  (35)
+	expr : expr . '/' expr  (36)
+	expr : expr . '%' expr  (37)
+
+	.  reduce 35
+
+
+state 76
+	expr : expr . '>' expr  (27)
+	expr : expr . GTE expr  (28)
+	expr : expr . '<' expr  (29)
+	expr : expr . LTE expr  (30)
+	expr : expr . NEQ expr  (31)
+	expr : expr . EQ expr  (32)
+	expr : expr . '+' expr  (33)
+	expr : expr . '-' expr  (34)
+	expr : expr . '*' expr  (35)
+	expr : expr . '/' expr  (36)
+	expr : expr '/' expr .  (36)
+	expr : expr . '%' expr  (37)
+
+	.  reduce 36
+
+
+state 77
+	arc_dec : id ARC id . attr_list  (15)
+	arc_dec : id ARC id .  (16)
+
+	STR  shift 10
+	FLT  shift 11
+	INT  shift 12
+	';'  reduce 16
+
+	attr_list  goto 88
+	pvalue  goto 61
+	attr  goto 62
+
+
+state 78
+	expr : expr . '>' expr  (27)
+	expr : expr . GTE expr  (28)
+	expr : expr . '<' expr  (29)
+	expr : expr . LTE expr  (30)
+	expr : expr . NEQ expr  (31)
+	expr : expr . EQ expr  (32)
+	expr : expr . '+' expr  (33)
+	expr : expr . '-' expr  (34)
+	expr : expr . '*' expr  (35)
+	expr : expr . '/' expr  (36)
+	expr : expr . '%' expr  (37)
+	assignment : id '=' expr .  (45)
+
+	'-'  shift 47
+	'+'  shift 48
+	'%'  shift 49
+	'*'  shift 50
+	'/'  shift 51
+	EQ  reduce 45
+	NEQ  reduce 45
+	LTE  reduce 45
+	GTE  reduce 45
+	'<'  reduce 45
+	'>'  reduce 45
+	';'  reduce 45
+	']'  reduce 45
+	')'  reduce 45
+
+
+state 79
+	label_app : id ':' node_dec .  (12)
+
+	.  reduce 12
+
+
+state 80
+	expr : expr . '>' expr  (27)
+	expr : expr . GTE expr  (28)
+	expr : expr . '<' expr  (29)
+	expr : expr . LTE expr  (30)
+	expr : expr . NEQ expr  (31)
+	expr : expr . EQ expr  (32)
+	expr : expr . '+' expr  (33)
+	expr : expr . '-' expr  (34)
+	expr : expr . '*' expr  (35)
+	expr : expr . '/' expr  (36)
+	expr : expr . '%' expr  (37)
+	access : id '[' expr . ']'  (43)
+
+	EQ  shift 41
+	NEQ  shift 42
+	LTE  shift 43
+	GTE  shift 44
+	'<'  shift 45
+	'>'  shift 46
+	'-'  shift 47
+	'+'  shift 48
+	'%'  shift 49
+	'*'  shift 50
+	'/'  shift 51
+	']'  shift 89
+	.  error
+
+
+state 81
+	expr : id '.' id .  (38)
+
+	.  reduce 38
+
+
+state 82
+	prim_dec : ptype id '=' . pvalue  (20)
+
+	STR  shift 10
+	FLT  shift 11
+	INT  shift 12
+	.  error
+
+	pvalue  goto 90
+
+
+state 83
+	expr : expr . '>' expr  (27)
+	expr : expr . GTE expr  (28)
+	expr : expr . '<' expr  (29)
+	expr : expr . LTE expr  (30)
+	expr : expr . NEQ expr  (31)
+	expr : expr . EQ expr  (32)
+	expr : expr . '+' expr  (33)
+	expr : expr . '-' expr  (34)
+	expr : expr . '*' expr  (35)
+	expr : expr . '/' expr  (36)
+	expr : expr . '%' expr  (37)
+	assignment : access '=' expr .  (44)
+
+	'-'  shift 47
+	'+'  shift 48
+	'%'  shift 49
+	'*'  shift 50
+	'/'  shift 51
+	EQ  reduce 44
+	NEQ  reduce 44
+	LTE  reduce 44
+	GTE  reduce 44
+	'<'  reduce 44
+	'>'  reduce 44
+	';'  reduce 44
+	']'  reduce 44
+	')'  reduce 44
+
+
+state 84
+	list_dec : LIST_T OF type ID .  (17)
+	id : ID .  (46)
+
+	'='  reduce 46
+	';'  reduce 17
+
+
+state 85
+	list_dec : LIST_T OF type id . '=' '[' attr_list ']'  (18)
+
+	'='  shift 91
+	.  error
+
+
+state 86
+	attr_list : attr_list ',' . attr  (22)
+
+	STR  shift 10
+	FLT  shift 11
+	INT  shift 12
+	.  error
+
+	pvalue  goto 61
+	attr  goto 92
+
+
+state 87
+	expr : '(' type ')' expr .  (25)
+	expr : expr . '>' expr  (27)
+	expr : expr . GTE expr  (28)
+	expr : expr . '<' expr  (29)
+	expr : expr . LTE expr  (30)
+	expr : expr . NEQ expr  (31)
+	expr : expr . EQ expr  (32)
+	expr : expr . '+' expr  (33)
+	expr : expr . '-' expr  (34)
+	expr : expr . '*' expr  (35)
+	expr : expr . '/' expr  (36)
+	expr : expr . '%' expr  (37)
+
+	.  reduce 25
+
+
+state 88
+	arc_dec : id ARC id attr_list .  (15)
+	attr_list : attr_list . ',' attr  (22)
+
+	','  shift 86
+	';'  reduce 15
+
+
+state 89
+	access : id '[' expr ']' .  (43)
+
+	.  reduce 43
+
+
+state 90
+	prim_dec : ptype id '=' pvalue .  (20)
+
+	.  reduce 20
+
+
+state 91
+	list_dec : LIST_T OF type id '=' . '[' attr_list ']'  (18)
+
+	'['  shift 93
+	.  error
+
+
+state 92
+	attr_list : attr_list ',' attr .  (22)
+
+	.  reduce 22
+
+
+state 93
+	list_dec : LIST_T OF type id '=' '[' . attr_list ']'  (18)
+
+	STR  shift 10
+	FLT  shift 11
+	INT  shift 12
+	.  error
+
+	attr_list  goto 94
+	pvalue  goto 61
+	attr  goto 62
+
+
+state 94
+	list_dec : LIST_T OF type id '=' '[' attr_list . ']'  (18)
+	attr_list : attr_list . ',' attr  (22)
+
+	']'  shift 95
+	','  shift 86
+	.  error
+
+
+state 95
+	list_dec : LIST_T OF type id '=' '[' attr_list ']' .  (18)
+
+	.  reduce 18
+
+
+44 terminals, 20 nonterminals
+54 grammar rules, 96 states

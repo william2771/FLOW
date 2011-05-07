@@ -13,7 +13,7 @@ public class WhileNode extends StatementNode {
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return "while (" + exp + ") {\n" + block +"}\n";
+		return "while (" + exp + "!= 0) {\n" + block +"}\n";
 	}
 
 }

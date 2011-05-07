@@ -4,6 +4,7 @@ public class Arithmetic extends Expression {
 
 	public Arithmetic(Expression e1, Expression e2, String op)
 	{
+	    super();
 		this.e1 = e1;
 		this.e2 = e2;
 		this.operator = op;
