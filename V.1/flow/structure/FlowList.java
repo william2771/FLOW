@@ -56,7 +56,9 @@ public class FlowList<E> extends ArrayList<E>
 		this.push(item);
 	}
 	
-
+	public int getlength(){
+	    return this.size();
+	}
 	
 	public void join(FlowList<E> other)
 	{

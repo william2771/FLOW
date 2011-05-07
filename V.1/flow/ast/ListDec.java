@@ -8,7 +8,7 @@ public class ListDec extends StatementNode {
 		this.aList = aList;
 		if (type.type == "int") this.type = "Integer";
 		else if (type.type == "double") this.type = "Double";
-		else if (type.type.length() > 4 && type.type.substring(0,4) == "list") this.type = "ArrayList";
+		else if (type.type.length() > 4 && type.type.substring(0,4) == "list") this.type = "FlowList";
 		else this.type = type.toString();
 	}
 
@@ -21,11 +21,11 @@ public class ListDec extends StatementNode {
 		String temp_name = id.toString() + "_tmp";
 		String str;
 		str = type + "[] " + temp_name + " = {" + aList.toString() + "};\n";
-		str +=  "ArrayList<" + type + "> " + id + " = new ArrayList<" + type + ">((List<" + type + ">) Arrays.asList(" + temp_name + "))";
+		str +=  "FlowList<" + type + "> " + id + " = new FlowList<" + type + ">((List<" + type + ">) Arrays.asList(" + temp_name + "))";
 		return str;
 	    }
 	    else {
-		return "ArrayList<" + type + "> " + id + " = new ArrayList<" + type + ">()";
+		return "FlowList<" + type + "> " + id + " = new FlowList<" + type + ">()";
 	    }
 	}
 }

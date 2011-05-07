@@ -3,19 +3,19 @@ package flow.structure;
 import java.util.ArrayList;
 
 public class SuperGraph {
-	protected ArrayList<SuperNode> nodes;
-	protected ArrayList<SuperArc> arcs;
+	protected FlowList<SuperNode> nodes;
+	protected FlowList<SuperArc> arcs;
 
 	public SuperGraph(){
-		nodes = new ArrayList<SuperNode>();
-		arcs = new ArrayList<SuperArc>();
+		nodes = new FlowList<SuperNode>();
+		arcs = new FlowList<SuperArc>();
 	}
 	
-	public ArrayList<SuperNode> getnodes(){
+	public FlowList<SuperNode> getNodes(){
 		return nodes;
 	}
 	
-	public ArrayList<SuperArc> getarcs(){
+	public FlowList<SuperArc> getArcs(){
 		return arcs;
 	}
 	

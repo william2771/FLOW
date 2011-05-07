@@ -29,15 +29,16 @@ public class SuperNode{
    int getdnDegree() { return inDegree; }
    int getoutDegree() { return outDegree; }
 
-   ArrayList<SuperArc> getarcs() { return arcs; }
-   ArrayList<SuperArc> getarcsIn() { return arcsOut; }
-   ArrayList<SuperArc> getarcsOut() { return arcsIn; }
+
+   FlowList<SuperArc> getArcs() { return arcs; }
+   FlowList<SuperArc> getArcsIn() { return arcsOut; }
+   FlowList<SuperArc> getArcsOut() { return arcsIn; }
 
    int inDegree;
    int outDegree;
    int degree;
 
-   ArrayList<SuperArc> arcsIn;
-   ArrayList<SuperArc> arcsOut;
-   ArrayList<SuperArc> arcs;
+   FlowList<SuperArc> arcsIn;
+   FlowList<SuperArc> arcsOut;
+   FlowList<SuperArc> arcs;
 }
