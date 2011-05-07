@@ -1,3 +1,4 @@
+
 #YACC = yacc.macosx
 #YACC = yacc.linux
 YACC = yacc
@@ -51,7 +52,8 @@ FunctionTest : Flow.class $(TESTDIR)SimpleGraph.flowg $(TESTDIR)SimpleGraph.flow
 
 DepthTest : Flow.class $(TESTDIR)Depth/Depth.flowt $(TESTDIR)Depth/Depth.flowg $(TESTDIR)Depth/Depth.flow
 	java Flow $(TESTDIR)Depth/Depth.flowg
-	java Flow  $(TESTDIR)SimpleGraph.flow
+	java Flow $(TESTDIR)Depth/Depth.flow
+
 	javac Solver.java
 	java Solver
 
