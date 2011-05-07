@@ -32,21 +32,21 @@ TypeLexer.java :	flowt.flex
 TypeParser.java :	type_parser.y
 	$(YACC) -Jclass='TypeParser' type_parser.y
 
-SumTest : Flow.class $(TESTDIR)SimpleTest.flow $(TESTDIR)SimpleGraph.flowg $(TESTDIR)SimpleGraph.flowt
-	java Flow $(TESTDIR)SimpleGraph.flowg
-	java Flow $(TESTDIR)SimpleTest.flow
+SumTest : Flow.class $(TESTDIR)SimpleTest/SimpleTest.flow $(TESTDIR)SimpleTest/SimpleTest.flowg $(TESTDIR)SimpleTest/SimpleTest.flowt
+	java Flow $(TESTDIR)SimpleTest/SimpleTest.flowg
+	java Flow $(TESTDIR)SimpleTest/SimpleTest.flow
 	javac Solver.java
 	java Solver
 
-ParityTest : Flow.class $(TESTDIR)ParityTest.flow $(TESTDIR)SimpleGraph.flowg $(TESTDIR)SimpleGraph.flowt
-	java Flow $(TESTDIR)SimpleGraph.flowg
-	java Flow $(TESTDIR)ParityTest.flow
+ParityTest : Flow.class $(TESTDIR)ParityTest/ParityTest.flow $(TESTDIR)ParityTest/ParityTest.flowg $(TESTDIR)ParityTest/ParityTest.flowt
+	java Flow $(TESTDIR)ParityTest/ParityTest.flowg
+	java Flow $(TESTDIR)ParityTest/ParityTest.flow
 	javac Solver.java
 	java Solver
 
-FunctionTest : Flow.class $(TESTDIR)SimpleGraph.flowg $(TESTDIR)SimpleGraph.flowt $(TESTDIR)FunctionTest.flow
-	java Flow $(TESTDIR)SimpleGraph.flowg
-	java Flow $(TESTDIR)FunctionTest.flow
+FunctionTest : Flow.class $(TESTDIR)FunctionTest/FunctionTest.flowg $(TESTDIR)FunctionTest/FunctionTest.flowt $(TESTDIR)FunctionTest/FunctionTest.flow
+	java Flow $(TESTDIR)FunctionTest/FunctionTest.flowg
+	java Flow $(TESTDIR)FunctionTest/FunctionTest.flow
 	javac Solver.java
 	java Solver
 
