@@ -31,9 +31,6 @@ NEQ     = "!="
 LTE     = "<="
 GTE     = ">="
 
-/* error lexemes */
-BAD_ID  = [^A-Za-z][A-Za-z0-9]+
-
 %state STRING
 %state SQSTRING
 
@@ -126,13 +123,13 @@ print       { return SolverParser.PRINT; }
 
 /* Escaped characters */
 
-"\\\""      { string += "\""; }
-"\\n"       { string += "\n"; }
-"\\t"       { string += "\t"; }
-"\\r"       { string += "\r"; }
-"\\f"       { string += "\f"; }
-"\\b"       { string += "\b"; }
-"\\\\"      { string += "\\"; }
+"\\\""      { string += "\\\""; }
+"\\n"       { string += "\\n"; }
+"\\t"       { string += "\\t"; }
+"\\r"       { string += "\\r"; }
+"\\f"       { string += "\\f"; }
+"\\b"       { string += "\\b"; }
+"\\\\"      { string += "\\\\"; }
 
 /* All other characters */
 
@@ -148,9 +145,15 @@ print       { return SolverParser.PRINT; }
               yyparser.yylval = new SolverParserVal(string);
               return SolverParser.STR; }
 
-/* Escaped single quote */
+/* Escaped characters */
 
-"\\'"       { string += "'"; }
+"\\'"       { string += "\\'"; }
+"\\n"       { string += "\\n"; }
+"\\t"       { string += "\\t"; }
+"\\r"       { string += "\\r"; }
+"\\f"       { string += "\\f"; }
+"\\b"       { string += "\\b"; }
+"\\\\"      { string += "\\\\"; }
 
 /* All other characters */
 
