@@ -88,23 +88,22 @@ solver_stmt_list : solver_stmt ';'  { $$.obj = new SequenceNode(null, (Statement
 | solver_stmt_list block_stmt       { $$.obj = new SequenceNode((SequenceNode) $1.obj, (StatementNode) $2.obj); }
 ;
 
-func_stmt_list : func_stmt ';'  { $$.obj = new FuncSequenceNode(null, (StatementNode) $1.obj); }
+func_stmt_list : func_stmt ';'           { $$.obj = new FuncSequenceNode(null, (StatementNode) $1.obj); }
 | func_block_stmt                        { $$.obj = new FuncSequenceNode(null, (StatementNode) $1.obj); }
-| func_stmt_list func_stmt ';'  { $$.obj = new FuncSequenceNode((FuncSequenceNode) $1.obj, (StatementNode) $2.obj); }
-| func_stmt_list func_block_stmt       { $$.obj = new FuncSequenceNode((FuncSequenceNode) $1.obj, (StatementNode) $2.obj); 
-   if (((StatementNode) $2.obj).type == null){
-     ((FuncSequenceNode) $$.obj).type = ((FuncSequenceNode) $1.obj).type;
-   }
-   else if(((FuncSequenceNode) $1.obj).type == null){
-     ((FuncSequenceNode) $$.obj).type = ((FuncSequenceNode) $1.obj).type;   
-   }
-   else if (((FuncSequenceNode) $1.obj).type != ((StatementNode) $2.obj).type){
-     yyerror("You are returning the wrong type.");
-   }
-   else{
-     ((FuncSequenceNode) $$.obj).type = ((StatementNode) $2.obj).type;   
-   }
- }
+| func_stmt_list func_stmt ';'           { $$.obj = new FuncSequenceNode((FuncSequenceNode) $1.obj, (StatementNode) $2.obj); }
+| func_stmt_list func_block_stmt         { $$.obj = new FuncSequenceNode((FuncSequenceNode) $1.obj, (StatementNode) $2.obj); 
+                                           if (((StatementNode) $2.obj).type == null) {
+                                             ((FuncSequenceNode) $$.obj).type = ((FuncSequenceNode) $1.obj).type;
+                                           }
+                                           else if(((FuncSequenceNode) $1.obj).type == null) {
+                                             ((FuncSequenceNode) $$.obj).type = ((FuncSequenceNode) $1.obj).type;   
+                                           }
+                                           else if (((FuncSequenceNode) $1.obj).type != ((StatementNode) $2.obj).type){
+                                             yyerror("You are returning the wrong type.");
+                                           }
+                                           else{
+                                             ((FuncSequenceNode) $$.obj).type = ((StatementNode) $2.obj).type;   
+                                           } }
 ;
 
 block_stmt: while_stmt
@@ -128,7 +127,8 @@ func_stmt: list_dec
 | assignment
 | print_stmt
 | func_call                         { $$.obj = $1.obj; }
-| RET expr                          { $$.obj = $2.obj; ((Expression) $$.obj).type = ((Expression) $2.obj).type;}
+| RET expr                          { $$.obj = $2.obj; 
+                                      ((Expression) $$.obj).type = ((Expression) $2.obj).type; }
 ;
 
 func_call : id '(' attr_list ')'                              { //Make sure this function was previously declared
@@ -335,16 +335,13 @@ access : id '[' expr ']'               { $$.obj = new ListAccess((ID) $1.obj, (E
 list_dec : LIST_T OF type id                { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, null);
                                               //added space, was new Type("list" ...) -> new Type("list " ...)
                                               ((ID) $4.obj).type = new Type("list " + $3.obj);
-						//This line below is unneccessary as id was already put into the symbol table when it was parsed
                                               symbols.put(((ID) $4.obj).toString(), $4.obj); }
 
 | LIST_T OF type id '=' '[' attr_list ']'   { //Do typechecking
-						check_type((Type) $3.obj, (AttrList) $7.obj);
-                                                $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, (AttrList) $7.obj);
-
-                                              ((ID) $4.obj).type = new Type("list " + $3.obj);
-                                              symbols.put(((ID) $4.obj).toString(), $4.obj); 
-                                              }
+					      check_type((Type) $3.obj, (AttrList) $7.obj);
+                                              $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, (AttrList) $7.obj);
+                                              ((ID) $4.obj).type = new Type("list " + $3.obj.toString());
+                                              symbols.put(((ID) $4.obj).toString(), $4.obj); }
 ;
 
 type : ptype                           { $$.obj = $1.obj; }
@@ -358,12 +355,8 @@ prim_dec : type id '=' expr            { $$.obj = new PrimDec((Type) $1.obj, (ID
                                          symbols.put(((ID) $2.obj).toString(), $2.obj); }
 ;
 
-attr_list : attr                       { $$.obj = new AttrList(null, (Attr) $1.obj); }
-| attr_list ',' attr                   { $$.obj = new AttrList((AttrList) $1.obj, (Attr) $3.obj); }
-;
-
-//attr no longer goes to pvalue
-attr : expr                            { $$.obj = $1.obj; }
+attr_list : expr                       { $$.obj = new AttrList(null, (Expression) $1.obj); }
+| attr_list ',' expr                   { $$.obj = new AttrList((AttrList) $1.obj, (Expression) $3.obj); }
 ;
 
 id : ID                                { if (symbols.containsKey($1.sval)) {
@@ -410,7 +403,7 @@ print_stmt : PRINT expr                { $$.obj = new Print((Expression) $2.obj)
     }
 
     //Print the token value - used for debugging
-    //System.out.println(yyl_return);
+    System.out.println(yyl_return);
 
     return yyl_return;
   }
