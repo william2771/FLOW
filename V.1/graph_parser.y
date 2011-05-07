@@ -205,8 +205,9 @@ expr : '(' expr ')'            { $$.obj = $2.obj; }
                                    yyerror("Modulus is not a string operation.");
                                  }
                                  ((Expression) $$.obj).type = check_type((Expression) $1.obj, (Expression) $3.obj); }
-| id '.' id                    { System.out.println("1");$$.obj = new Dot((ID) $1.obj, $3.obj.toString());System.out.println("2");
-                                 if (((Expression) $1.obj).type.type.equals("Node")) {System.out.println("3");
+| id '.' id                    { System.out.println("1"); $$.obj = new Dot((ID) $1.obj, $3.obj.toString()); System.out.println("2");
+   if (((Expression) $1.obj).type.type.equals("Node")) 
+     {System.out.println("3");
                                    if (((Hashtable) symbols.get("node_attributes")).containsKey(((ID) $3.obj).toString())){
 				     System.out.println("4");
                                      ((Expression) $$.obj).type = new Type(((Hashtable) symbols.get("node_attributes")).get($3.obj.toString()).toString());
@@ -244,6 +245,7 @@ expr : '(' expr ')'            { $$.obj = $2.obj; }
                                    yyerror("Dot operator applied to invalid type: " + ((ID) $1.obj).toString() + " is of type " + ((Expression) $1.obj).type.type);
                                    ((Expression) $$.obj).type = new pType("error");
                                  } }
+  }
 | GRAPH '.' id                 { $$.obj = new Dot(new ID("graph"), $3.obj.toString());
                                  if (((Hashtable) symbols.get("labels")).containsKey($3.obj.toString())) {
                                    ((Expression) $$.obj).type = new Type(((Hashtable) symbols.get("labels")).get($3.obj.toString()).toString());

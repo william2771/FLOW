@@ -52,6 +52,7 @@ string input_string = "Input is '";
 int i = 0;
 while (i < input.length) {
   input_string = input_string + input[i];
+  i = i+1;
 }
 input_string = input_string + "'\n";
 
