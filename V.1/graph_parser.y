@@ -116,7 +116,7 @@ arc_dec : id ARC id attr_list          { $$.obj = new ArcDec((ID) $1.obj, (ID) $
 | id ARC id                            { $$.obj = new ArcDec((ID) $1.obj, (ID) $3.obj, null); }
 ;
 
-list_dec : LIST_T OF type ID           { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, null); symbols.put(((ID)$4.obj).toString(), (ID)$4.obj);}
+list_dec : LIST_T OF type id           { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, null); symbols.put(((ID)$4.obj).toString(), (ID)$4.obj); System.out.println("3");}
 | LIST_T OF type id '=' '[' attr_list ']' { $$.obj = new ListDec((Type) $3.obj, (ID) $4.obj, (AttrList) $7.obj); symbols.put(((ID)$4.obj).toString(), (ID)$4.obj);}
 ;
 
@@ -148,7 +148,7 @@ if_stmt : IF '(' expr ')' '{' graph_stmt_list '}'            { $$.obj = new IfNo
 ;
 
 attr_list : expr                       { $$.obj = new AttrList(null, (Expression) $1.obj); }
-| attr_list ',' expr                   { $$.obj = new AttrList((AttrList) $1.obj, (pValue) $3.obj); }
+| attr_list ',' expr                   { $$.obj = new AttrList((AttrList) $1.obj, (Expression) $3.obj); }
 ;
 
 expr : '(' expr ')'            { $$.obj = $2.obj; }

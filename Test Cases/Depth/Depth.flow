@@ -16,6 +16,7 @@ int depth(Node myNode)
 		if(temp > deep) {
 			deep = temp;
 		}
+		k = k+1;
 	}
 	return (deep + 1);
 }
