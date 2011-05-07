@@ -1,5 +1,5 @@
 //Specify the typedef
-use 'dfa.flowt';
+use 'Depth.flowt';
 
 //Create a depthN type node called 'a', label it with the special label root
 ROOT: @a;
