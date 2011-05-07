@@ -94,18 +94,11 @@ solver_stmt_list : solver_stmt ';'  { $$.obj = new SequenceNode(null, (Statement
 
 
 
-func_stmt_list : func_stmt ';'           { System.out.println("Reducing func_stmt to: func_stmt_list");
-                                            $$.obj = new FuncSequenceNode(null, (StatementNode) $1.obj);
-                                           ((FuncSequenceNode) $$.obj).type = ((StatementNode) $1.obj).type;
-                                           System.out.println("it is: " + $$.obj);}
-                                           
-| func_block_stmt                        { $$.obj = new FuncSequenceNode(null, (StatementNode) $1.obj);
-
-
+func_stmt_list : func_stmt ';'           { $$.obj = new FuncSequenceNode(null, (StatementNode) $1.obj);
                                            ((FuncSequenceNode) $$.obj).type = ((StatementNode) $1.obj).type; }
-| func_stmt_list func_stmt ';'           { System.out.println("Reducing func_stmt_list func_stmt to: func_stmt_list");
-                                           System.out.println("" + $1.obj + $2.obj);
-                                            $$.obj = new FuncSequenceNode((FuncSequenceNode) $1.obj, (StatementNode) $2.obj);
+| func_block_stmt                        { $$.obj = new FuncSequenceNode(null, (StatementNode) $1.obj);
+                                           ((FuncSequenceNode) $$.obj).type = ((StatementNode) $1.obj).type; }
+| func_stmt_list func_stmt ';'           { $$.obj = new FuncSequenceNode((FuncSequenceNode) $1.obj, (StatementNode) $2.obj);
                                            if (((StatementNode) $2.obj).type == null) {
                                             //If func_stmt has type null, keep the statement list's current type
                                              ((FuncSequenceNode) $$.obj).type = ((FuncSequenceNode) $1.obj).type;
@@ -120,7 +113,7 @@ func_stmt_list : func_stmt ';'           { System.out.println("Reducing func_stm
                                            else{
                                              ((FuncSequenceNode) $$.obj).type = ((StatementNode) $2.obj).type;   
                                            } }
-| func_stmt_list func_block_stmt         { $$.obj = new FuncSequenceNode((FuncSequenceNode) $1.obj, (StatementNode) $2.obj);  System.out.println($1.obj);
+| func_stmt_list func_block_stmt         { $$.obj = new FuncSequenceNode((FuncSequenceNode) $1.obj, (StatementNode) $2.obj);
                                            if (((StatementNode) $2.obj).type == null) {
                                              ((FuncSequenceNode) $$.obj).type = ((FuncSequenceNode) $1.obj).type;
                                            }
@@ -206,13 +199,11 @@ func_dec : param '(' param_list ')'
             }
             
             '{'  func_stmt_list '}'  { $$.obj = new FunctionNode((Param) $1.obj, (ParamList) $3.obj, (FuncSequenceNode) $7.obj); 
-                                       
-                                       System.out.println((((FuncSequenceNode) $7.obj).type == null));
-                                        if (!((Param) $1.obj).id.type.type.equals(((FuncSequenceNode) $7.obj).type.type)) { 
+                                       if (!((Param) $1.obj).id.type.type.equals(((FuncSequenceNode) $7.obj).type.type)) { 
                                          yyerror("Function " + ((Param) $1.obj).id.toString() + " returns the wrong type.");
                                        } 
                                        //Restore the old symbol table
-                                       symbols = old; System.out.println("OKAY3");}
+                                       symbols = old; }
 
 ;
 
@@ -385,9 +376,22 @@ type : ptype                           { $$.obj = $1.obj; }
 ;
 
 
-prim_dec : type id '=' expr            { $$.obj = new PrimDec((Type) $1.obj, (ID) $2.obj, (Expression) $4.obj);
-                                         ((Expression) $2.obj).type = check_type((Type) $1.obj, (Expression) $4.obj);
-                                         symbols.put(((ID) $2.obj).toString(), $2.obj); }
+prim_dec : type id                     { $$.obj = new PrimDec((Type) $1.obj, (ID) $2.obj, null);
+                                         if (symbols.containsKey($2.obj.toString())) {
+                                           yyerror("Variable " + $2.obj.toString() + " already declared");
+                                         }
+                                         else {
+                                           ((Expression) $2.obj).type = (Type) $1.obj;
+                                           symbols.put(((ID) $2.obj).toString(), $2.obj);
+                                         } }
+| type id '=' expr                     { $$.obj = new PrimDec((Type) $1.obj, (ID) $2.obj, (Expression) $4.obj);
+                                         if (symbols.containsKey($2.obj.toString())) {
+                                           yyerror("Variable " + $2.obj.toString() + " already declared");
+                                         }
+                                         else {
+                                           ((Expression) $2.obj).type = check_type((Type) $1.obj, (Expression) $4.obj);
+                                           symbols.put(((ID) $2.obj).toString(), $2.obj);
+                                         } }
 ;
 
 attr_list : expr                       { $$.obj = new AttrList(null, (Expression) $1.obj); }
@@ -439,7 +443,7 @@ print_stmt : PRINT expr                { $$.obj = new Print((Expression) $2.obj)
     }
 
     //Print the token value - used for debugging
-    System.out.println(yyl_return);
+    //System.out.println(yyl_return);
 
     return yyl_return;
   }

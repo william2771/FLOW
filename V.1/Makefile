@@ -1,7 +1,6 @@
-
-#YACC = yacc.macosx
+YACC = yacc.macosx
 #YACC = yacc.linux
-YACC = yacc
+#YACC = yacc
 
 AST_FILES = 	flow/ast/ASTNode.java		flow/ast/Expression.java	flow/ast/NodeDec.java		flow/ast/Symbol.java \
 		flow/ast/ArcDec.java		flow/ast/FunctionCall.java	flow/ast/Param.java		flow/ast/SymbolTable.java \
@@ -61,13 +60,13 @@ EvenDFATest : Flow.class $(TESTDIR)EvenDFA/Even.flowt $(TESTDIR)EvenDFA/Even.flo
 	java Flow $(TESTDIR)EvenDFA/Even.flowg
 	java Flow $(TESTDIR)EvenDFA/Even.flow
 	javac Solver.java
-	java Solve
+	java Solver
 
 HelloWorldTest : Flow.class $(TESTDIR)HelloWorld/HelloWorld.flowt $(TESTDIR)HelloWorld/HelloWorld.flowg $(TESTDIR)HelloWorld/HelloWorld.flow 
 	java Flow $(TESTDIR)HelloWorld/HelloWorld.flowg
 	java Flow $(TESTDIR)HelloWorld/HelloWorld.flow
 	javac Solver.java
-	java Solve
+	java Solver
 
 clean :
 	rm *~ *.class SolverLexer.java SolverParser.java SolverParserVal.java GraphLexer.java GraphParser.java GraphParserVal.java TypeParser.java TypeParserVal.java TypeLexer.java Node.java Arc.java Graph.java Solver.java flow/ast/*.class flow/structure/*.class
