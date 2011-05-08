@@ -1,0 +1,436 @@
+Even.flow:
+
+//Specify the typedef
+use 'Even.flowt';
+
+/* This function simulates the dfa specified above on its parameter input string */
+int simulate(List of string input) { 
+    Node current = Graph.START; 
+    print "The first current variable is set.";
+
+    print "Entering the loop to look through the arcs.";
+    int i = 0;
+    while(i < input.length) {
+	List of Arc pathLst;
+	pathLst = current.arcsOut;
+	Arc next = pathLst[0];
+
+	
+	int j = 0;
+	while(j < pathLst.length) {
+	    Arc connected = pathLst[j];
+	    if(connected.symbol == input[i]) {
+		next = connected;
+		print "Went to the next edge.";
+	    }
+	    j = j+1;
+	}
+
+	int isNext = 0;
+	if (next) {
+	    isNext = 1;
+	    print "Navigating to the node at the end of that edge.";
+	    current = next.to;
+	}
+	if (isNext == 0) {
+	    print "There was a problem.  Now exiting.";
+	    return 0;
+	}
+	i = i + 1;
+    }
+
+    if (current.isAccepting) {
+    	return 1;
+    }
+	
+    return 0;
+}
+
+/* All code not within a function definition will execute every time */
+
+List of string input = ["a","a","b","a","b","b","a","a","b"];
+
+string input_string = "Input is '";
+int i = 0;
+while (i < input.length) {
+  input_string = input_string + input[i];
+  i = i+1;
+}
+input_string = input_string + "'\n";
+
+print input_string;
+
+int truth = 0;
+if (simulate(input)) {
+	truth = 1;
+	print "Input is accepted.\n";
+}
+if (truth == 0) {
+	print "Input is not accepted.\n";
+}
+
+Even.flowg:
+//Specify the typedef
+use 'Even.flowt';
+
+//Building the graph
+START: @s0 "s0", 1;  //state s0 is labeled as the START state
+@s1 "s1", 0;
+@s2 "s2", 0; 
+@s3 "s3", 0;
+
+//Path definition
+s0 -> s1 "a";
+s1 -> s0 "a";
+s1-> s2 "b";
+s2 -> s1 "b";
+s2 -> s3 "a";
+s3 -> s2 "a";
+s3 -> s0 "b";
+s0 -> s3 "b";
+
+
+Even.flowt
+//Each state node has two attributes, and each path arc has one attribute
+Node state(string value, int isAccepting) START; //START is a required node label
+Arc path(string symbol);
+
+
+Depth.flow
+//Specify the typedef
+use "Depth.flowt";
+
+int depth(Node myNode)
+{
+	int deep = 0;
+	List of Arc arcs;
+	arcs = myNode.arcsOut;
+	if(arcs.length == 0) {
+		return 0;
+	}
+	int k = 0;
+	while(k < arcs.length) {
+		Arc n = arcs[k];
+		int temp = depth(n.to);
+		if(temp > deep) {
+			deep = temp;
+		}
+		k = k+1;
+	}
+	return (deep + 1);
+}
+print depth(Graph.ROOT);
+
+
+Depth.flowg
+//Specify the typedef
+use "Depth.flowt";
+
+//Create a depthN type node called 'a', label it with the special label root
+ROOT: @a;
+
+//Create two more depthN nodes
+@b;
+@c;
+@d;
+ 
+//Connect node 'a' to 'b', then node 'a' to 'c' with anonymous arcs
+a -> b;
+a -> c;
+c -> d; 
+
+
+Depth.flowt
+//Define a depthN type node to have 0 attributes, and require 1 of them to be labeled root
+Node depthN() ROOT;
+//Define depArc type arc to have 0 attributes
+Arc depArc();
+
+
+FunctionTest.flow
+//Function Test
+use "FunctionTest.flowt";
+
+int foo(int x)
+{
+	int y = 4;
+	return x + y;
+}
+
+int bar(int y)
+{
+	return y - 1;
+}
+
+int k = 0;
+k = foo(k);
+print(k);
+
+k = foo(1);
+print(k);
+
+k = foo(1 + k);
+print(k);
+
+print(foo(bar(k)));
+
+k = bar(k);
+print( bar(k));
+
+
+FunctionTest.flowg
+use "FunctionTest.flowt";
+//This is the graph associated with the parity tester DFA
+START: @Evenstate 1;
+@Oddstate 0;
+
+Evenstate -> Evenstate 0;
+Oddstate -> Oddstate 0;
+
+Evenstate -> Oddstate 1;
+Oddstate -> Evenstate 1;
+
+
+FunctionTest.flowt
+Node DFA(int isAccepting) START;
+Arc path(int transition);
+
+
+
+HelloWorld.flow
+
+/* This function simulates the dfa specified above on its parameter input string */
+
+//precondition: dfa, e.g. every character in the alphabet
+//is represented uniquely by an out-arc on each node
+use 'HelloWorld.flowt';
+
+function simulate(string input) { 
+    Node current = Graph.START; 
+    print "The first current variable is set.";
+
+    print "Entering the for loop to look through the arcs.";
+
+    int i = 0;
+    while(i < input.length) {
+	  Arc next;
+	  List of Arc pathLst = current.arcsOut();
+	
+	  int j = 0;
+	  while(j < pathLst.length)
+	  {
+	     Arc connected = pathLst[j];
+		if(connected.symbol == input.substring(i, i+1)
+		{
+			next = connected;
+			print "Went to the next edge.";
+		}
+		j++;
+	  }
+
+	  int isNext = 0;
+	  if (next) {
+	     isNext = 1;
+	     print "Navigating to node at the end of that edge.";
+	     current = next.to;
+	  }
+	  if (isNext == 0) {
+	     print "There was a problem.  Now exiting.";
+	     return 0;
+	  }
+	  i = i + 1;
+    }
+
+    if (current.isAccepting) {
+    	  return 1;
+    }
+	
+    return 0;
+}
+
+/* All code not within a function definition will execute every time */
+
+string input = "Hello World";
+print "Input is '" + input + "'\n"; 
+
+int truth = 0;
+if (simulate(input)) {
+	truth = 1;
+	print "Input is accepted.\n";
+}
+if (truth == 0) {
+	print "Input is not accepted.\n";
+}
+
+
+
+HelloWorld.flowg
+use 'HelloWorld.flowt';
+
+/* Building the graph */ 
+
+START: @s0 "s0", 0;  //state s0 is labeled as the START state
+@s1 "s1", 0;
+s0 -> s1 "h";
+@s2 "s2", 0; 
+s1 -> s2 "e";
+@s3 "s3", 0;
+s2 -> s3 "l"; 
+@s4 "s4", 0; 
+s3 -> s4 "l"; 
+@s5 "s5", 0; 
+s4 -> s5 "o"; 
+@s6 "s6", 0; 
+s5 -> s6 " "; 
+@s7 "s7", 0; 
+s6 -> s7 "w"; 
+@s8 "s8", 0; 
+s7 -> s8 "o"; 
+@s9 "s9", 0; 
+s8 -> s9 "r";
+@s10 "s10", 0; 
+s9 -> s10 "l"; 
+@s11 "s11", 0;
+s10 -> s11 "d"; 
+@s12 "s12", 1;
+s11 -> s12 "!"; 
+@skill "kill", 0;
+
+List of string lst = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P','Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z','a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
+'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',' ','!'];
+
+List of Node dfaLst = [s0,s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,skill];
+List of string strLst = ["h","e","l","l","o"," ","w","o","r","l","d","!",""];
+
+int pos = 0;
+//int len = dfaLst.length;
+while (pos < dfaLst.length){	
+	int k = 0;
+	while (k < lst.length)
+	{	
+		string character = lst[k];
+		if(character != strLst[pos])
+		{
+			n -> skill character;
+		}
+	}
+	pos = pos + 1;
+}
+
+
+HelloWorld.flowt
+/* The typedef section */ 
+/* Each DFA node has two attributes, and each path arc has one attribute. */
+
+Node state(string value, int isAccepting) START; //START is a required node label
+
+Arc path(string symbol);
+
+
+ParityTest.flow
+use "ParityTest.flowt";
+
+List of int binary = [1,0,1,1,0,0,1,0]; //The value to be checked
+
+int count = binary.length - 1;
+
+Node current = Graph.START;
+while(count >= 0)
+{
+	List of Arc fromArcs;
+	fromArcs = current.arcsOut;
+	int k = fromArcs.length - 1;
+
+	while(k >= 0)
+	{
+		Arc myArc = fromArcs[k];		
+		if(myArc.transition == binary[count])
+		{
+			current = myArc.to;
+		}
+		k = k - 1;
+	}
+	count = count - 1;
+	
+
+}
+
+
+if(current.isAccepting == 1)//1 is accepting 0 is not
+{
+	print("Even parity");
+}
+if(current.isAccepting != 1)
+{
+	print("Odd parity");
+}
+
+
+ParityTest.flowg
+use "ParityTest.flowt";
+//This is the graph associated with the parity tester DFA
+START: @Evenstate 1;
+@Oddstate 0;
+
+Evenstate -> Evenstate 0;
+Oddstate -> Oddstate 0;
+
+Evenstate -> Oddstate 1;
+Oddstate -> Evenstate 1;
+
+
+ParityTest.flowt
+Node DFA(int isAccepting) START;
+Arc path(int transition);
+
+
+SimpleTest.flow
+use "SimpleTest.flowt";
+
+//Sum of all Arc values
+List of Arc arcList;
+arcList = Graph.arcs;
+
+int k = 0;
+int arcSum = 0;
+while(k < arcList.length)
+{
+	Arc arc = arcList[k];
+	arcSum = arcSum + arc.transition;
+	k = k + 1;
+}
+
+print(arcSum);
+
+//Sum of all Node values
+List of Node nodeList;
+nodeList = Graph.nodes;
+
+int j = 0;
+int nodeSum = 0;
+while(j < nodeList.length)
+{
+	Node node = nodeList[j];
+	nodeSum = nodeSum + node.isAccepting;
+	j = j + 1;
+}
+
+print(nodeSum);
+
+
+SimpleTest.flowg
+use "SimpleTest.flowt";
+//This is the graph associated with the parity tester DFA
+START: @Evenstate 1;
+@Oddstate 0;
+
+Evenstate -> Evenstate 0;
+Oddstate -> Oddstate 0;
+
+Evenstate -> Oddstate 1;
+Oddstate -> Evenstate 1;
+
+
+SimpleTest.flowt
+Node DFA(int isAccepting) START;
+Arc path(int transition);
