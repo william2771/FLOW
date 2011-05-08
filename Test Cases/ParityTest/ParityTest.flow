@@ -3,24 +3,28 @@ use "ParityTest.flowt";
 List of int binary = [1,0,1,1,0,0,1,0]; //The value to be checked
 
 int count = binary.length - 1;
+
 Node current = Graph.START;
-while(count > 0)
+while(count >= 0)
 {
 	List of Arc fromArcs;
 	fromArcs = current.arcsOut;
 	int k = fromArcs.length - 1;
+
 	while(k >= 0)
 	{
 		Arc myArc = fromArcs[k];		
 		if(myArc.transition == binary[count])
 		{
-			
 			current = myArc.to;
 		}
 		k = k - 1;
 	}
 	count = count - 1;
+	
+
 }
+
 
 if(current.isAccepting == 1)//1 is accepting 0 is not
 {
