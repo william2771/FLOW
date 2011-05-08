@@ -33,10 +33,13 @@ List of string lst = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'
 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',' ','!'];
 
 List of Node dfaLst = [s0,s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,skill];
+
+
+
 List of string strLst = ["h","e","l","l","o"," ","w","o","r","l","d","!",""];
 
 int pos = 0;
-//int len = dfaLst.length;
+
 while (pos < dfaLst.length){	
 	int k = 0;
 	while (k < lst.length)
@@ -44,8 +47,10 @@ while (pos < dfaLst.length){
 		string character = lst[k];
 		if(character != strLst[pos])
 		{
+			Node n = dfaLst[pos];
 			n -> skill character;
 		}
+		k = k + 1;
 	}
 	pos = pos + 1;
 }

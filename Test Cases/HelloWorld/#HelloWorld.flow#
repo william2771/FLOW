@@ -5,7 +5,7 @@
 //is represented uniquely by an out-arc on each node
 use 'HelloWorld.flowt';
 
-int simulate(List of string input) { 
+int simulate( input) { 
     Node current = Graph.START; 
     print "The first current variable is set.";
 
@@ -13,20 +13,19 @@ int simulate(List of string input) {
 
     int i = 0;
     while(i < input.length) {
-	  List of Arc pathLst;
-	  pathLst = current.arcsOut;
-	  Arc next = pathLst[0];
+	  Arc next;
+	  List of Arc pathLst = current.arcsOut();
 	
 	  int j = 0;
 	  while(j < pathLst.length)
 	  {
 	     Arc connected = pathLst[j];
-		if(connected.symbol == input[i])
+		if(connected.symbol == input.substring(i, i+1)
 		{
 			next = connected;
 			print "Went to the next edge.";
 		}
-		j = j + 1;
+		j++;
 	  }
 
 	  int isNext = 0;
@@ -51,8 +50,8 @@ int simulate(List of string input) {
 
 /* All code not within a function definition will execute every time */
 
-List of string input = ["H","e","l","l","o"," ","W","o","r","l","d"];
-//print "Input is '" + input + "'\n"; 
+string input = "Hello World";
+print "Input is '" + input + "'\n"; 
 
 int truth = 0;
 if (simulate(input)) {
