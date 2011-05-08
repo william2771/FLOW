@@ -51,7 +51,7 @@ int simulate(List of string input) {
 
 /* All code not within a function definition will execute every time */
 
-List of string input = ["H","e","l","l","o"," ","W","o","r","l","d"];
+List of string input = ["h","e","l","l","o"," ","w","o","r","l","d", "!"];
 //print "Input is '" + input + "'\n"; 
 
 int truth = 0;
