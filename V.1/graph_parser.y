@@ -379,8 +379,8 @@ access : id '[' expr ']'               { $$.obj = new ListAccess((ID) $1.obj, (E
                                          } }
 ;
 
-list_lit : '[' attr_list ']'                { System.out.println("list_list"); $$.obj = new ListLit((AttrList) $2.obj);
-	      ((Expression) $$.obj).type = new Type("list " + check_type((AttrList) $2.obj).toString()); System.out.println("Parsed a list literal.");}
+list_lit : '[' attr_list ']'                { $$.obj = new ListLit((AttrList) $2.obj);
+	      ((Expression) $$.obj).type = new Type("list " + check_type((AttrList) $2.obj).toString()); }
 ;
 
 /*list_dec : list_type id                     { $$.obj = new ListDec((Type) $1.obj, (ID) $2.obj, null);
@@ -417,7 +417,7 @@ prim_dec : type id                     { $$.obj = new PrimDec((Type) $1.obj, (ID
                                          else {
                                            ((Expression) $2.obj).type = check_type((Type) $1.obj, (Expression) $4.obj);
                                            symbols.put(((ID) $2.obj).toString(), $2.obj);
-					   System.out.println("Declared " + $2.obj);
+
                                          } }
 ;
 
@@ -425,7 +425,7 @@ attr_list : expr                       { $$.obj = new AttrList(null, (Expression
 | attr_list ',' expr                   { $$.obj = new AttrList((AttrList) $1.obj, (Expression) $3.obj); }
 ;
 
-id : ID                                { System.out.println("Looking at " + $1.sval); if (symbols.containsKey($1.sval)) {
+id : ID                                { if (symbols.containsKey($1.sval)) {
                                            $$.obj = symbols.get($1.sval);
                                          }
                                          else {
@@ -510,7 +510,6 @@ print_stmt : PRINT expr                { $$.obj = new Print((Expression) $2.obj)
     Type t1 = attrs.get(0).type;
     Type ret;
     for(Expression attr : attrs) {
-      System.out.println(attrs.get(0));
         //check_type(type t1, expression e2) will put an error into yyerror
         ret = check_type(t1, attr);
         if(ret.type.equals("error")) {
