@@ -1,1 +1,15 @@
 Git Repo for PLT project 2011--Team FLOW
+Team Members: 
+David Hughes
+Mark Liu
+William Liu
+Moses Nakamura
+Stephanie Ng
+
+Please refer to ~/Documentation for all documentation and tutorials
+
+To execute:
+cd /V.1
+make
+
+Sample Programs/Test Files are located in ~/Testcases
